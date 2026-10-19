@@ -96,6 +96,9 @@ def test_trailing_more_phrasing_without_verb():
     ("Is there anything cheaper?", True, False, MessageKind.followup),
     ("What if I increase my budget by 30000?", True, False, MessageKind.followup),
     ("Recommend a new build with an Intel CPU", True, False, MessageKind.build_request),
+    ("Is there a lower budget CPU you can recommend?", True, False, MessageKind.followup),
+    ("Can you suggest a quieter cooler?", True, False, MessageKind.followup),
+    ("Recommend a cheaper CPU", False, False, MessageKind.build_request),
 ])
 def test_classifies_message_kind(message, has_build, awaiting, kind):
     assert classify_message_rule_based(message, has_build, awaiting) is kind

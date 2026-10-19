@@ -31,9 +31,11 @@ class FakeLLMProvider(LLMProvider):
     so orchestration logic can be tested without a real model."""
 
     def __init__(self, intent_json: dict | None = None, explanation: str = "Fake explanation.",
-                 tool_call_sequence: list[list[ToolCall]] | None = None):
+                 tool_call_sequence: list[list[ToolCall]] | None = None,
+                 tool_answer: str = "Final tool-loop answer."):
         self.intent_json = intent_json
         self.explanation = explanation
+        self.tool_answer = tool_answer
         self.tool_call_sequence = tool_call_sequence or []
         self._tool_call_index = 0
         self.calls: list[dict] = []
@@ -49,7 +51,7 @@ class FakeLLMProvider(LLMProvider):
                 calls = self.tool_call_sequence[self._tool_call_index]
                 self._tool_call_index += 1
                 return LLMResponse(content=None, tool_calls=calls)
-            return LLMResponse(content="Final tool-loop answer.")
+            return LLMResponse(content=self.tool_answer)
 
         return LLMResponse(content=self.explanation)
 
@@ -304,3 +306,157 @@ def test_small_talk_kind_is_kept_when_llm_omits_the_state(db):
     llm = FakeLLMProvider(intent_json={"message_kind": "small_talk"})
     result = handle_chat_message(db, llm, ChatSession(), "hey there, how are you doing today")
     assert result.build is None and "budget" in result.reply
+
+
+# --- Use case: asked, not assumed ---
+
+def test_asks_what_the_pc_is_for_instead_of_assuming_gaming(db):
+    session = ChatSession()
+    llm = FakeLLMProvider(intent_json={**_state(1, use_case=[]), "message_kind": "build_request"},
+                          explanation="Here is the build.")
+
+    question = handle_chat_message(db, llm, session, "I want to build a PC but I'm unsure what to get")
+
+    assert question.build is None
+    assert "use the PC for" in question.reply and "budget" in question.reply
+    assert "₱" not in question.reply  # no gaming build quoted
+
+    # The answer gives a use case but still no budget: that question was
+    # already asked, so the starting build comes straight away.
+    llm.intent_json = {**_state(1, use_case=["video_editing"]), "message_kind": "build_request"}
+    build = handle_chat_message(db, llm, session, "Video editing, I don't have a budget yet")
+
+    assert build.build is not None
+    assert build.reply.startswith("Since you don't have a budget yet") and "video editing" in build.reply
+
+
+def test_use_case_question_is_asked_only_once(db):
+    session = ChatSession()
+    llm = FakeLLMProvider(intent_json={**_state(50000, use_case=[]), "message_kind": "build_request"})
+
+    first = handle_chat_message(db, llm, session, "I want a PC for 50k")
+    second = handle_chat_message(db, llm, session, "Not sure, just something decent")
+
+    assert first.build is None and "use the PC for" in first.reply
+    assert second.build is not None  # sized for general use
+    assert second.state.use_case == []
+
+
+# --- Memory and pinned parts ---
+
+def _other_cpu_for(db, build) -> dict:
+    """A priced CPU, not in the build, that fits the build's motherboard."""
+    from app.models.product import Category
+    from app.services import parts_service
+
+    current = build.primary.components.cpu
+    for product in db.query(Product).filter(Product.category == Category.cpu, Product.price_php.is_not(None)):
+        part = parts_service.get_part(db, product.id)
+        if part["socket"] == current["socket"] and part["id"] != current["id"]:
+            return part
+    pytest.skip("No other CPU on the same socket in this catalog")
+
+
+def test_switch_to_a_suggested_part_pins_it_and_reruns_the_engine(db):
+    session = _session_with_build(db)
+    first_build = session.last_result
+    other = _other_cpu_for(db, first_build)
+    cpu_id = str(other["id"])
+
+    suggest = FakeLLMProvider(
+        intent_json={**_state(70000), "message_kind": "followup"},
+        tool_call_sequence=[[ToolCall(id="call_0", name="get_part_details", arguments={"product_id": cpu_id})]],
+        # Written the way models often write names: narrow no-break spaces, non-breaking hyphens.
+        tool_answer=f"The {other['manufacturer']} {other['model']} would also work.".replace(" ", "\u202f").replace("-", "\u2011"),
+    )
+    handle_chat_message(db, suggest, session, "Is there a lower budget CPU you can recommend?")
+    assert session.mentioned_parts[0]["id"] == cpu_id
+
+    switch = FakeLLMProvider(
+        intent_json={**_state(70000, pinned_parts={"cpu": cpu_id}), "message_kind": "build_request"},
+        explanation="Switched the CPU.",
+    )
+    result = handle_chat_message(db, switch, session, "Switch to it")
+
+    # The parser saw the earlier exchange and the suggested part's ID.
+    parser_input = switch.calls[0]["messages"][1]["content"]
+    assert "Is there a lower budget CPU" in parser_input and cpu_id in parser_input
+    # The engine re-ran around the pinned part, and the reply is the diff explanation.
+    assert str(result.build.primary.components.cpu["id"]) == cpu_id
+    assert result.reply == "Switched the CPU."
+    assert session.last_result is result.build and result.build is not first_build
+    assert all(not c["tools"] for c in switch.calls)
+
+
+def test_pin_with_an_id_the_parser_was_not_offered_is_dropped(db):
+    import uuid
+
+    session = _session_with_build(db)
+    cpu_before = session.last_result.primary.components.cpu["id"]
+    llm = FakeLLMProvider(
+        intent_json={**_state(70000, pinned_parts={"cpu": str(uuid.uuid4())}), "message_kind": "build_request"},
+    )
+
+    result = handle_chat_message(db, llm, session, "Use the Ryzen 9 9950X")
+
+    assert result.state.pinned_parts == {}
+    assert result.build.primary.components.cpu["id"] == cpu_before
+
+
+def test_followup_sees_recent_messages(db):
+    session = _session_with_build(db)
+    llm = FakeLLMProvider(intent_json={**_state(70000), "message_kind": "followup"})
+
+    handle_chat_message(db, llm, session, "Why that one?")
+
+    tool_messages = next(c for c in llm.calls if c["tools"])["messages"]
+    assert {"role": "user", "content": "Build me a 70k gaming PC"} in tool_messages
+    assert tool_messages[-1] == {"role": "user", "content": "Why that one?"}
+
+
+def test_off_topic_messages_stay_out_of_the_history(db):
+    session = _session_with_build(db)
+    history_before = list(session.history)
+
+    handle_chat_message(db, FakeLLMProvider(intent_json={**_state(70000), "message_kind": "off_topic"}),
+                        session, "Recommend a movie")
+
+    assert session.history == history_before
+
+
+def test_prices_reach_the_model_with_the_peso_sign_unescaped(db):
+    # "₱2,200" (the ASCII-escaped "₱2,200") reads as ₱12,200 to a model.
+    llm = FakeLLMProvider(intent_json={**_state(70000), "message_kind": "build_request"})
+    handle_chat_message(db, llm, ChatSession(), "Build me a 70k gaming PC")
+
+    explanation_input = next(c for c in llm.calls if not c["json_mode"] and not c["tools"])["messages"][1]["content"]
+    assert "₱" in explanation_input and "\\u20b1" not in explanation_input
+
+
+def test_pinning_a_part_already_in_the_build_says_so_without_rerunning(db):
+    session = _session_with_build(db)
+    state_before, build_before = session.state, session.last_result
+    cpu = build_before.primary.components.cpu
+    llm = FakeLLMProvider(intent_json={**_state(70000, pinned_parts={"cpu": str(cpu["id"])}),
+                                       "message_kind": "build_request"})
+
+    result = handle_chat_message(db, llm, session, "Switch to it")
+
+    assert cpu["model"] in result.reply and "already" in result.reply
+    assert session.state is state_before and session.last_result is build_before
+    assert len(llm.calls) == 1  # just the parser
+
+
+def test_tool_loop_answers_on_its_last_round_instead_of_giving_up(db):
+    from app.llm.tool_loop import MAX_ITERATIONS
+
+    session = _session_with_build(db)
+    cpu_id = str(session.last_result.primary.components.cpu["id"])
+    lookup = [ToolCall(id="call", name="get_part_details", arguments={"product_id": cpu_id})]
+    llm = FakeLLMProvider(intent_json={**_state(70000), "message_kind": "followup"},
+                          tool_call_sequence=[lookup] * MAX_ITERATIONS, explanation="Answer from lookups.")
+
+    result = handle_chat_message(db, llm, session, "Tell me everything about that CPU")
+
+    assert result.reply == "Answer from lookups."
+    assert not llm.calls[-1]["tools"]

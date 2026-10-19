@@ -6,18 +6,26 @@ short fixed reply about what the assistant does, and off-topic messages get
 OFF_TOPIC_REPLY; neither reaches the engine or the LLM's own answers, and
 neither changes the conversation state.
 
+Before the first build, a request that doesn't say what the PC is for
+gets one question about its use (and budget, if missing). If the next
+message still doesn't say, the build is sized for general use.
+
 Without a budget, the first turn quotes the cheapest build that fully
 covers the request (starting_budget.py) and asks for a budget. If the next
 message still has none ("not sure", "you pick"), that build is shown.
 
+Each session keeps its last few messages and the parts follow-up answers
+named, so "switch to it" can pin the suggested part (pinned_parts); the
+engine then re-runs around it like any other changed requirement.
+
 Otherwise a turn takes one of three paths:
 
-1. Build request: always runs parse_message -> RecommendationEngine.recommend
+1. Build request with no build yet, or with unchanged requirements: runs parse_message -> RecommendationEngine.recommend
    -> explain_build. Build generation is never left to the model's choice
    of tool, so the engine cannot be bypassed by the model answering from
    its own knowledge.
-2. What-if question ("what if I increase my budget by 10,000?"): when
-   intent parsing shows a real constraint change, the engine re-runs under
+2. Changed requirement with a build already shown ("what if I add
+   10,000?", "make it 60k", "switch to that CPU"): the engine re-runs under
    the new constraints and the LLM explains the diff against the previous
    build.
 3. Exploratory follow-up (comparisons, "why not X", spec lookups): handled
@@ -27,6 +35,7 @@ Otherwise a turn takes one of three paths:
 In every path the engine selects the parts and the LLM only narrates.
 """
 
+import re
 from dataclasses import dataclass
 
 from sqlalchemy.orm import Session
@@ -48,6 +57,11 @@ _GREETING_REPLY = (
     "Hi! I put together PC builds from a catalog of real parts, checked for compatibility. "
     "Tell me your budget in pesos and what you'll use the PC for (games, resolution, editing, and so on)."
 )
+_USE_CASE_QUESTION = (
+    "What will you mostly use the PC for? For example gaming (and at what resolution), "
+    "video editing, 3D rendering, programming, or office work."
+)
+_BUDGET_TOO_QUESTION = " And do you have a budget in pesos? If you're not sure yet, that's fine."
 _FOLLOWUP_PROMPT_REPLY = (
     "Happy to help. You can ask about any part in this build, compare it with others, "
     "or change the budget or preferences."
@@ -60,8 +74,10 @@ _FOLLOWUP_PROMPT_REPLY = (
 _ENGINE_RELEVANT_FIELDS = (
     "budget_php", "use_case", "resolution", "target_fps", "cpu_brand", "gpu_brand",
     "wifi_required", "small_form_factor", "quiet", "low_power",
-    "prioritize_upgradeability", "existing_parts",
+    "prioritize_upgradeability", "existing_parts", "pinned_parts",
 )
+
+_BUILD_ROLES = ["cpu", "gpu", "motherboard", "ram", "storage", "psu", "cooler", "case"]
 
 
 @dataclass
@@ -75,6 +91,96 @@ def _engine_relevant_state_changed(old: BuildRequest | None, new: BuildRequest) 
     if old is None:
         return False
     return any(getattr(old, field) != getattr(new, field) for field in _ENGINE_RELEVANT_FIELDS)
+
+
+def _part_name(part: dict) -> str:
+    return f"{part['manufacturer']} {part['model']}"
+
+
+def _build_parts(result: BuildResult | None) -> list[dict]:
+    if result is None:
+        return []
+    components = result.primary.components
+    parts = []
+    for role in _BUILD_ROLES:
+        value = getattr(components, role)
+        for part in (value if isinstance(value, list) else [value] if value else []):
+            parts.append({"id": str(part["id"]), "category": role, "name": _part_name(part),
+                          "price_php": part.get("price_php")})
+    return parts
+
+
+def _pinnable_parts(session: ChatSession) -> list[dict]:
+    """Parts the user can ask to pin: the ones follow-up answers named,
+    newest first, then the current build's (for "keep this CPU")."""
+    in_build = _build_parts(session.last_result)
+    build_ids = {p["id"] for p in in_build}
+    suggested = [{**p, "where": "suggested earlier"} for p in session.mentioned_parts if p["id"] not in build_ids]
+    return suggested + [{**p, "where": "in the current build"} for p in in_build]
+
+
+def _checked_pins(state: BuildRequest, previous: BuildRequest | None, pinnable: list[dict]) -> BuildRequest:
+    """Drops pins whose ID the parser wasn't offered for that category, so
+    an invented or misfiled ID can't reach the engine. Pins kept from the
+    previous turn stay valid."""
+    allowed = {(p["category"], p["id"]) for p in pinnable if p.get("price_php") is not None}
+    if previous:
+        allowed |= {(role, str(pid)) for role, pid in previous.pinned_parts.items()}
+    pins = {role: pid for role, pid in state.pinned_parts.items() if (role, str(pid)) in allowed}
+    if pins == state.pinned_parts:
+        return state
+    return state.model_copy(update={"pinned_parts": pins})
+
+
+_HYPHENS = str.maketrans({c: "-" for c in "\u2010\u2011\u2012\u2013\u2014\u2015\u2212"})
+
+
+def _comparable(text: str) -> str:
+    """Lowercase, with Unicode spaces and hyphens made plain. Models often
+    write "Ryzen\u202f5\u202f7600" or "i5\u201112400F" for the catalog's plain names."""
+    return re.sub(r"\s+", " ", text.translate(_HYPHENS)).lower()
+
+
+def _parts_named_in(reply: str, executor: ToolExecutor, exclude: set[str]) -> list[dict]:
+    """Priced parts the tool loop looked up and the reply names by model, so
+    a later "switch to it" knows which product was meant."""
+    text = _comparable(reply)
+    named = []
+    for part_id, part in executor.seen_parts.items():
+        if part_id in exclude or part.get("price_php") is None or not part.get("model"):
+            continue
+        # Stop at the model's end so "Ryzen 5 7600" doesn't match "Ryzen 5 7600X".
+        match = re.search(re.escape(_comparable(part["model"])) + r"(?![\w-])", text)
+        if match:
+            named.append((match.start(), {"id": part_id, "category": part["category"],
+                                          "name": _part_name(part), "price_php": part["price_php"]}))
+    # In the order the reply names them; the first is usually the suggestion.
+    return [part for _, part in sorted(named, key=lambda item: item[0])]
+
+
+def _new_pins(previous: BuildRequest | None, state: BuildRequest) -> dict:
+    before = previous.pinned_parts if previous else {}
+    return {role: pid for role, pid in state.pinned_parts.items() if before.get(role) != pid}
+
+
+def _only_repins_current_parts(previous: BuildRequest | None, state: BuildRequest, result: BuildResult) -> bool:
+    """True when the only change is pinning parts the build already has,
+    which happens when "switch to it" can't be matched to a suggestion."""
+    new_pins = _new_pins(previous, state)
+    if not new_pins or previous is None:
+        return False
+    unpinned = state.model_copy(update={"pinned_parts": previous.pinned_parts})
+    if _engine_relevant_state_changed(previous, unpinned):
+        return False
+    in_build = {(p["category"], p["id"]) for p in _build_parts(result)}
+    return all((role, str(pid)) in in_build for role, pid in new_pins.items())
+
+
+def _already_in_build_reply(previous: BuildRequest | None, state: BuildRequest, result: BuildResult) -> str:
+    names = {p["id"]: p["name"] for p in _build_parts(result)}
+    parts = " and ".join(f"the {names[str(pid)]}" for pid in _new_pins(previous, state).values())
+    return (f"Your build already has {parts}, so nothing changes. Which part did you want instead? "
+            "You can also ask me for options, like \"is there a cheaper CPU?\"")
 
 
 def _ask_for_budget(llm: LLMProvider, state: BuildRequest | None) -> str:
@@ -128,37 +234,83 @@ def _build_at_starting_budget(llm: LLMProvider, session: ChatSession, state: Bui
 
 
 def handle_chat_message(db: Session, llm: LLMProvider, session: ChatSession, message: str) -> ChatTurnResult:
+    """Runs one chat turn and records it in the session's history."""
+    result, kind = _run_turn(db, llm, session, message)
+    # Small talk and off-topic messages carry nothing later turns refer to.
+    if kind not in (MessageKind.small_talk, MessageKind.off_topic):
+        session.remember(message, result.reply)
+    return result
+
+
+def _run_turn(db: Session, llm: LLMProvider, session: ChatSession, message: str) -> tuple[ChatTurnResult, MessageKind]:
     previous_state = session.state
     awaiting_budget = previous_state is not None and previous_state.budget_php < MIN_VALID_BUDGET
+    pinnable = _pinnable_parts(session)
     parsed = parse_message(
         llm, message, existing=session.state,
         has_build=session.last_result is not None, awaiting_budget=awaiting_budget,
+        history=session.history, pinnable=pinnable,
     )
+    kind = parsed.kind
 
     # Neither path touches session.state, so a stray message can't change
     # the build or count as the "still no budget" turn. No build is attached,
     # so the UI doesn't repeat the parts table under the reply.
-    if parsed.kind is MessageKind.off_topic:
-        return ChatTurnResult(reply=OFF_TOPIC_REPLY, state=previous_state or parsed.state, build=None)
-    if parsed.kind is MessageKind.small_talk:
+    if kind is MessageKind.off_topic:
+        return ChatTurnResult(reply=OFF_TOPIC_REPLY, state=previous_state or parsed.state, build=None), kind
+    if kind is MessageKind.small_talk:
         reply = _FOLLOWUP_PROMPT_REPLY if session.last_result else _GREETING_REPLY
-        return ChatTurnResult(reply=reply, state=previous_state or parsed.state, build=None)
+        return ChatTurnResult(reply=reply, state=previous_state or parsed.state, build=None), kind
 
-    state = parsed.state
+    state = _checked_pins(parsed.state, previous_state, pinnable)
     session.state = state
+
+    if not state.use_case and session.last_result is None and not session.asked_use_case:
+        session.asked_use_case = True
+        reply = _USE_CASE_QUESTION
+        if state.budget_php < MIN_VALID_BUDGET:
+            # This already asks for a budget, so a budget-less answer gets
+            # the starting build rather than a second budget question.
+            session.offered_starting_budget = True
+            reply += _BUDGET_TOO_QUESTION
+        return ChatTurnResult(reply=reply, state=state, build=None), kind
 
     if state.budget_php < MIN_VALID_BUDGET:
         starting = find_starting_budget(db, state)
         if starting is None:
-            return ChatTurnResult(reply=_ask_for_budget(llm, state), state=state, build=session.last_result)
+            return ChatTurnResult(reply=_ask_for_budget(llm, state), state=state, build=session.last_result), kind
         if not session.offered_starting_budget:
             session.offered_starting_budget = True
-            return ChatTurnResult(reply=_offer_starting_budget(state, starting), state=state, build=session.last_result)
-        return _build_at_starting_budget(llm, session, state, starting)
+            return ChatTurnResult(reply=_offer_starting_budget(state, starting), state=state, build=session.last_result), kind
+        return _build_at_starting_budget(llm, session, state, starting), kind
 
-    wants_new_build = parsed.kind is MessageKind.build_request or session.last_result is None
+    if session.last_result is not None and _only_repins_current_parts(previous_state, state, session.last_result):
+        session.state = previous_state
+        return ChatTurnResult(reply=_already_in_build_reply(previous_state, state, session.last_result),
+                              state=previous_state, build=session.last_result), kind
 
-    if wants_new_build:
+    if session.last_result is not None and _engine_relevant_state_changed(previous_state, state):
+        # A changed requirement with a build on screen, whether asked as a
+        # what-if or as a request: re-run the engine and explain the diff,
+        # so totals in the reply come from the engine, not the model.
+        previous_result = session.last_result
+        new_result = RecommendationEngine.recommend(db, state)
+        if new_result is None:
+            session.state = previous_state  # keep the last workable requirements
+            reply = (
+                "That change doesn't leave a compatible build under the other constraints; "
+                "try a smaller change or adjust a different preference."
+            )
+            return ChatTurnResult(reply=reply, state=previous_state, build=previous_result), kind
+
+        session.last_result = new_result
+        reply = explain_followup(
+            llm, message, previous_result, previous_state,
+            comparison=new_result, comparison_request=state,
+        )
+        return ChatTurnResult(reply=reply, state=state, build=new_result), kind
+
+    if kind is MessageKind.build_request or session.last_result is None:
         result = RecommendationEngine.recommend(db, state)
         session.last_result = result
         if result is None:
@@ -166,42 +318,19 @@ def handle_chat_message(db: Session, llm: LLMProvider, session: ChatSession, mes
                 "I couldn't find a compatible build under these constraints. "
                 "Try raising the budget or relaxing a preference (brand, Wi-Fi, form factor)."
             )
-            return ChatTurnResult(reply=reply, state=state, build=None)
-        reply = explain_build(llm, result, state)
-        return ChatTurnResult(reply=reply, state=state, build=result)
-
-    if _engine_relevant_state_changed(previous_state, state):
-        # What-if question: a real constraint changed without an explicit request
-        # for a new build. Re-run the engine and explain the diff.
-        previous_result = session.last_result
-        new_result = RecommendationEngine.recommend(db, state)
-        if new_result is None:
-            reply = (
-                "That change doesn't leave a compatible build under the other constraints; "
-                "try a smaller change or adjust a different preference."
-            )
-            return ChatTurnResult(reply=reply, state=state, build=previous_result)
-
-        session.last_result = new_result
-        reply = explain_followup(
-            llm, message, previous_result, previous_state,
-            comparison=new_result, comparison_request=state,
-        )
-        return ChatTurnResult(reply=reply, state=state, build=new_result)
+            return ChatTurnResult(reply=reply, state=state, build=None), kind
+        return ChatTurnResult(reply=explain_build(llm, result, state), state=state, build=result), kind
 
     # Follow-up / exploratory question against the existing build: let the
     # model decide which tool(s) answer it, grounded in real data.
     executor = ToolExecutor(db)
+    in_build = _build_parts(session.last_result)
     context = {
         "current_request": state.model_dump(mode="json"),
         "current_build_summary": {
-            "primary_price_php": session.last_result.primary.score.total_price_php if session.last_result else None,
+            "primary_price_php": session.last_result.primary.score.total_price_php,
             # IDs let the model call get_part_details on the parts it's asked about.
-            "primary_parts": {
-                role: {"id": str(part["id"]), "name": f"{part['manufacturer']} {part['model']}"}
-                for role in ["cpu", "gpu", "motherboard", "ram", "psu", "cooler", "case"]
-                if (part := getattr(session.last_result.primary.components, role))
-            } if session.last_result else None,
+            "primary_parts": {p["category"]: {"id": p["id"], "name": p["name"]} for p in in_build},
         },
     }
     messages = [
@@ -211,12 +340,17 @@ def handle_chat_message(db: Session, llm: LLMProvider, session: ChatSession, mes
                 "You are a PC-building assistant answering a follow-up question. "
                 "Use the provided tools to look up any fact you need. Never state a spec, price, or "
                 "compatibility result you haven't retrieved via a tool call. "
+                "When you suggest a different part, name it with its catalog name and don't work out a new "
+                "build total yourself; tell the user they can ask to switch to it, and the build will be "
+                "recalculated. "
                 "If the question isn't about PC hardware or this build, don't answer it; reply only: "
                 f"\"{OFF_TOPIC_REPLY}\" "
                 f"Context: {context}"
             ),
         },
+        *session.history,
         {"role": "user", "content": message},
     ]
     reply = run_tool_loop(llm, executor, messages)
-    return ChatTurnResult(reply=reply, state=state, build=session.last_result)
+    session.remember_parts(_parts_named_in(reply, executor, exclude={p["id"] for p in in_build}))
+    return ChatTurnResult(reply=reply, state=state, build=session.last_result), kind

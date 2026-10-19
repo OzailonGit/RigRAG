@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from pydantic import ValidationError
 
+from app.json_utils import to_prompt_json
 from app.llm.prompts.system_prompts import INTENT_PARSER_SYSTEM
 from app.llm.providers.base import LLMProvider
 from app.llm.rule_based_intent import classify_message_rule_based, parse_intent_rule_based
@@ -22,14 +23,27 @@ class ParsedMessage:
     kind: MessageKind
 
 
+def _conversation_block(history: list[dict], pinnable: list[dict]) -> str:
+    text = ""
+    if history:
+        lines = "\n".join(f"{m['role']}: {m['content']}" for m in history)
+        text += f"\nRECENT CONVERSATION (oldest first):\n{lines}\n"
+    if pinnable:
+        lines = "\n".join(f"- {p['category']}: {p['name']} (id {p['id']}, {p['where']})" for p in pinnable)
+        text += f"\nPARTS THAT CAN BE PINNED:\n{lines}\n"
+    return text
+
+
 def _parse_with_llm(
-    llm: LLMProvider, message: str, existing: BuildRequest | None, awaiting_budget: bool
+    llm: LLMProvider, message: str, existing: BuildRequest | None, awaiting_budget: bool,
+    history: list[dict], pinnable: list[dict],
 ) -> tuple[BuildRequest, MessageKind | None]:
     current_state = existing.model_dump(mode="json") if existing else {}
     waiting = "\nTHE ASSISTANT JUST ASKED FOR: a budget\n" if awaiting_budget else ""
+    context = _conversation_block(history, pinnable)
     messages = [
         {"role": "system", "content": INTENT_PARSER_SYSTEM},
-        {"role": "user", "content": f"CURRENT STATE:\n{json.dumps(current_state)}\n{waiting}\nNEWEST MESSAGE:\n{message}"},
+        {"role": "user", "content": f"CURRENT STATE:\n{to_prompt_json(current_state)}\n{context}{waiting}\nNEWEST MESSAGE:\n{message}"},
     ]
     response = llm.chat(messages, json_mode=True)
     if not response.content:
@@ -57,9 +71,16 @@ def parse_message(
     existing: BuildRequest | None = None,
     has_build: bool = False,
     awaiting_budget: bool = False,
+    history: list[dict] | None = None,
+    pinnable: list[dict] | None = None,
 ) -> ParsedMessage:
     """Turns a user message and the prior conversational state into a
     BuildRequest plus the kind of message it is, in one LLM call.
+
+    `history` (recent {"role", "content"} messages) lets references like
+    "switch to it" resolve. `pinnable` lists the parts, as {"id",
+    "category", "name", "where"}, that the message may ask to pin; the
+    caller still checks any pinned ID against it.
 
     Falls back to conservative rule-based extraction when the LLM is
     unreachable or returns output that does not validate, and to rule-based
@@ -67,7 +88,7 @@ def parse_message(
     the request.
     """
     try:
-        state, kind = _parse_with_llm(llm, message, existing, awaiting_budget)
+        state, kind = _parse_with_llm(llm, message, existing, awaiting_budget, history or [], pinnable or [])
         return ParsedMessage(state, kind or classify_message_rule_based(message, has_build, awaiting_budget))
     except (ValidationError, json.JSONDecodeError, ValueError, KeyError) as exc:
         logger.warning("LLM intent parsing failed (%s), falling back to rule-based extraction", exc)

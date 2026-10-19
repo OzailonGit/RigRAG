@@ -151,11 +151,27 @@ class ToolExecutionError(Exception):
     pass
 
 
+def _find_parts(value: Any, found: dict[str, dict]) -> None:
+    """Collects every catalog part (a dict with an id, category, and model)
+    nested anywhere in a tool result."""
+    if isinstance(value, dict):
+        if {"id", "category", "manufacturer", "model"} <= value.keys():
+            found.setdefault(str(value["id"]), value)
+        for item in value.values():
+            _find_parts(item, found)
+    elif isinstance(value, list):
+        for item in value:
+            _find_parts(item, found)
+
+
 class ToolExecutor:
     def __init__(self, db: Session):
         self._db = db
         self._embedder = None
         self._store = None
+        # Every part a tool returned during this executor's lifetime, by ID,
+        # so the caller can tell which parts an answer was based on.
+        self.seen_parts: dict[str, dict] = {}
 
     def _lazy_rag(self):
         if self._embedder is None:
@@ -167,7 +183,9 @@ class ToolExecutor:
         handler = getattr(self, f"_tool_{name}", None)
         if handler is None:
             raise ToolExecutionError(f"Unknown tool: {name}")
-        return to_jsonable(handler(**arguments))
+        result = to_jsonable(handler(**arguments))
+        _find_parts(result, self.seen_parts)
+        return result
 
     def _tool_search_parts(self, query: str, category: str | None = None, max_price_php: float | None = None, manufacturer: str | None = None, limit: int = 5):
         embedder, store = self._lazy_rag()

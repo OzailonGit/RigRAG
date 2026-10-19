@@ -53,6 +53,13 @@ _BUILD_REQUEST_KEYWORDS = ("build", "recommend", "suggest", "put together", "wha
 
 _BUILD_REQUEST_KEYWORDS_RE = re.compile("|".join(re.escape(kw) for kw in _BUILD_REQUEST_KEYWORDS))
 
+# "Can you recommend a cheaper CPU?" with a build on screen asks for options
+# for one part, not for a new build, even though it says "recommend".
+_SINGLE_PART = re.compile(
+    r"\b(cpu|processor|gpu|graphics card|video card|motherboard|ram|memory|ssd|nvme|storage|psu|power supply|cooler|case)s?\b"
+)
+_WHOLE_BUILD = re.compile(r"\b(build|pc|computer|rig|setup)\b")
+
 _USE_CASE_KEYWORDS = {
     "gaming": UseCase.gaming, "game": UseCase.gaming,
     "programming": UseCase.programming, "coding": UseCase.programming, "development": UseCase.programming,
@@ -149,6 +156,8 @@ def classify_message_rule_based(message: str, has_build: bool, awaiting_budget: 
         if awaiting_budget and _ANSWER_WITHOUT_BUDGET.search(text):
             return MessageKind.build_request
         return MessageKind.off_topic
+    if has_build and _SINGLE_PART.search(text) and not _WHOLE_BUILD.search(text):
+        return MessageKind.followup
     if not has_build or any(kw in text for kw in _BUILD_REQUEST_KEYWORDS):
         return MessageKind.build_request
     return MessageKind.followup
