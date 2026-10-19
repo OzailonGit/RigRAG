@@ -36,6 +36,7 @@ In every path the engine selects the parts and the LLM only narrates.
 """
 
 import re
+import uuid
 from dataclasses import dataclass
 
 from sqlalchemy.orm import Session
@@ -44,7 +45,7 @@ from app.llm.explain import explain_build, explain_followup
 from app.llm.intent_parser import parse_message
 from app.llm.providers.base import LLMProvider
 from app.llm.tool_loop import run_tool_loop
-from app.llm.tools import ToolExecutor
+from app.llm.tools import TOOL_DEFINITIONS, ToolExecutor
 from app.recommendation.engine import BuildResult, RecommendationEngine
 from app.recommendation.starting_budget import StartingBudget, find_starting_budget
 from app.schemas import BuildRequest, MessageKind, UseCase
@@ -78,6 +79,11 @@ _ENGINE_RELEVANT_FIELDS = (
 )
 
 _BUILD_ROLES = ["cpu", "gpu", "motherboard", "ram", "storage", "psu", "cooler", "case"]
+
+# Follow-ups can't run the engine themselves: a build made there would be
+# described in the reply but never shown or kept. Changed requirements go
+# through intent parsing instead, which re-runs the engine.
+_FOLLOWUP_TOOLS = [t for t in TOOL_DEFINITIONS if t["function"]["name"] != "generate_build"]
 
 
 @dataclass
@@ -163,17 +169,47 @@ def _new_pins(previous: BuildRequest | None, state: BuildRequest) -> dict:
     return {role: pid for role, pid in state.pinned_parts.items() if before.get(role) != pid}
 
 
+def _pin_only_change(previous: BuildRequest | None, state: BuildRequest) -> bool:
+    if previous is None or not _new_pins(previous, state):
+        return False
+    unpinned = state.model_copy(update={"pinned_parts": previous.pinned_parts})
+    return not _engine_relevant_state_changed(previous, unpinned)
+
+
 def _only_repins_current_parts(previous: BuildRequest | None, state: BuildRequest, result: BuildResult) -> bool:
     """True when the only change is pinning parts the build already has,
     which happens when "switch to it" can't be matched to a suggestion."""
-    new_pins = _new_pins(previous, state)
-    if not new_pins or previous is None:
-        return False
-    unpinned = state.model_copy(update={"pinned_parts": previous.pinned_parts})
-    if _engine_relevant_state_changed(previous, unpinned):
+    if not _pin_only_change(previous, state):
         return False
     in_build = {(p["category"], p["id"]) for p in _build_parts(result)}
-    return all((role, str(pid)) in in_build for role, pid in new_pins.items())
+    return all((role, str(pid)) in in_build for role, pid in _new_pins(previous, state).items())
+
+
+def _swap_in_pins(db: Session, state: BuildRequest, result: BuildResult) -> BuildResult | None:
+    """The current build with only the newly pinned parts changed, when the
+    rest of it still fits them and the total stays on budget."""
+    keep: dict[str, uuid.UUID] = {}
+    for part in _build_parts(result):
+        keep.setdefault(part["category"], uuid.UUID(part["id"]))
+    swapped = state.model_copy(update={"pinned_parts": {**keep, **state.pinned_parts}})
+    swap = RecommendationEngine.recommend(db, swapped, explore=False)
+    if swap is None or swap.primary.score.total_price_php > state.budget_php:
+        return None
+    return swap
+
+
+def _unspent_note(result: BuildResult, state: BuildRequest) -> str:
+    """Says why a build leaves much of the budget unspent, so a ₱69,500
+    answer to a ₱600,000 request doesn't look like a misread budget."""
+    if result.unspent_reason is None:
+        return ""
+    total = result.primary.score.total_price_php
+    lead = (f"\n\nThis build comes to ₱{total:,.0f}, leaving ₱{state.budget_php - total:,.0f} "
+            f"of your ₱{state.budget_php:,.0f} budget unspent: ")
+    if result.unspent_reason == "top_tier":
+        return lead + ("its CPU and GPU are already in the top performance tier, so spending more "
+                       "wouldn't buy a faster tier. You could put the rest toward more storage or memory.")
+    return lead + "the next step up in performance costs more than your budget."
 
 
 def _already_in_build_reply(previous: BuildRequest | None, state: BuildRequest, result: BuildResult) -> str:
@@ -294,7 +330,13 @@ def _run_turn(db: Session, llm: LLMProvider, session: ChatSession, message: str)
         # what-if or as a request: re-run the engine and explain the diff,
         # so totals in the reply come from the engine, not the model.
         previous_result = session.last_result
-        new_result = RecommendationEngine.recommend(db, state)
+        new_result = None
+        if _pin_only_change(previous_state, state):
+            # "Switch to it" changes just that part when the rest still fits;
+            # otherwise the build is re-picked around it.
+            new_result = _swap_in_pins(db, state, previous_result)
+        if new_result is None:
+            new_result = RecommendationEngine.recommend(db, state)
         if new_result is None:
             session.state = previous_state  # keep the last workable requirements
             reply = (
@@ -308,7 +350,7 @@ def _run_turn(db: Session, llm: LLMProvider, session: ChatSession, message: str)
             llm, message, previous_result, previous_state,
             comparison=new_result, comparison_request=state,
         )
-        return ChatTurnResult(reply=reply, state=state, build=new_result), kind
+        return ChatTurnResult(reply=reply + _unspent_note(new_result, state), state=state, build=new_result), kind
 
     if kind is MessageKind.build_request or session.last_result is None:
         result = RecommendationEngine.recommend(db, state)
@@ -319,7 +361,8 @@ def _run_turn(db: Session, llm: LLMProvider, session: ChatSession, message: str)
                 "Try raising the budget or relaxing a preference (brand, Wi-Fi, form factor)."
             )
             return ChatTurnResult(reply=reply, state=state, build=None), kind
-        return ChatTurnResult(reply=explain_build(llm, result, state), state=state, build=result), kind
+        reply = explain_build(llm, result, state) + _unspent_note(result, state)
+        return ChatTurnResult(reply=reply, state=state, build=result), kind
 
     # Follow-up / exploratory question against the existing build: let the
     # model decide which tool(s) answer it, grounded in real data.
@@ -351,6 +394,6 @@ def _run_turn(db: Session, llm: LLMProvider, session: ChatSession, message: str)
         *session.history,
         {"role": "user", "content": message},
     ]
-    reply = run_tool_loop(llm, executor, messages)
+    reply = run_tool_loop(llm, executor, messages, tools=_FOLLOWUP_TOOLS)
     session.remember_parts(_parts_named_in(reply, executor, exclude={p["id"] for p in in_build}))
     return ChatTurnResult(reply=reply, state=state, build=session.last_result), kind

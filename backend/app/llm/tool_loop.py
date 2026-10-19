@@ -20,14 +20,15 @@ MAX_ITERATIONS = 4
 _GAVE_UP = "I wasn't able to fully answer that after several tool calls. Could you rephrase or narrow the question?"
 
 
-def run_tool_loop(llm: LLMProvider, executor: ToolExecutor, messages: list[dict]) -> str:
+def run_tool_loop(llm: LLMProvider, executor: ToolExecutor, messages: list[dict],
+                  tools: list[dict] = TOOL_DEFINITIONS) -> str:
     messages = list(messages)  # don't mutate the caller's list
 
     for iteration in range(MAX_ITERATIONS):
         # The last round offers no tools, so the model answers from the
         # lookups it already made instead of being cut off mid-search.
         last_round = iteration == MAX_ITERATIONS - 1
-        response = llm.chat(messages, tools=None if last_round else TOOL_DEFINITIONS)
+        response = llm.chat(messages, tools=None if last_round else tools)
 
         if not response.tool_calls:
             return response.content or _GAVE_UP
