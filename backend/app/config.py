@@ -36,6 +36,21 @@ class Settings(BaseSettings):
     icecat_cache_dir: str = ""  # empty: <repo>/data/raw/icecat
     icecat_request_interval_s: float = 0.25
 
+    # Prices: Shopee Affiliate Open API
+    shopee_app_id: str = ""
+    shopee_secret: str = ""
+    shopee_api_url: str = "https://open-api.affiliate.shopee.ph/graphql"
+
+    # Prices: Lazada Open Platform (affiliate)
+    lazada_app_key: str = ""
+    lazada_app_secret: str = ""
+    lazada_access_token: str = ""
+    lazada_api_url: str = "https://api.lazada.com.ph/rest"
+    lazada_product_search_path: str = "/marketing/product/feed"
+
+    price_request_interval_s: float = 1.0
+    price_max_age_days: int = 14
+
     # App
     app_env: str = "development"
     default_currency: str = "PHP"
