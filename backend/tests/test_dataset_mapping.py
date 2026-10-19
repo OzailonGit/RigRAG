@@ -5,7 +5,7 @@ from decimal import Decimal
 
 import pytest
 
-from app.ingestion.import_datasets import ImportReport, collect, dataset_key, estimate_price_php
+from app.ingestion.import_datasets import ImportReport, collect, dataset_key, estimate_price_php, product_link
 from app.ingestion.normalization import datasets as m
 from app.ingestion.validation.specs import validate_spec
 from app.models.product import Category
@@ -266,7 +266,7 @@ def test_cheapest_variant_keeps_a_siblings_product_link(tmp_path):
     import json
 
     rows = [
-        {**CPU_ROW, "price_usd": 230, "pcpartpicker_url": "https://pcpartpicker.com/product/abc/amd-ryzen-5-7600"},
+        {**CPU_ROW, "price_usd": 230, "pcpartpicker_url": "https://fr.pcpartpicker.com/product/abc/amd-ryzen-5-7600"},
         {**CPU_ROW, "price_usd": 200, "pcpartpicker_url": None},
     ]
     (tmp_path / "cpu.jsonl").write_text("\n".join(json.dumps(r) for r in rows))
@@ -275,4 +275,10 @@ def test_cheapest_variant_keeps_a_siblings_product_link(tmp_path):
     (candidate,) = collect(Category.cpu, tmp_path, args, ImportReport(), {}).values()
 
     assert candidate.price_php == estimate_price_php(rows[1], 66.0, 57.0)[0]
-    assert candidate.url == rows[0]["pcpartpicker_url"]
+    assert candidate.url == "https://pcpartpicker.com/product/abc/amd-ryzen-5-7600"
+
+
+def test_regional_pcpartpicker_links_point_at_the_main_site():
+    assert product_link("https://fr.pcpartpicker.com/product/ms4Zxr/x") == "https://pcpartpicker.com/product/ms4Zxr/x"
+    assert product_link("https://pcpartpicker.com/product/ms4Zxr/x") == "https://pcpartpicker.com/product/ms4Zxr/x"
+    assert product_link(None) is None

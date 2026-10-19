@@ -17,14 +17,21 @@ from app.recommendation.engine import BuildResult
 from app.recommendation.engine import ScoredBuild
 
 
+_OWNED_NOTE = " The user already owns this part, so its price isn't in the total."
+
+
+def _describe(part: dict) -> str:
+    return build_product_document(part) + (_OWNED_NOTE if part.get("owned") else "")
+
+
 def summarize_scored_build(build: ScoredBuild) -> dict:
     parts = {}
     for role in ("cpu", "gpu", "motherboard", "ram", "psu", "cooler", "case"):
         part = getattr(build.components, role)
         if part:
-            parts[role] = build_product_document(part)
+            parts[role] = _describe(part)
     if build.components.storage:
-        parts["storage"] = [build_product_document(s) for s in build.components.storage]
+        parts["storage"] = [_describe(s) for s in build.components.storage]
 
     notable_issues = [
         {"rule": r.rule, "severity": r.severity, "message": r.message}

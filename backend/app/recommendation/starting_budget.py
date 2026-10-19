@@ -37,14 +37,20 @@ def find_starting_budget(db: Session, request: BuildRequest) -> StartingBudget |
     catalog can't produce any build for the request."""
     best: StartingBudget | None = None
     for budget in BUDGET_LADDER_PHP:
-        result = RecommendationEngine.recommend(db, request.model_copy(update={"budget_php": budget}))
+        # The quick search (no tier step-up, no alternatives) is enough to
+        # find the budget; the full search runs once, on the one chosen.
+        result = RecommendationEngine.recommend(db, request.model_copy(update={"budget_php": budget}), explore=False)
         # The engine falls back to the least-over-budget build when nothing
         # fits, which isn't a build at this budget.
         if result is None or result.primary.score.total_price_php > budget:
             continue
         candidate = StartingBudget(budget, result)
         if result.primary.score.performance_fit >= FULL_FIT:
-            return candidate
+            best = candidate
+            break
         if best is None or result.primary.score.performance_fit > best.result.primary.score.performance_fit:
             best = candidate
-    return best
+    if best is None:
+        return None
+    full = RecommendationEngine.recommend(db, request.model_copy(update={"budget_php": best.budget_php}))
+    return StartingBudget(best.budget_php, full) if full else best

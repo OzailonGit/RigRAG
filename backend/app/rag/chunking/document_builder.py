@@ -3,8 +3,8 @@ gets embedded for semantic search.
 
 Only facts present in the structured row are stated as fact, and fields
 listed in `assumed_fields` are given as minimums ("at least 1 M.2 slot"). Use-case
-framing derived from `performance_tier` is hedged as an estimated tier
-rather than presented as a benchmark result.
+framing derived from `performance_tier` is hedged as an estimated tier;
+benchmark results are stated only for parts that were actually benchmarked.
 """
 
 CATEGORY_TEMPLATES = {
@@ -46,11 +46,33 @@ CATEGORY_TEMPLATES = {
 }
 
 TIER_BLURBS = {
-    "entry": "Positioned as an entry-level / budget-tier part based on its specifications.",
-    "mid": "Positioned as a mid-tier part based on its specifications.",
-    "high": "Positioned as a high-tier part based on its specifications.",
-    "enthusiast": "Positioned as an enthusiast/flagship-tier part based on its specifications.",
+    "entry": "Positioned as an entry-level / budget-tier part based on its {basis}.",
+    "mid": "Positioned as a mid-tier part based on its {basis}.",
+    "high": "Positioned as a high-tier part based on its {basis}.",
+    "enthusiast": "Positioned as an enthusiast/flagship-tier part based on its {basis}.",
 }
+
+
+def _benchmark_clause(product: dict) -> str:
+    """Measured relative speed (app.ingestion.import_benchmarks), for parts
+    that were benchmarked; a score set from the tier isn't stated."""
+    if product.get("benchmark_estimated"):
+        return ""
+    if product["category"] == "gpu" and product.get("raster_1440p") is not None:
+        return (
+            " In Tom's Hardware's rasterization benchmarks it reaches "
+            f"{product['raster_1080p']:.0f}% of the fastest card tested at 1080p, "
+            f"{product['raster_1440p']:.0f}% at 1440p, and {product['raster_4k']:.0f}% at 4K."
+        )
+    if product["category"] == "cpu":
+        scores = []
+        if product.get("gaming_score") is not None:
+            scores.append(f"{product['gaming_score']:.0f}% of the fastest CPU tested in 1080p gaming")
+        if product.get("multithread_score") is not None:
+            scores.append(f"{product['multithread_score']:.0f}% in multithreaded apps")
+        if scores:
+            return " In Tom's Hardware's benchmarks it scores " + " and ".join(scores) + "."
+    return ""
 
 
 def build_product_document(product: dict) -> str:
@@ -126,8 +148,11 @@ def build_product_document(product: dict) -> str:
     else:
         text += f" Estimated price: {product.get('price_type', 'estimated')} ₱{product['price_php']:,.0f} PHP (source: {product['source']})."
 
+    benchmark = _benchmark_clause(product)
+    text += benchmark
+
     tier = product.get("performance_tier")
     if tier and tier in TIER_BLURBS:
-        text += " " + TIER_BLURBS[tier]
+        text += " " + TIER_BLURBS[tier].format(basis="benchmark scores" if benchmark else "specifications")
 
     return text

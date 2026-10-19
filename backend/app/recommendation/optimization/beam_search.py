@@ -12,8 +12,9 @@ from app.recommendation.compatibility.build_components import BuildComponents
 from app.recommendation.compatibility.power import recommended_psu_watts
 from app.recommendation.optimization.candidate_generation import fetch_candidates
 from app.recommendation.optimization.sizing import psu_wattage_range
-from app.recommendation.scoring.scoring import W_UNVERIFIED
-from app.recommendation.scoring.tiers import needed_cpu_tier, needed_gpu_tier, performance_fit
+from app.recommendation.scoring.scoring import W_PERF, W_SPEED, W_UNVERIFIED, _budget_overrun_penalty, build_speed
+from app.recommendation.scoring.performance import part_tier
+from app.recommendation.scoring.tiers import needed_cpu_tier, needed_gpu_tier, ordinal_fit
 from app.schemas import BuildRequest
 from app.services import parts_service
 
@@ -58,7 +59,8 @@ def _has_blocking(results) -> bool:
     return any(not r.compatible and r.severity == "blocking" for r in results)
 
 
-def _partial_heuristic(partial: dict, bands: dict[str, tuple[float, float]], request: BuildRequest) -> float:
+def _partial_heuristic(partial: dict, bands: dict[str, tuple[float, float]], request: BuildRequest,
+                       boost: int = 0) -> float:
     """Cheap proxy for ranking partial builds mid-search: how well CPU/GPU fit
     what the use case needs (see scoring/tiers.py), penalized by drift from
     cumulative target spend.
@@ -71,9 +73,9 @@ def _partial_heuristic(partial: dict, bands: dict[str, tuple[float, float]], req
     fits = []
     for role, value in partial.items():
         if role == "cpu":
-            fits.append(performance_fit(value.get("performance_tier"), needed_cpu_tier(request)))
+            fits.append(ordinal_fit(part_tier(value, "cpu", request), needed_cpu_tier(request, boost)))
         elif role == "gpu":
-            fits.append(performance_fit(value.get("performance_tier"), needed_gpu_tier(request)))
+            fits.append(ordinal_fit(part_tier(value, "gpu", request), needed_gpu_tier(request, boost)))
         # Owned and pinned roles have no band; their price is fixed and says
         # nothing about how well the rest of the budget is being spent.
         if role not in bands:
@@ -86,7 +88,15 @@ def _partial_heuristic(partial: dict, bands: dict[str, tuple[float, float]], req
 
     fit_score = sum(fits) / len(fits) if fits else 0.5
     price_deviation = abs(price - target) / target if target else 0.0
-    return fit_score - PRICE_DEVIATION_WEIGHT * price_deviation
+    # The same speed reward final scoring gives, so the beam keeps the faster
+    # of two parts that both meet the need.
+    speed = build_speed(partial["cpu"], partial.get("gpu"), request, gpu_pending="gpu" not in partial) if "cpu" in partial else 0.0
+    # Prices only add up, so a partial build already over budget stays over:
+    # penalize it as final scoring would, before it crowds out builds that fit.
+    spent = sum(sum(float(item["price_php"]) for item in value) if role == "storage" else float(value["price_php"])
+                for role, value in partial.items() if role in bands)
+    overrun = _budget_overrun_penalty(spent, request.budget_php) / W_PERF
+    return fit_score + W_SPEED / W_PERF * speed - PRICE_DEVIATION_WEIGHT * price_deviation - overrun
 
 
 def load_fixed_parts(db, request: BuildRequest) -> dict[str, dict] | None:
@@ -98,16 +108,19 @@ def load_fixed_parts(db, request: BuildRequest) -> dict[str, dict] | None:
         part = parts_service.get_part(db, product_id)
         if part is None or part["category"] != role:
             return None
-        if role not in request.existing_parts and part.get("price_php") is None:
+        if role in request.existing_parts:
+            part = {**part, "owned": True}  # free: see scoring._total_price
+        elif part.get("price_php") is None:
             return None
         fixed[role] = part
     return fixed
 
 
 def generate_builds(db, request: BuildRequest, fixed: dict[str, dict],
-                    bands: dict[str, tuple[float, float]]) -> list[BuildComponents]:
+                    bands: dict[str, tuple[float, float]], boost: int = 0) -> list[BuildComponents]:
     """Candidate builds for `request`, with `fixed` (see load_fixed_parts)
-    used as-is and every other role shopped for within `bands`."""
+    used as-is, every other role shopped for within `bands`, and CPU and GPU
+    tier needs raised by `boost`."""
 
     def candidates_for(role: str, beam: list[dict]) -> list:
         if role in fixed:
@@ -141,7 +154,7 @@ def generate_builds(db, request: BuildRequest, fixed: dict[str, dict],
                 # verified cases and coolers alive instead of discovering
                 # too late that only unverified builds fit the budget.
                 penalty = W_UNVERIFIED * sum(1 for r in results if rules.is_unverified(r))
-                expanded.append((_partial_heuristic(merged, bands, request) - penalty, merged))
+                expanded.append((_partial_heuristic(merged, bands, request, boost) - penalty, merged))
 
         if not expanded:
             return []  # every candidate for this role conflicted with something already chosen

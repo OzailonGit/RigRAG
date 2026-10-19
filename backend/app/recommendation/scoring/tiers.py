@@ -1,15 +1,15 @@
 """Ordinal mapping for performance_tier, plus heuristics for how much tier
 a given use case and resolution need.
 
-A heuristic, not a benchmark-derived model. It gives "don't just pick the
-most expensive part" something concrete to measure: a build that heavily
-over-provisions tier for its use case scores worse on fit than one that
-matches it, even though it costs more.
+The needs are heuristics, not benchmark-derived. A part's own tier comes
+from its benchmark scores when it has them (performance.py), so "is this
+enough for 1440p?" is judged on measured speed.
 """
 
 from app.schemas import BuildRequest, Resolution, UseCase
 
 TIER_ORDINAL = {"entry": 1, "mid": 2, "high": 3, "enthusiast": 4}
+MAX_TIER = 4
 
 _GPU_TIER_BY_RESOLUTION = {
     Resolution.r1080p: 2,  # mid
@@ -33,21 +33,25 @@ def tier_ordinal(performance_tier: str | None) -> int:
     return TIER_ORDINAL.get(performance_tier, 2)  # unknown tier treated as "mid"
 
 
-def needed_gpu_tier(request: BuildRequest) -> int:
+def needed_gpu_tier(request: BuildRequest, boost: int = 0) -> int:
+    """GPU tier the request needs, raised by `boost` tiers when the budget
+    can pay for more (see RecommendationEngine.recommend)."""
     if request.resolution is not None:
-        return _GPU_TIER_BY_RESOLUTION[request.resolution]
-    # An unstated use case gets the same mid-tier GPU as gaming rather than
-    # the higher tier creative work needs.
-    return 2 if not request.use_case or UseCase.gaming in request.use_case else 3
+        base = _GPU_TIER_BY_RESOLUTION[request.resolution]
+    else:
+        # An unstated use case gets the same mid-tier GPU as gaming rather
+        # than the higher tier creative work needs.
+        base = 2 if not request.use_case or UseCase.gaming in request.use_case else 3
+    return min(base + boost, MAX_TIER)
 
 
-def needed_cpu_tier(request: BuildRequest) -> int:
-    return max((_CPU_TIER_BY_USE_CASE.get(uc, 2) for uc in request.use_case), default=2)
+def needed_cpu_tier(request: BuildRequest, boost: int = 0) -> int:
+    base = max((_CPU_TIER_BY_USE_CASE.get(uc, 2) for uc in request.use_case), default=2)
+    return min(base + boost, MAX_TIER)
 
 
-def performance_fit(actual_tier: str | None, needed_ordinal: int) -> float:
-    """1.0 at an exact tier match, decaying for both under- and
-    over-provisioning (an enthusiast GPU for a 1080p esports build wastes
-    budget just as surely as an entry GPU underserves a 4K build)."""
-    actual = tier_ordinal(actual_tier)
-    return max(0.0, 1 - abs(actual - needed_ordinal) / 3)
+def ordinal_fit(actual_ordinal: int, needed_ordinal: int) -> float:
+    """1.0 once a part meets the needed tier, decaying for each tier short.
+    Going past the need isn't penalized: the budget caps spending, and the
+    value term (scoring.py) stops a pricier part winning for little gain."""
+    return max(0.0, 1 - max(needed_ordinal - actual_ordinal, 0) / 3)

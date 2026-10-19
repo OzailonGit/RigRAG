@@ -28,6 +28,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database.session import SessionLocal
+from app.ingestion import import_benchmarks
 from app.ingestion.normalization import datasets as mapping
 from app.ingestion.validation.specs import validate_spec
 from app.models.product import Category, PerformanceTier, PriceType, Product
@@ -102,6 +103,16 @@ def estimate_price_php(row: dict, eur_php: float, usd_php: float) -> tuple[Decim
     return (php / 10).quantize(Decimal("1")) * 10, note
 
 
+_REGIONAL_PCPARTPICKER = re.compile(r"^https://[a-z]{2}\.pcpartpicker\.com/")
+
+
+def product_link(url: str | None) -> str | None:
+    """The dataset's PCPartPicker link on the main (US, English) site. The
+    listings come from the French site, whose product IDs the regional
+    sites share."""
+    return _REGIONAL_PCPARTPICKER.sub("https://pcpartpicker.com/", url) if url else None
+
+
 def _read_jsonl(path: Path):
     with path.open(encoding="utf-8") as handle:
         for line in handle:
@@ -134,7 +145,7 @@ def collect(category: Category, directory: Path, args, report: ImportReport, chi
 
         key = dataset_key(mapped)
         current = candidates.get(key)
-        url = row.get("pcpartpicker_url")
+        url = product_link(row.get("pcpartpicker_url"))
         if current is None or (price is not None and (current.price_php is None or price < current.price_php)):
             # Colour variants share a product page closely enough that a
             # sibling's link stands in when the cheapest row has none.
@@ -174,7 +185,8 @@ def upsert(db: Session, category: Category, candidates: dict[str, Candidate], re
         mapped = candidate.mapped
         match = curated.get((_slug(mapped.manufacturer), _slug(mapped.model)))
         if match is not None:
-            if match.url is None and candidate.url:
+            # A borrowed PCPartPicker link is refreshed; a retailer listing link stays.
+            if candidate.url and (match.url is None or "pcpartpicker.com/" in match.url):
                 match.url = candidate.url
             report.skip(f"{category.value}: already in catalog")
             continue
@@ -250,6 +262,11 @@ def main(argv: list[str] | None = None) -> None:
             print(f"  {category.value}: {len(candidates)} products")
     finally:
         db.close()
+
+    if not args.dry_run:
+        # The import resets tiers to name-based ones; benchmark scores and
+        # the tiers they give go back on top.
+        import_benchmarks.main()
 
     verb = "Would import" if args.dry_run else "Imported"
     print(f"{verb} {report.created} new, updated {report.updated} ({report.priced} with an estimated price), "

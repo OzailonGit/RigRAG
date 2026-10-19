@@ -1,7 +1,7 @@
 import enum
 import uuid
 
-from sqlalchemy import Enum, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Enum, Float, ForeignKey, Integer, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -33,3 +33,10 @@ class Gpu(Base):
     pcie_gen: Mapped[str] = mapped_column(String(16), nullable=False)
     length_mm: Mapped[int] = mapped_column(Integer, nullable=False)
     performance_tier: Mapped[PerformanceTier] = mapped_column(Enum(PerformanceTier, name="performance_tier"), nullable=False)
+    # Rasterization benchmark scores per resolution, as % of the fastest card
+    # tested (data/reference/benchmarks.json, app.ingestion.import_benchmarks).
+    raster_1080p: Mapped[float | None] = mapped_column(Float, nullable=True)
+    raster_1440p: Mapped[float | None] = mapped_column(Float, nullable=True)
+    raster_4k: Mapped[float | None] = mapped_column(Float, nullable=True)
+    # True when the scores are a stand-in from the card's tier, not a benchmark.
+    benchmark_estimated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
