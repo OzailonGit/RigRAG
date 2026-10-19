@@ -1,5 +1,4 @@
-import json
-
+from app.json_utils import to_prompt_json
 from app.llm.build_summary import summarize_build_result
 from app.llm.prompts.system_prompts import EXPLANATION_SYSTEM, FOLLOWUP_EXPLANATION_SYSTEM
 from app.llm.providers.base import LLMProvider
@@ -20,7 +19,7 @@ def explain_build(llm: LLMProvider, result: BuildResult, request: BuildRequest) 
     }
     messages = [
         {"role": "system", "content": EXPLANATION_SYSTEM},
-        {"role": "user", "content": json.dumps(payload)},
+        {"role": "user", "content": to_prompt_json(payload)},
     ]
     response = llm.chat(messages)
     return response.content or "(the model returned no explanation)"
@@ -52,7 +51,7 @@ def explain_followup(
     }
     messages = [
         {"role": "system", "content": FOLLOWUP_EXPLANATION_SYSTEM},
-        {"role": "user", "content": json.dumps(payload)},
+        {"role": "user", "content": to_prompt_json(payload)},
     ]
     response = llm.chat(messages)
     return response.content or "(the model returned no explanation)"
