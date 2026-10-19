@@ -14,6 +14,8 @@ Most "AI PC builder" demos let a language model pick the parts, which means they
 
 Follow-up questions work in chat. "Why not the Ryzen 7?" goes to a tool-calling loop backed by the same tested code. "What if I add 10k to the budget?" re-runs the engine under the new budget and explains the difference.
 
+Each chat keeps its last six messages and the parts follow-up answers named, so "switch to it" resolves to a real product ID. That part is pinned (`pinned_parts` in the `BuildRequest`): the engine builds the rest around it, counts its price against the budget, and the reply compares the old and new builds using the engine's totals. If a request doesn't say what the PC is for, the chat asks once before building, then sizes the build for general use if there's still no answer.
+
 ## Tech stack
 
 - **API:** FastAPI
@@ -102,6 +104,7 @@ That adds about 18,800 parts on current platforms (AM4, AM5, LGA1200, LGA1700, L
 - **What's skipped.** Server and laptop parts, DDR3 and older, SFX PSUs, M.2 SATA drives, and GPUs on chips missing from `gpu_chips.json`.
 - **Prices.** They're estimates converted from the PCPartPicker listings in the datasets. The French euro price (May 2026) is used when there is one, otherwise the US dollar price (July 2025), and both are adjusted to Philippine VAT. A listing more than 1.5x the part's launch MSRP is dropped, since that's usually leftover stock.
 - **Re-runs.** Specs and estimated prices update in place. A price observed from Shopee or Lazada is never overwritten.
+- **Links.** Each part links to its PCPartPicker product page, and seed or Icecat parts borrow the link of a dataset row with the same name. A price refresh replaces the link with the Shopee or Lazada listing priced closest to the quoted median. Seed parts named generically (an "NVIDIA RTX 4060" rather than a specific card, or a RAM kit sold in several latencies) have no link.
 - **Board slots.** No dataset lists SATA ports, and few list M.2 slots, so boards get a floor of 1 M.2 slot and 2 SATA ports. Those fields are recorded in `assumed_fields`, and the search documents say "at least".
 - **Cases and coolers.** The datasets don't list case clearances or cooler sockets. The 100 most popular models get them from `case_specs.json` and `cooler_specs.json` (below). Every other tower case and cooler is imported **unverified**. The rules can't check those parts, so they return a warning telling the user what to confirm instead of passing or failing them, and both the beam search and final scoring penalize each unverified check. Desktop, slim, and small ITX cases without verified specs are skipped, since they may need an SFX PSU.
 
@@ -206,6 +209,7 @@ frontend/                 React + Vite chat UI (components in src/components/, t
 - **Evaluation covers retrieval only.** Answer faithfulness isn't measured automatically. An LLM judge would add its own noise.
 - **The LLM can still misquote a number in its prose.** One explanation listed a ₱1,800 part as ₱11,800 even though the correct price was in its input. Structured fields like `total_price_php` are always the numbers to trust.
 - **Chat sessions live in memory.** They're lost on restart and not shared between workers. A production setup would keep them in Postgres or Redis.
+- **Chat memory is short.** Only the last six messages are kept, with long replies cut to their first 800 characters, so "the GPU you mentioned earlier" can stop resolving after a few turns. Parts are only remembered when a follow-up answer names one it looked up, so a part the model names from its own knowledge can't be pinned.
 - **Local 8B models are slow on small GPUs.** On a 4GB laptop GPU, `qwen3:8b` splits across GPU and CPU and runs slowly. `qwen3:4b` or Groq is the practical choice there, and the hardware probe recommends accordingly.
 - **The Groq retry is minimal.** It retries a rate limit once, but there's no automatic fallback to another provider.
 - **Replies arrive all at once.** The chat API doesn't stream, so a slow local model shows a waiting indicator for up to a minute before the reply appears.

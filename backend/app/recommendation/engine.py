@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from app.recommendation.compatibility.build_components import BuildComponents
 from app.recommendation.compatibility.checker import CompatibilityChecker
 from app.recommendation.compatibility.results import CompatibilityResult
-from app.recommendation.optimization.beam_search import generate_builds
+from app.recommendation.optimization.beam_search import generate_builds, load_fixed_parts
 from app.recommendation.optimization.budget_allocator import allocate_budget
 from app.recommendation.scoring.scoring import ScoreBreakdown, score_build
 from app.schemas import BuildRequest
@@ -58,8 +58,13 @@ def _label_alternatives(primary: ScoredBuild, ranked: list[ScoredBuild]) -> list
 class RecommendationEngine:
     @staticmethod
     def recommend(db: Session, request: BuildRequest) -> BuildResult | None:
-        bands = allocate_budget(request)
-        candidates = generate_builds(db, request)
+        fixed = load_fixed_parts(db, request)
+        if fixed is None:
+            return None
+        pinned_spend = sum(float(fixed[role]["price_php"]) for role in request.pinned_parts
+                           if role not in request.existing_parts)
+        bands = allocate_budget(request, pinned_spend)
+        candidates = generate_builds(db, request, fixed, bands)
         if not candidates:
             return None
 

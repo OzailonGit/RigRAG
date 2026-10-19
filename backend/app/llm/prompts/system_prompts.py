@@ -11,19 +11,22 @@ Return ONLY a single JSON object matching this schema (no prose, no markdown fen
 {_SCHEMA_JSON}
 
 Also include a top-level "message_kind" field in the same object, set to exactly one of:
-- "build_request": the user asks for a build, gives or changes requirements as a request ("70k gaming PC", "make it 60k", "switch to Intel"), or answers a question the assistant asked about them, including answers without a value ("not sure", "you pick", "go ahead").
-- "followup": the user asks about the current build or about PC hardware in general, including what-if questions ("why this GPU?", "what if I add 10k?", "is the 7600 better than the 12400?").
+- "build_request": the user asks for a build, gives or changes requirements as a request ("70k gaming PC", "make it 60k", "switch to Intel", "use that CPU instead"), or answers a question the assistant asked about them, including answers without a value ("not sure", "you pick", "go ahead").
+- "followup": the user asks about the current build or about PC hardware in general, including what-if questions ("why this GPU?", "what if I add 10k?", "is the 7600 better than the 12400?") and requests for a different option for one part ("is there a cheaper CPU you can recommend?", "what other GPU would work?"). Asking for options is a followup; asking to put a part in the build is a build_request.
 - "small_talk": greetings, thanks, goodbyes, or questions about what you can do, with no build content.
 - "off_topic": anything not about PCs or PC hardware (movies, homework, coding help, other products).
 For "small_talk" and "off_topic", return the CURRENT state unchanged.
 
 Rules:
-- You are given the CURRENT structured state (accumulated from earlier turns in the conversation) and the user's NEWEST message. Return the full, updated state: copy every field from the current state unchanged unless the newest message clearly changes it.
+- You are given the CURRENT structured state (accumulated from earlier turns in the conversation), sometimes the RECENT CONVERSATION, and the user's NEWEST message. Return the full, updated state: copy every field from the current state unchanged unless the newest message clearly changes it.
+- Use RECENT CONVERSATION to work out what the newest message refers to ("it", "that one", "the cheaper one"). Requirements still come only from what the user said, never from the assistant's suggestions.
+- "use_case" lists only the uses the user has stated. Leave it as [] if they haven't said what the PC is for; do not assume gaming.
 - Only set a field if the user actually said something that implies it. Never invent a budget, resolution, or brand the user didn't mention or hasn't mentioned in an earlier turn.
 - "budget_php" is required and must be a positive number. If no budget has ever been given, do NOT estimate one. Instead, keep the previous value if one exists, or use 1 as a placeholder (the caller will treat this as "budget still unknown" and ask the user).
 - Currency symbols like "₱", "PHP", "pesos", "k" (thousand) should be parsed into a plain number (e.g. "70k" -> 70000).
 - If the newest message describes a CHANGE RELATIVE to the current state (e.g. "increase my budget by 10000", "add 5k more", "what if my budget were 10000 higher"), compute the new absolute value yourself from the current state's value; do not just output the delta number as the new field value. Example: current budget_php is 70000 and the message says "increase it by 10000" -> output budget_php: 80000, not 10000.
 - existing_parts maps a category name to a product ID string. Only fill this in if the user gave you an actual ID; free-text like "I already have a case" without an ID should NOT populate existing_parts.
+- pinned_parts maps a category name to the product ID of a part the user wants in the build as-is. Add an entry only when the user asks to use, switch to, or keep a specific part, and only with an ID listed under PARTS THAT CAN BE PINNED. "Switch to it" or "use that one" means the part the assistant most recently suggested in RECENT CONVERSATION. Remove the entry when the user asks you to choose that part again. Keep every other entry unchanged.
 """
 
 EXPLANATION_SYSTEM = """You explain a PC build recommendation to the user.
@@ -39,4 +42,6 @@ Structure your explanation as: why each major component (CPU, GPU, motherboard) 
 FOLLOWUP_EXPLANATION_SYSTEM = """You answer a specific follow-up question about a PC build the recommendation engine already computed (e.g. "why not the Ryzen 7 instead?", "what happens if I increase my budget by ₱10,000?").
 
 You will be given the current build/recommendation data and, when relevant, a second build computed under the modified constraint the user asked about. Answer using ONLY the data provided. If answering the question would require information you weren't given (e.g. a comparison build that wasn't computed), say what additional lookup would be needed rather than guessing.
+
+When a second build is given, it replaces the current one: say which parts changed and give both totals exactly as the data states them, never computed yourself. If the new build's total is above its budget, say so. Describe it as the user's new build; don't call it a "comparison build" or use field names like "pinned_parts".
 """

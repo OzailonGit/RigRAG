@@ -36,7 +36,9 @@ def tier_ordinal(performance_tier: str | None) -> int:
 def needed_gpu_tier(request: BuildRequest) -> int:
     if request.resolution is not None:
         return _GPU_TIER_BY_RESOLUTION[request.resolution]
-    return 2 if UseCase.gaming in request.use_case else 3
+    # An unstated use case gets the same mid-tier GPU as gaming rather than
+    # the higher tier creative work needs.
+    return 2 if not request.use_case or UseCase.gaming in request.use_case else 3
 
 
 def needed_cpu_tier(request: BuildRequest) -> int:

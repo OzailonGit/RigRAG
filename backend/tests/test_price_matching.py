@@ -5,7 +5,7 @@ from decimal import Decimal
 import pytest
 
 from app.ingestion.prices.base import Listing
-from app.ingestion.prices.matching import aggregate_price, drop_outliers, match_score
+from app.ingestion.prices.matching import aggregate_price, drop_outliers, match_score, representative_listing
 from app.models.price_observation import Retailer
 
 ASUS_4060 = {
@@ -74,3 +74,22 @@ def test_aggregate_prefers_official_stores():
     assert aggregate_price(prices) == Decimal("19200.00")
     assert aggregate_price([listing("17000"), listing("18000"), listing("20000")]) == Decimal("18000.00")
     assert aggregate_price([]) is None
+
+
+def test_link_goes_to_the_listing_nearest_the_quoted_price():
+    listings = [
+        Listing(retailer=Retailer.shopee, listing_id=price, title="x", price_php=Decimal(price), url=f"https://shopee.ph/{price}")
+        for price in ("9000", "10000", "15000")
+    ]
+    assert representative_listing(listings, aggregate_price(listings)).url == "https://shopee.ph/10000"
+
+
+def test_link_prefers_official_stores_and_skips_listings_without_a_url():
+    listings = [
+        Listing(retailer=Retailer.shopee, listing_id="a", title="x", price_php=Decimal("10000"), url="https://shopee.ph/a"),
+        Listing(retailer=Retailer.lazada, listing_id="b", title="x", price_php=Decimal("12000"),
+                is_official_store=True, url="https://lazada.com.ph/b"),
+        Listing(retailer=Retailer.lazada, listing_id="c", title="x", price_php=Decimal("12000"), is_official_store=True),
+    ]
+    assert representative_listing(listings, Decimal("12000")).url == "https://lazada.com.ph/b"
+    assert representative_listing(listings[2:], Decimal("12000")) is None

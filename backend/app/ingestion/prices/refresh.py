@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.database.session import SessionLocal
 from app.ingestion.prices.base import Listing, PriceSource, PriceSourceError
-from app.ingestion.prices.matching import aggregate_price, drop_outliers, match_score
+from app.ingestion.prices.matching import aggregate_price, drop_outliers, match_score, representative_listing
 from app.models.price_observation import PriceObservation, Retailer
 from app.models.product import Category, PriceType, Product
 from app.services.parts_service import to_full_dict
@@ -92,6 +92,9 @@ def refresh_product(db: Session, product: Product, sources: list[PriceSource], d
         ))
     product.price_php = price
     product.price_type = PriceType.observed
+    link = representative_listing([listing for listing, _ in matched], price)
+    if link is not None:
+        product.url = link.url
     product.price_updated_at = now
     return len(matched)
 

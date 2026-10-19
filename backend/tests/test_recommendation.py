@@ -68,3 +68,30 @@ def test_existing_parts_are_reused_not_repurchased(db):
 
     assert result is not None
     assert str(result.primary.components.case["id"]) == str(owned_case.id)
+
+
+def test_pinned_part_is_used_and_its_price_counted(db):
+    from app.models.product import Category
+
+    cpu = (db.query(Product)
+           .filter(Product.category == Category.cpu, Product.price_php.is_not(None))
+           .order_by(Product.price_php).first())
+    request = BuildRequest(budget_php=70000, use_case=[UseCase.gaming], pinned_parts={"cpu": cpu.id})
+    result = RecommendationEngine.recommend(db, request)
+
+    assert result is not None
+    components = result.primary.components
+    assert str(components.cpu["id"]) == str(cpu.id)
+    parts = [components.cpu, components.motherboard, components.ram, components.psu,
+             components.cooler, components.case, *components.storage]
+    if components.gpu:
+        parts.append(components.gpu)
+    assert result.primary.score.total_price_php == pytest.approx(sum(float(p["price_php"]) for p in parts))
+    assert result.primary.score.total_price_php <= request.budget_php
+
+
+def test_pin_for_a_missing_part_returns_none(db):
+    import uuid
+
+    request = BuildRequest(budget_php=70000, use_case=[UseCase.gaming], pinned_parts={"cpu": uuid.uuid4()})
+    assert RecommendationEngine.recommend(db, request) is None

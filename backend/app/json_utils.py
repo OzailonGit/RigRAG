@@ -1,6 +1,7 @@
 import datetime
 import decimal
 import enum
+import json
 import uuid
 from typing import Any
 
@@ -26,3 +27,9 @@ def to_jsonable(value: Any) -> Any:
     if isinstance(value, enum.Enum):
         return value.value
     return value
+
+
+def to_prompt_json(payload) -> str:
+    """JSON for a prompt, with "₱" kept as-is. The default escape turns
+    "₱2,200" into "\\u20b12,200", which models read as ₱12,200."""
+    return json.dumps(payload, ensure_ascii=False)

@@ -40,7 +40,9 @@ class BuildRequest(BaseModel):
 
     budget_php: float = Field(gt=0)
     currency: str = "PHP"
-    use_case: list[UseCase] = Field(default_factory=lambda: [UseCase.gaming])
+    # Empty until the user says what the PC is for; the engine then sizes
+    # the build for general use.
+    use_case: list[UseCase] = Field(default_factory=list)
     resolution: Resolution | None = None
     target_fps: int | None = None
     games: list[str] = Field(default_factory=list)
@@ -56,3 +58,6 @@ class BuildRequest(BaseModel):
     # category -> product_id the user already owns; the engine builds around
     # these instead of shopping for them.
     existing_parts: dict[str, uuid.UUID] = Field(default_factory=dict)
+    # category -> product_id the user picked to buy ("switch to that CPU");
+    # the engine builds around these and counts their price.
+    pinned_parts: dict[str, uuid.UUID] = Field(default_factory=dict)
