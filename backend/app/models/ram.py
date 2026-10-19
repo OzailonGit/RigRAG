@@ -17,5 +17,5 @@ class RamKit(Base):
     sticks: Mapped[int] = mapped_column(Integer, nullable=False)
     ddr_gen: Mapped[RamType] = mapped_column(Enum(RamType, name="ram_type"), nullable=False)
     speed_mhz: Mapped[int] = mapped_column(Integer, nullable=False)
-    cas_latency: Mapped[int] = mapped_column(Integer, nullable=False)
-    voltage: Mapped[float] = mapped_column(nullable=False)
+    cas_latency: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    voltage: Mapped[float | None] = mapped_column(nullable=True)

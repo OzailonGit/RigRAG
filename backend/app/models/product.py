@@ -2,8 +2,8 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, Numeric, String, Text, func
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import BigInteger, DateTime, Enum, Numeric, String, Text, func
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -39,6 +39,9 @@ class Product(Base):
     Category-specific specs live in the sibling tables (Cpu, Gpu, ...) keyed by
     product_id, so recommendation/compatibility code can query "all products"
     generically while spec access stays typed.
+
+    `price_php` is NULL for imported products that have no retailer price yet;
+    those are listed but never recommended.
     """
 
     __tablename__ = "products"
@@ -48,7 +51,11 @@ class Product(Base):
     manufacturer: Mapped[str] = mapped_column(String(128), nullable=False)
     model: Mapped[str] = mapped_column(String(256), nullable=False)
 
-    price_php: Mapped[float] = mapped_column(Numeric(12, 2), nullable=False)
+    icecat_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, unique=True)
+    mpn: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)
+    gtins: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default="[]")
+
+    price_php: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)
     price_type: Mapped[PriceType] = mapped_column(Enum(PriceType, name="price_type"), nullable=False, default=PriceType.estimated)
     price_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 

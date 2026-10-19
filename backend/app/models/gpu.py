@@ -21,6 +21,11 @@ class Gpu(Base):
 
     product_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"), primary_key=True)
 
+    # Board-partner cards (ASUS, MSI, ...) are sold under the card maker's
+    # name, so brand preferences ("NVIDIA", "AMD") filter on the chip vendor.
+    chip: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    chip_vendor: Mapped[str | None] = mapped_column(String(16), nullable=True, index=True)
+
     vram_gb: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     vram_type: Mapped[VramType] = mapped_column(Enum(VramType, name="vram_type"), nullable=False)
     tdp_w: Mapped[int] = mapped_column(Integer, nullable=False)

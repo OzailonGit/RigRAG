@@ -23,5 +23,5 @@ class StorageDevice(Base):
     capacity_gb: Mapped[int] = mapped_column(Integer, nullable=False)
     interface: Mapped[str] = mapped_column(String(32), nullable=False)
     pcie_gen: Mapped[str | None] = mapped_column(String(16), nullable=True)
-    read_mb_s: Mapped[int] = mapped_column(Integer, nullable=False)
-    write_mb_s: Mapped[int] = mapped_column(Integer, nullable=False)
+    read_mb_s: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    write_mb_s: Mapped[int | None] = mapped_column(Integer, nullable=True)
