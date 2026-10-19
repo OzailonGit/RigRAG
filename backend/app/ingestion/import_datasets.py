@@ -12,7 +12,7 @@ Prices are estimates converted from the PCPartPicker listings in the
 datasets: the French EUR price (newer) when there is one, otherwise the US
 price. Both are adjusted to Philippine VAT. Re-running the import updates
 specs and estimated prices in place and never overwrites a price that the
-Shopee/Lazada refresh has observed.
+Shopee/Lazada refresh has observed, or the listing link that came with it.
 """
 
 import argparse
@@ -59,6 +59,7 @@ class Candidate:
     price_php: Decimal | None
     price_note: str | None
     sources: str
+    url: str | None = None
 
 
 @dataclass
@@ -133,8 +134,14 @@ def collect(category: Category, directory: Path, args, report: ImportReport, chi
 
         key = dataset_key(mapped)
         current = candidates.get(key)
+        url = row.get("pcpartpicker_url")
         if current is None or (price is not None and (current.price_php is None or price < current.price_php)):
-            candidates[key] = Candidate(mapped, price, note, row.get("sources") or "")
+            # Colour variants share a product page closely enough that a
+            # sibling's link stands in when the cheapest row has none.
+            candidates[key] = Candidate(mapped, price, note, row.get("sources") or "",
+                                        url or (current.url if current else None))
+        elif current.url is None:
+            current.url = url
     return candidates
 
 
@@ -155,16 +162,20 @@ def upsert(db: Session, category: Category, candidates: dict[str, Candidate], re
         select(Product).where(Product.category == category, Product.dataset_key.is_not(None))
     )}
     # Seed and Icecat rows already describe these parts with curated or
-    # observed data, so the dataset copy is skipped.
+    # observed data, so the dataset copy is skipped; it only lends them a
+    # product link when they have none.
     curated = {
-        (_slug(p.manufacturer), _slug(p.model))
+        (_slug(p.manufacturer), _slug(p.model)): p
         for p in db.scalars(select(Product).where(Product.category == category, Product.dataset_key.is_(None)))
     }
     now = datetime.now(timezone.utc)
 
     for key, candidate in candidates.items():
         mapped = candidate.mapped
-        if (_slug(mapped.manufacturer), _slug(mapped.model)) in curated:
+        match = curated.get((_slug(mapped.manufacturer), _slug(mapped.model)))
+        if match is not None:
+            if match.url is None and candidate.url:
+                match.url = candidate.url
             report.skip(f"{category.value}: already in catalog")
             continue
         tier = PerformanceTier(mapped.performance_tier) if mapped.performance_tier else None
@@ -182,6 +193,7 @@ def upsert(db: Session, category: Category, candidates: dict[str, Candidate], re
                 price_type=PriceType.estimated,
                 price_updated_at=now,
                 source=_source_text(candidate),
+                url=candidate.url,
                 performance_tier=tier,
                 assumed_fields=mapped.assumed,
             )
@@ -195,10 +207,12 @@ def upsert(db: Session, category: Category, candidates: dict[str, Candidate], re
         product.model = mapped.model[:256]
         product.performance_tier = tier
         product.assumed_fields = mapped.assumed
+        # An observed price comes with its listing link, which stays.
         if product.price_type is PriceType.estimated:
             product.price_php = candidate.price_php
             product.price_updated_at = now
             product.source = _source_text(candidate)
+            product.url = candidate.url or product.url
         spec = db.get(spec_model, product.id)
         if spec is None:
             db.add(spec_model(product_id=product.id, **mapped.spec))

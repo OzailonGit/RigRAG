@@ -64,6 +64,9 @@ class Product(Base):
     price_updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
     source: Mapped[str] = mapped_column(Text, nullable=False)
+    # Where to see or buy the part: the retailer listing behind an observed
+    # price, else the PCPartPicker product page from the datasets.
+    url: Mapped[str | None] = mapped_column(Text, nullable=True)
     performance_tier: Mapped[PerformanceTier | None] = mapped_column(Enum(PerformanceTier, name="performance_tier"), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

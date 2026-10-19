@@ -130,3 +130,15 @@ def aggregate_price(listings: list[Listing]) -> Decimal | None:
     official = [l for l in listings if l.is_official_store]
     pool = official or listings
     return Decimal(str(statistics.median(float(l.price_php) for l in pool))).quantize(Decimal("0.01"))
+
+
+def representative_listing(listings: list[Listing], price: Decimal) -> Listing | None:
+    """The listing to link a product to: from the same pool aggregate_price
+    used, the one priced closest to the median, so the linked page shows
+    roughly the price the catalog quotes."""
+    with_url = [l for l in listings if l.url]
+    official = [l for l in with_url if l.is_official_store]
+    pool = official or with_url
+    if not pool:
+        return None
+    return min(pool, key=lambda l: abs(float(l.price_php) - float(price)))
