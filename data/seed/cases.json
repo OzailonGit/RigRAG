@@ -1,0 +1,23 @@
+[
+  {
+    "manufacturer": "NZXT", "model": "H510", "price_php": 4500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "form_factor_support": ["ATX", "Micro-ATX", "Mini-ITX"], "max_gpu_length_mm": 381,
+    "max_cooler_height_mm": 165, "psu_form_factor": "ATX",
+    "radiator_support": {"front": 240, "top": 0}, "fan_mounts": {"front": 2, "top": 2, "rear": 1}
+  },
+  {
+    "manufacturer": "Cooler Master", "model": "MasterBox Q300L", "price_php": 2800, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "form_factor_support": ["Micro-ATX", "Mini-ITX"], "max_gpu_length_mm": 360,
+    "max_cooler_height_mm": 159, "psu_form_factor": "ATX",
+    "radiator_support": {"front": 240, "top": 0}, "fan_mounts": {"front": 2, "top": 2, "rear": 1}
+  },
+  {
+    "manufacturer": "Lian Li", "model": "Lancool 205", "price_php": 3800, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "form_factor_support": ["ATX", "Micro-ATX", "Mini-ITX"], "max_gpu_length_mm": 375,
+    "max_cooler_height_mm": 180, "psu_form_factor": "ATX",
+    "radiator_support": {"front": 240, "top": 240}, "fan_mounts": {"front": 3, "top": 2, "rear": 1}
+  }
+]

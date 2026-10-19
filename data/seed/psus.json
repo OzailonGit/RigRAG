@@ -1,0 +1,26 @@
+[
+  {
+    "manufacturer": "Corsair", "model": "CV550", "price_php": 2800, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "wattage": 550, "efficiency_rating": "80+ Bronze", "atx_version": "ATX 2.4",
+    "pcie_connectors": {"pcie_8pin": 2}, "supports_12vhpwr": false
+  },
+  {
+    "manufacturer": "Cooler Master", "model": "MWE 650 Gold V2", "price_php": 4200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "wattage": 650, "efficiency_rating": "80+ Gold", "atx_version": "ATX 2.4",
+    "pcie_connectors": {"pcie_8pin": 2}, "supports_12vhpwr": false
+  },
+  {
+    "manufacturer": "Seasonic", "model": "Focus GX-750", "price_php": 6500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "wattage": 750, "efficiency_rating": "80+ Gold", "atx_version": "ATX 3.0",
+    "pcie_connectors": {"pcie_8pin": 4, "12vhpwr": 1}, "supports_12vhpwr": true
+  },
+  {
+    "manufacturer": "Antec", "model": "NE650", "price_php": 3300, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "wattage": 650, "efficiency_rating": "80+ Bronze", "atx_version": "ATX 2.4",
+    "pcie_connectors": {"pcie_8pin": 2}, "supports_12vhpwr": false
+  }
+]

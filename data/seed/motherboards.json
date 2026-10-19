@@ -1,0 +1,44 @@
+[
+  {
+    "manufacturer": "ASUS", "model": "Prime B650M-A", "price_php": 8500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "socket": "AM5", "chipset": "B650", "form_factor": "Micro-ATX", "ram_type": "DDR5",
+    "max_ram_gb": 128, "ram_slots": 4, "m2_slots": 2, "sata_ports": 4,
+    "wifi": false, "bluetooth": false, "pcie_slots": {"x16": 1, "x1": 2}, "bios_flash_required": false
+  },
+  {
+    "manufacturer": "MSI", "model": "MAG B650 Tomahawk WiFi", "price_php": 12500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "socket": "AM5", "chipset": "B650", "form_factor": "ATX", "ram_type": "DDR5",
+    "max_ram_gb": 128, "ram_slots": 4, "m2_slots": 3, "sata_ports": 4,
+    "wifi": true, "bluetooth": true, "pcie_slots": {"x16": 2, "x1": 2}, "bios_flash_required": false
+  },
+  {
+    "manufacturer": "Gigabyte", "model": "B550M DS3H", "price_php": 5000, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "socket": "AM4", "chipset": "B550", "form_factor": "Micro-ATX", "ram_type": "DDR4",
+    "max_ram_gb": 128, "ram_slots": 4, "m2_slots": 1, "sata_ports": 4,
+    "wifi": false, "bluetooth": false, "pcie_slots": {"x16": 1, "x1": 2}, "bios_flash_required": false
+  },
+  {
+    "manufacturer": "ASRock", "model": "B450M Pro4", "price_php": 3800, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "socket": "AM4", "chipset": "B450", "form_factor": "Micro-ATX", "ram_type": "DDR4",
+    "max_ram_gb": 64, "ram_slots": 4, "m2_slots": 1, "sata_ports": 4,
+    "wifi": false, "bluetooth": false, "pcie_slots": {"x16": 1, "x1": 2}, "bios_flash_required": true
+  },
+  {
+    "manufacturer": "MSI", "model": "PRO B760M-A WiFi", "price_php": 9000, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "socket": "LGA1700", "chipset": "B760", "form_factor": "Micro-ATX", "ram_type": "DDR5",
+    "max_ram_gb": 128, "ram_slots": 4, "m2_slots": 2, "sata_ports": 4,
+    "wifi": true, "bluetooth": true, "pcie_slots": {"x16": 1, "x1": 2}, "bios_flash_required": false
+  },
+  {
+    "manufacturer": "ASUS", "model": "TUF Gaming B760-Plus WiFi D4", "price_php": 9500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "socket": "LGA1700", "chipset": "B760", "form_factor": "ATX", "ram_type": "DDR4",
+    "max_ram_gb": 128, "ram_slots": 4, "m2_slots": 2, "sata_ports": 6,
+    "wifi": true, "bluetooth": true, "pcie_slots": {"x16": 2, "x1": 2}, "bios_flash_required": false
+  }
+]

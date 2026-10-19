@@ -1,0 +1,20 @@
+[
+  {
+    "manufacturer": "Cooler Master", "model": "Hyper 212", "price_php": 1800, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "type": "air", "socket_support": ["AM4", "AM5", "LGA1700", "LGA1200"],
+    "height_mm": 159, "radiator_mm": null, "tdp_rating_w": 150
+  },
+  {
+    "manufacturer": "DeepCool", "model": "AK400", "price_php": 2200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "type": "air", "socket_support": ["AM4", "AM5", "LGA1700", "LGA1200"],
+    "height_mm": 155, "radiator_mm": null, "tdp_rating_w": 220
+  },
+  {
+    "manufacturer": "ARCTIC", "model": "Liquid Freezer II 240", "price_php": 5500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "type": "aio", "socket_support": ["AM4", "AM5", "LGA1700", "LGA1200"],
+    "height_mm": null, "radiator_mm": 240, "tdp_rating_w": 250
+  }
+]

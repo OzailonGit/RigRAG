@@ -1,0 +1,21 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.egg-info/
+.pytest_cache/
+node_modules/
+dist/
+build/
+.DS_Store
+frontend/.vite/
+*.log
+.idea/
+.vscode/
+qdrant_storage/
+pgdata/
+
+# Local planning notes and tooling docs
+*.md
+!README.md

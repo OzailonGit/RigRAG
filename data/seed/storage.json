@@ -1,0 +1,26 @@
+[
+  {
+    "manufacturer": "Kingston", "model": "NV2 500GB", "price_php": 1800, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "type": "SSD_NVME", "capacity_gb": 500, "interface": "M.2 NVMe", "pcie_gen": "4.0",
+    "read_mb_s": 3500, "write_mb_s": 2100
+  },
+  {
+    "manufacturer": "Western Digital", "model": "Black SN770 1TB", "price_php": 3500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "type": "SSD_NVME", "capacity_gb": 1000, "interface": "M.2 NVMe", "pcie_gen": "4.0",
+    "read_mb_s": 5150, "write_mb_s": 4900
+  },
+  {
+    "manufacturer": "Kingston", "model": "A400 480GB", "price_php": 1200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "type": "SSD_SATA", "capacity_gb": 480, "interface": "SATA III", "pcie_gen": null,
+    "read_mb_s": 500, "write_mb_s": 450
+  },
+  {
+    "manufacturer": "Seagate", "model": "Barracuda 2TB", "price_php": 2500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "type": "HDD", "capacity_gb": 2000, "interface": "SATA III", "pcie_gen": null,
+    "read_mb_s": 190, "write_mb_s": 190
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "manufacturer": "AMD", "model": "Ryzen 5 7600", "price_php": 11500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "socket": "AM5", "cores": 6, "threads": 12, "base_clock_ghz": 3.8, "boost_clock_ghz": 5.1,
+    "tdp_w": 65, "has_igpu": true, "architecture": "Zen 4", "generation": "Ryzen 7000"
+  },
+  {
+    "manufacturer": "AMD", "model": "Ryzen 7 7800X3D", "price_php": 22000, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "socket": "AM5", "cores": 8, "threads": 16, "base_clock_ghz": 4.2, "boost_clock_ghz": 5.0,
+    "tdp_w": 120, "has_igpu": true, "architecture": "Zen 4", "generation": "Ryzen 7000"
+  },
+  {
+    "manufacturer": "AMD", "model": "Ryzen 5 5600", "price_php": 5500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "socket": "AM4", "cores": 6, "threads": 12, "base_clock_ghz": 3.5, "boost_clock_ghz": 4.4,
+    "tdp_w": 65, "has_igpu": false, "architecture": "Zen 3", "generation": "Ryzen 5000"
+  },
+  {
+    "manufacturer": "Intel", "model": "Core i5-13400F", "price_php": 10500, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "socket": "LGA1700", "cores": 10, "threads": 16, "base_clock_ghz": 2.5, "boost_clock_ghz": 4.6,
+    "tdp_w": 65, "has_igpu": false, "architecture": "Raptor Lake", "generation": "13th Gen"
+  },
+  {
+    "manufacturer": "Intel", "model": "Core i5-12400", "price_php": 9000, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "socket": "LGA1700", "cores": 6, "threads": 12, "base_clock_ghz": 2.5, "boost_clock_ghz": 4.4,
+    "tdp_w": 65, "has_igpu": true, "architecture": "Alder Lake", "generation": "12th Gen"
+  },
+  {
+    "manufacturer": "Intel", "model": "Core i7-13700K", "price_php": 24000, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "socket": "LGA1700", "cores": 16, "threads": 24, "base_clock_ghz": 3.4, "boost_clock_ghz": 5.4,
+    "tdp_w": 125, "has_igpu": true, "architecture": "Raptor Lake", "generation": "13th Gen"
+  }
+]

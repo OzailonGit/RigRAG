@@ -1,0 +1,22 @@
+[
+  {
+    "manufacturer": "Kingston", "model": "Fury Beast 16GB (2x8) DDR5-5600", "price_php": 3200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "capacity_gb": 16, "sticks": 2, "ddr_gen": "DDR5", "speed_mhz": 5600, "cas_latency": 36, "voltage": 1.25
+  },
+  {
+    "manufacturer": "Corsair", "model": "Vengeance 32GB (2x16) DDR5-6000", "price_php": 6200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
+    "capacity_gb": 32, "sticks": 2, "ddr_gen": "DDR5", "speed_mhz": 6000, "cas_latency": 30, "voltage": 1.35
+  },
+  {
+    "manufacturer": "Kingston", "model": "Fury Beast 16GB (2x8) DDR4-3200", "price_php": 2200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "entry",
+    "capacity_gb": 16, "sticks": 2, "ddr_gen": "DDR4", "speed_mhz": 3200, "cas_latency": 16, "voltage": 1.35
+  },
+  {
+    "manufacturer": "Corsair", "model": "Vengeance LPX 32GB (2x16) DDR4-3600", "price_php": 4200, "price_type": "estimated",
+    "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
+    "capacity_gb": 32, "sticks": 2, "ddr_gen": "DDR4", "speed_mhz": 3600, "cas_latency": 18, "voltage": 1.35
+  }
+]
