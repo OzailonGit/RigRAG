@@ -21,3 +21,4 @@ data/raw/
 *.md
 !README.md
 data/combined/
+.playwright-mcp/
