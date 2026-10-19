@@ -53,6 +53,10 @@ class Product(Base):
 
     icecat_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True, unique=True)
     mpn: Mapped[str | None] = mapped_column(String(128), nullable=True, index=True)
+    # Stable identity for rows imported from data/combined, so re-imports update in place.
+    dataset_key: Mapped[str | None] = mapped_column(String(200), nullable=True, unique=True)
+    # Spec fields set to a conservative floor because the source didn't list them.
+    assumed_fields: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default="[]")
     gtins: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default="[]")
 
     price_php: Mapped[float | None] = mapped_column(Numeric(12, 2), nullable=True)

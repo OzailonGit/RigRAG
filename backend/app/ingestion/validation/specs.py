@@ -25,8 +25,9 @@ RANGES: dict[Category, dict[str, tuple[float, float]]] = {
 }
 
 # Fields a compatibility rule reads even though the column is nullable.
+# Case clearances and cooler sockets may be unknown: the rules warn about
+# those instead of checking them (see compatibility/rules.py).
 EXTRA_REQUIRED: dict[Category, set[str]] = {
-    Category.cooler: {"socket_support"},
     Category.case: {"form_factor_support"},
 }
 

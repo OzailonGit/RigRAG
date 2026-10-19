@@ -1,0 +1,921 @@
+{
+  "source": "Socket support and heights for the most popular coolers in the combined datasets, which don't list them. Sources as in case_specs.json. Heights include fans; where listings differ, the tallest figure is used. AIO radiator sizes come from the dataset row, since one entry covers every size of a cooler family.",
+  "coolers": [
+    {
+      "manufacturer": "Thermalright",
+      "model": "Peerless Assassin 120 SE",
+      "aliases": [
+        "Peerless Assassin 120 SE ARGB",
+        "Peerless Assassin 120 SE WHITE ARGB",
+        "Peerless Assassin 120 SE V2",
+        "Peerless Assassin 120 SE V3"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 155,
+      "source": "https://www.thermalright.com/product/peerless-assassin-120-se/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Phantom Spirit 120 SE",
+      "aliases": [
+        "Phantom Spirit 120 SE ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 154,
+      "source": "https://www.thermalright.com/product/phantom-spirit-120-se/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Assassin X 120 Refined SE",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 148,
+      "source": "https://www.thermalright.com/product/assassin-x-120-refined-se/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Burst Assassin 120 SE",
+      "aliases": [
+        "Burst Assassin 120 SE ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 148,
+      "source": "https://www.thermalright.com/product/burst-assassin-120-se/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Peerless Assassin 120 Digital",
+      "aliases": [
+        "Peerless Assassin 120 Digital ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 162,
+      "source": "https://www.thermalright.com/product/peerless-assassin-120-digital/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Assassin Spirit 120 EVO",
+      "aliases": [
+        "Assassin Spirit 120 EVO DARK",
+        "Assassin Spirit 120 EVO WHITE ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 156,
+      "source": "https://www.thermalright.com/product/assassin-spirit-120-evo/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Aqua Elite V3",
+      "aliases": [],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.thermalright.com/product/aqua-elite-360-v3/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Frozen Notte ARGB",
+      "aliases": [],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.thermalright.com/product/frozen-notte-360-black-argb/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "AK620",
+      "aliases": [
+        "AK620 ZERO DARK"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 160,
+      "source": "https://www.paradigit.ie/deepcool-ak620/80065870/product",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "AK620 DIGITAL",
+      "aliases": [
+        "AK620 DIGITAL WH"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 162,
+      "source": "https://www.buildcores.com/products/CPUCooler/ud7famece/Deepcool-AK620-DIGITAL-Air-68.99-CFM-162mm-Black",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "AG400",
+      "aliases": [
+        "GAMMAXX AG400 ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 150,
+      "source": "https://www.microcenter.com/quickView/653058/deepcool-ag400-argb-single-tower-cpu-cooler-white",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "AK500",
+      "aliases": [
+        "AK500 ZERO DARK"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 158,
+      "source": "https://ldlc.com/en/product/PB00541801.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "LS720 SE",
+      "aliases": [
+        "LS720 SE WH"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.memoryexpress.com/Products/MX00127451",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "NZXT",
+      "model": "Kraken 240",
+      "aliases": [
+        "Kraken 240 RGB",
+        "Kraken 280",
+        "Kraken 280 RGB",
+        "Kraken 360",
+        "Kraken 360 RGB"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://nzxt.com/product/kraken-240",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "ARCTIC",
+      "model": "Liquid Freezer III 240 A-RGB",
+      "aliases": [
+        "Liquid Freezer III 280",
+        "Liquid Freezer III 280 A-RGB",
+        "Liquid Freezer III 360",
+        "Liquid Freezer III 360 A-RGB",
+        "Liquid Freezer III 420",
+        "Liquid Freezer III 420 A-RGB",
+        "Liquid Freezer III Pro 360",
+        "Liquid Freezer III Pro A-RGB 360"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.arctic.de/en/Liquid-Freezer-III-360/ACFRE00136A",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "ARCTIC",
+      "model": "Freezer 36",
+      "aliases": [
+        "Freezer 36 A-RGB",
+        "Freezer 36 CO"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 159,
+      "source": "https://www.arctic.de/en/Freezer-36/ACFRE00121A",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "be quiet!",
+      "model": "Pure Rock 2",
+      "aliases": [
+        "Pure Rock 2 Black",
+        "Pure Rock 2 FX"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 155,
+      "source": "https://galaxus.at/en/s1/product/be-quiet-pure-rock-2-155-mm-cpu-coolers-13451706",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "be quiet!",
+      "model": "Dark Rock Pro 5",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 168,
+      "source": "https://www.pbtech.com/product/FANBQT4106/be-quiet-Dark-Rock-PRO-5-CPU-Cooler-Dual-120MM-Fan",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "NZXT",
+      "model": "Kraken Elite 360 (2024)",
+      "aliases": [
+        "Kraken Elite 360 RGB (2024)",
+        "Kraken Elite 240 (2024)",
+        "Kraken Elite 240 RGB (2024)",
+        "Kraken Elite 280 RGB (2024)"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.memoryexpress.com/Products/MX00132624",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Noctua",
+      "model": "NH-D15 G2",
+      "aliases": [
+        "NH-D15 G2 chromax.black",
+        "NH-D15 G2 LBC",
+        "NH-D15 G2 HBC"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 168,
+      "source": "https://at-web1.www.anandtech.com/show/21462/noctua-launches-new-flagship-cooler-nhd15-g2-with-lga1851-cpus-support",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "Hyper 212 Black Edition",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 159,
+      "source": "https://www.kitguru.net/components/cooling/silas-newman/cooler-master-hyper-212-black-edition-review-back-in-black/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "MasterLiquid 240L Core ARGB",
+      "aliases": [],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.coolermaster.com/en-global/products/masterliquid-240l-core-argb/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "ID-COOLING",
+      "model": "SE-224-XTS",
+      "aliases": [
+        "SE-224-XTS BLACK"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 151,
+      "source": "https://root-nation.com/en/pc-en/hardware-en/en-id-cooling-se-224-xts-review/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "ID-COOLING",
+      "model": "FROZN A410 BLACK",
+      "aliases": [
+        "FROZN A410 ARGB",
+        "FROZN A410 ARGB WHITE",
+        "FROZN A410 DK",
+        "FROZN A410 SE",
+        "FROZN A410 SE ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 152,
+      "source": "https://www.galaxus.ch/en/s1/product/id-cooling-frozn-a410-152-mm-cpu-coolers-63913412",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "NAUTILUS 360 RS ARGB",
+      "aliases": [
+        "NAUTILUS 360 RS",
+        "NAUTILUS 240 RS",
+        "NAUTILUS 240 RS ARGB"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.microcenter.com/quickView/688615/corsair-nautilus-360-rs-argb-360mm-all-in-one-liquid-cpu-cooling-kit-black",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "iCUE LINK TITAN 360 RX RGB",
+      "aliases": [
+        "iCUE LINK TITAN 240 RX RGB",
+        "iCUE LINK TITAN 280 RX RGB",
+        "iCUE LINK TITAN 420 RX RGB",
+        "iCUE LINK TITAN 360 RX LCD",
+        "iCUE LINK TITAN 240 RX LCD"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.memoryexpress.com/Products/MX00131482",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "Galahad II Trinity",
+      "aliases": [
+        "Galahad II Trinity Performance",
+        "Galahad II Trinity SL-INF"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.pccasegear.com/products/62867/lian-li-galahad-ii-trinity-240mm-aio-cpu-cooler-black",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "HyperFlow ARGB 360",
+      "aliases": [
+        "HyperFlow ARGB 240"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.kitguru.net/components/cooling/james-dawson/montech-hyperflow-argb-aio-review/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Asus",
+      "model": "ROG Ryujin III ARGB",
+      "aliases": [
+        "ROG Ryujin III"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.microcenter.com/quickview/679815/asus-rog-ryujin-iii-argb-360mm-all-in-one-liquid-cpu-cooling-kit-white",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Asus",
+      "model": "ROG Ryujin III ARGB Extreme",
+      "aliases": [
+        "ROG Ryujin III 360 ARGB Extreme"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.paradigit.ie/asus-rog-ryujin-iii-360-argb-extreme-black/21647269/product",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Noctua",
+      "model": "NH-U12S",
+      "aliases": [
+        "NH-U12S chromax.black",
+        "NH-U12S redux"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 158,
+      "source": "https://www.noctua.at/en/products/nh-u12s/specifications",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Noctua",
+      "model": "NH-D15",
+      "aliases": [
+        "NH-D15 chromax.black"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 168,
+      "source": "https://www.noctua.at/en/products/nh-d15/specifications",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Noctua",
+      "model": "NH-U12A",
+      "aliases": [
+        "NH-U12A chromax.black"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 158,
+      "source": "https://noctua.at/en/nh-u12a/specification",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Frozen Prism ARGB",
+      "aliases": [
+        "Frozen Prism"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://galaxus.at/en/s1/product/thermalright-frozen-prism-360-argb-white-cpu-water-cooling-max-27-dba-cpu-water-coolers-37194072",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "AG620 WH ARGB",
+      "aliases": [
+        "GAMMAXX AG620 ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 157,
+      "source": "https://www.ldlc.com/en/product/PB00615840.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "be quiet!",
+      "model": "Pure Loop 2",
+      "aliases": [
+        "Pure Loop 2 FX"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.ple.com.au/products/662246/be-quiet-pure-loop-2-240mm-aio-cpu-cooler",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "ID-COOLING",
+      "model": "SE-214-XT ARGB",
+      "aliases": [
+        "SE-214-XT PLUS"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 150,
+      "source": "https://pangoly.com/en/product/id-cooling-se-214-xt-argb",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "Hyper 622 Halo",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 157,
+      "source": "https://www.club386.com/cooler-master-launches-hyper-622-halo-rgb-dual-tower-cpu-cooler",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "MSI",
+      "model": "MAG CORELIQUID E360",
+      "aliases": [
+        "MAG CORELIQUID E360 WHITE",
+        "MAG CORELIQUID E240",
+        "MAG CORELIQUID E240 WHITE"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.scan.co.uk/products/msi-mag-coreliquid-e360-aio-cooler-360mm-3x-120mm-rgb-fans-copper-heatsink-aluminium-radiator-intel",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "LE520",
+      "aliases": [],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://deepcool.com/company/pressroom/newsrelease/2023/17264.shtml",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "MasterLiquid 360L Core ARGB",
+      "aliases": [],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.adorama.com/cmmlwd36ma18.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "AK400 DIGITAL",
+      "aliases": [
+        "AK400 DIGITAL WH"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 156,
+      "source": "https://www.paradigit.ie/deepcool-ak400-digital-white/80065869/product",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "LT520",
+      "aliases": [
+        "LT520 WH"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://www.memoryexpress.com/Products/MX00128538",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Asus",
+      "model": "TUF Gaming LC II ARGB",
+      "aliases": [],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": null,
+      "source": "https://ldlc.com/en/product/PB00577979.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Phantom Spirit 120",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 157,
+      "source": "https://www.thermalright.com/product/phantom-spirit-120/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Phantom Spirit 120 EVO",
+      "aliases": [
+        "Phantom Spirit 120 Digital EVO"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 160,
+      "source": "https://www.thermalright.com/product/phantom-spirit-120-digital-evo/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Peerless Assassin 140",
+      "aliases": [
+        "Peerless Assassin 140 Digital"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 158,
+      "source": "https://www.thermalright.com/product/peerless-assassin-140/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Frozen Warframe ARGB",
+      "aliases": [
+        "Frozen Warframe PRO",
+        "Frozen Warframe PRO ARGB"
+      ],
+      "type": "aio",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": null,
+      "source": "https://www.thermalright.com/product/frozen-warframe-360-black-argb/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Thermalright",
+      "model": "Peerless Assassin 90 SE",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 110,
+      "source": "https://www.thermalright.com/product/peerless-assassin-90-se/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "be quiet!",
+      "model": "Dark Rock 5",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700",
+        "LGA1851"
+      ],
+      "height_mm": 161,
+      "source": "https://www.galaxus.de/en/s1/product/be-quiet-dark-rock-5-161-mm-cpu-coolers-46461111",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "ARCTIC",
+      "model": "Freezer 34 eSports DUO",
+      "aliases": [],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 157,
+      "source": "https://arctic.de/en/Freezer-34-eSports-DUO",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "ID-COOLING",
+      "model": "FROZN A620 PRO SE",
+      "aliases": [
+        "FROZN A620 PRO SE ARGB"
+      ],
+      "type": "air",
+      "socket_support": [
+        "AM4",
+        "AM5",
+        "LGA1200",
+        "LGA1700"
+      ],
+      "height_mm": 160,
+      "source": "https://www.pccasegear.com/products/70774/id-cooling-frozn-a620-pro-se-dual-tower-cpu-cooler",
+      "source_kind": "retailer"
+    }
+  ]
+}

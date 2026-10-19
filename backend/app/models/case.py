@@ -13,8 +13,9 @@ class Case(Base):
     product_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"), primary_key=True)
 
     form_factor_support: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
-    max_gpu_length_mm: Mapped[int] = mapped_column(Integer, nullable=False)
-    max_cooler_height_mm: Mapped[int] = mapped_column(Integer, nullable=False)
+    # NULL when no source lists the clearance; the rules then warn instead of checking.
+    max_gpu_length_mm: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    max_cooler_height_mm: Mapped[int | None] = mapped_column(Integer, nullable=True)
     psu_form_factor: Mapped[str] = mapped_column(String(16), nullable=False, default="ATX")
     radiator_support: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     fan_mounts: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
