@@ -128,3 +128,18 @@ def test_compare_endpoint_404_for_unknown_id():
         json={"product_ids": [gpu[0]["id"], "00000000-0000-0000-0000-000000000000"]},
     )
     assert response.status_code == 404
+
+
+def test_chat_reports_a_rate_limited_llm_as_503(monkeypatch):
+    import httpx
+
+    from app.api.routers import chat as chat_router
+
+    def rate_limited(*args, **kwargs):
+        request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+        raise httpx.HTTPStatusError("429", request=request, response=httpx.Response(429, request=request))
+
+    monkeypatch.setattr(chat_router, "handle_chat_message", rate_limited)
+    response = client.post("/api/chat", json={"session_id": "rate-limit-test", "message": "Why this GPU?"})
+    assert response.status_code == 503
+    assert "rate-limited" in response.json()["detail"]
