@@ -9,6 +9,7 @@ from app.models.cooler import CpuCooler
 from app.models.case import Case
 from app.models.build import Build, BuildItem, CompatibilityRuleLog
 from app.models.price_observation import PriceObservation, Retailer
+from app.models.chat_session import ChatSessionRecord
 
 __all__ = [
     "Category",
@@ -28,4 +29,5 @@ __all__ = [
     "CompatibilityRuleLog",
     "PriceObservation",
     "Retailer",
+    "ChatSessionRecord",
 ]
