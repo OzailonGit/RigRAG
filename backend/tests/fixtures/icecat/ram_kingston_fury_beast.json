@@ -1,0 +1,421 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 94557481,
+  "Title": "Kingston Technology FURY Beast 32GB 5200MT/s DDR5 CL40 DIMM (Kit of 2) Black",
+  "Brand": "Kingston Technology",
+  "ProductName": "32GB 5200MT/s DDR5 CL40 DIMM (Kit of 2) FURY Beast Black",
+  "BrandPartCode": "KF552C40BBK2-32",
+  "GTIN": [
+   "0740617324358",
+   "740617324358"
+  ],
+  "Category": {
+   "CategoryID": "911",
+   "Name": {
+    "Value": "Memory Modules",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": "FURY"
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Features"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "44495",
+      "Name": {
+       "Value": "On-Die ECC"
+      }
+     }
+    },
+    {
+     "Value": "40",
+     "Feature": {
+      "ID": "1635",
+      "Name": {
+       "Value": "CAS latency"
+      }
+     }
+    },
+    {
+     "Value": "32",
+     "Feature": {
+      "ID": "11381",
+      "Name": {
+       "Value": "Internal memory"
+      }
+     }
+    },
+    {
+     "Value": "2 x 16",
+     "Feature": {
+      "ID": "16023",
+      "Name": {
+       "Value": "Memory layout (modules x size)"
+      }
+     }
+    },
+    {
+     "Value": "DDR5",
+     "Feature": {
+      "ID": "427",
+      "Name": {
+       "Value": "Internal memory type"
+      }
+     }
+    },
+    {
+     "Value": "5200",
+     "Feature": {
+      "ID": "37536",
+      "Name": {
+       "Value": "Memory data transfer rate"
+      }
+     }
+    },
+    {
+     "Value": "PC",
+     "Feature": {
+      "ID": "9163",
+      "Name": {
+       "Value": "Component for"
+      }
+     }
+    },
+    {
+     "Value": "288-pin DIMM",
+     "Feature": {
+      "ID": "7696",
+      "Name": {
+       "Value": "Memory form factor"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "1628",
+      "Name": {
+       "Value": "ECC"
+      }
+     }
+    },
+    {
+     "Value": "Unregistered (unbuffered)",
+     "Feature": {
+      "ID": "38209",
+      "Name": {
+       "Value": "Buffered memory type"
+      }
+     }
+    },
+    {
+     "Value": "1.25",
+     "Feature": {
+      "ID": "6266",
+      "Name": {
+       "Value": "Memory voltage"
+      }
+     }
+    },
+    {
+     "Value": "2048M x 64",
+     "Feature": {
+      "ID": "1631",
+      "Name": {
+       "Value": "Module configuration"
+      }
+     }
+    },
+    {
+     "Value": "48",
+     "Feature": {
+      "ID": "3347",
+      "Name": {
+       "Value": "Row cycle time"
+      }
+     }
+    },
+    {
+     "Value": "295",
+     "Feature": {
+      "ID": "3348",
+      "Name": {
+       "Value": "Refresh row cycle time"
+      }
+     }
+    },
+    {
+     "Value": "32",
+     "Feature": {
+      "ID": "3350",
+      "Name": {
+       "Value": "Row active time"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "21116",
+      "Name": {
+       "Value": "Intel Extreme Memory Profile (XMP)"
+      }
+     }
+    },
+    {
+     "Value": "3.0",
+     "Feature": {
+      "ID": "31816",
+      "Name": {
+       "Value": "Intel Extreme Memory Profile (XMP) version"
+      }
+     }
+    },
+    {
+     "Value": "1.8",
+     "Feature": {
+      "ID": "34175",
+      "Name": {
+       "Value": "Programming power voltage (VPP)"
+      }
+     }
+    },
+    {
+     "Value": "Heatsink",
+     "Feature": {
+      "ID": "6392",
+      "Name": {
+       "Value": "Cooling type"
+      }
+     }
+    },
+    {
+     "Value": "Gold",
+     "Feature": {
+      "ID": "1634",
+      "Name": {
+       "Value": "Lead plating"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "34174",
+      "Name": {
+       "Value": "JEDEC standard"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Operational conditions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "0 - 85",
+     "Feature": {
+      "ID": "1112",
+      "Name": {
+       "Value": "Operating temperature (T-T)"
+      }
+     }
+    },
+    {
+     "Value": "-55 - 100",
+     "Feature": {
+      "ID": "757",
+      "Name": {
+       "Value": "Storage temperature (T-T)"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "6.62",
+     "Feature": {
+      "ID": "1649",
+      "Name": {
+       "Value": "Width"
+      }
+     }
+    },
+    {
+     "Value": "133.35",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "34.87",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    },
+    {
+     "Value": "67.48",
+     "Feature": {
+      "ID": "94",
+      "Name": {
+       "Value": "Weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "95.25",
+     "Feature": {
+      "ID": "3808",
+      "Name": {
+       "Value": "Package width"
+      }
+     }
+    },
+    {
+     "Value": "13.97",
+     "Feature": {
+      "ID": "3806",
+      "Name": {
+       "Value": "Package depth"
+      }
+     }
+    },
+    {
+     "Value": "171.45",
+     "Feature": {
+      "ID": "3807",
+      "Name": {
+       "Value": "Package height"
+      }
+     }
+    },
+    {
+     "Value": "101.72",
+     "Feature": {
+      "ID": "762",
+      "Name": {
+       "Value": "Package weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Logistics data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "84733020",
+     "Feature": {
+      "ID": "23731",
+      "Name": {
+       "Value": "Harmonized System (HS) code"
+      }
+     }
+    },
+    {
+     "Value": "25",
+     "Feature": {
+      "ID": "22659",
+      "Name": {
+       "Value": "Products per master (outer) case"
+      }
+     }
+    },
+    {
+     "Value": "203.2",
+     "Feature": {
+      "ID": "4457",
+      "Name": {
+       "Value": "Master (outer) case width"
+      }
+     }
+    },
+    {
+     "Value": "311.15",
+     "Feature": {
+      "ID": "22658",
+      "Name": {
+       "Value": "Master (outer) case length"
+      }
+     }
+    },
+    {
+     "Value": "101.6",
+     "Feature": {
+      "ID": "4456",
+      "Name": {
+       "Value": "Master (outer) case height"
+      }
+     }
+    },
+    {
+     "Value": "2754.94",
+     "Feature": {
+      "ID": "19016",
+      "Name": {
+       "Value": "Master (outer) case gross weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Other features"
+    }
+   },
+   "Features": [
+    {
+     "Value": "China,Taiwan",
+     "Feature": {
+      "ID": "3294",
+      "Name": {
+       "Value": "Country of origin"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

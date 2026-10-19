@@ -8,6 +8,7 @@ from app.models.psu import Psu
 from app.models.cooler import CpuCooler
 from app.models.case import Case
 from app.models.build import Build, BuildItem, CompatibilityRuleLog
+from app.models.price_observation import PriceObservation, Retailer
 
 __all__ = [
     "Category",
@@ -25,4 +26,6 @@ __all__ = [
     "Build",
     "BuildItem",
     "CompatibilityRuleLog",
+    "PriceObservation",
+    "Retailer",
 ]

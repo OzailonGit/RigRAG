@@ -1,0 +1,510 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 89660529,
+  "Title": "be quiet! PURE ROCK SLIM 2 Processor Air cooler 9.2 cm Silver 1 pc(s)",
+  "Brand": "be quiet!",
+  "ProductName": "PURE ROCK SLIM 2",
+  "BrandPartCode": "BK030",
+  "GTIN": [
+   "4260052188453"
+  ],
+  "Category": {
+   "CategoryID": "921",
+   "Name": {
+    "Value": "Computer Cooling Systems",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": null
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Performance"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Processor",
+     "Feature": {
+      "ID": "8173",
+      "Name": {
+       "Value": "Suitable location"
+      }
+     }
+    },
+    {
+     "Value": "Air cooler",
+     "Feature": {
+      "ID": "31",
+      "Name": {
+       "Value": "Type"
+      }
+     }
+    },
+    {
+     "Value": "92",
+     "Feature": {
+      "ID": "7385",
+      "Name": {
+       "Value": "Fan diameter"
+      }
+     }
+    },
+    {
+     "Value": "LGA 1150 (Socket H3),LGA 1151 (Socket H4),LGA 1155 (Socket H2),LGA 1200 (Socket H5),LGA 1700,Socket AM4,Socket AM5",
+     "Feature": {
+      "ID": "7443",
+      "Name": {
+       "Value": "Supported processor sockets"
+      }
+     }
+    },
+    {
+     "Value": "2000",
+     "Feature": {
+      "ID": "15534",
+      "Name": {
+       "Value": "Rotational speed (max)"
+      }
+     }
+    },
+    {
+     "Value": "13.1",
+     "Feature": {
+      "ID": "10645",
+      "Name": {
+       "Value": "Noise level (low speed)"
+      }
+     }
+    },
+    {
+     "Value": "25.4",
+     "Feature": {
+      "ID": "10647",
+      "Name": {
+       "Value": "Noise level (high speed)"
+      }
+     }
+    },
+    {
+     "Value": "Rifle bearing",
+     "Feature": {
+      "ID": "19982",
+      "Name": {
+       "Value": "Bearing type"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "20228",
+      "Name": {
+       "Value": "Quantity per pack"
+      }
+     }
+    },
+    {
+     "Value": "80000",
+     "Feature": {
+      "ID": "533",
+      "Name": {
+       "Value": "Mean time between failures (MTBF)"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Design"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Silver",
+     "Feature": {
+      "ID": "1766",
+      "Name": {
+       "Value": "Product colour"
+      }
+     }
+    },
+    {
+     "Value": "Aluminum",
+     "Feature": {
+      "ID": "10835",
+      "Name": {
+       "Value": "Radiator material"
+      }
+     }
+    },
+    {
+     "Value": "Copper",
+     "Feature": {
+      "ID": "8755",
+      "Name": {
+       "Value": "Base plate material"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "4539",
+      "Name": {
+       "Value": "Number of fans"
+      }
+     }
+    },
+    {
+     "Value": "7",
+     "Feature": {
+      "ID": "36407",
+      "Name": {
+       "Value": "Number of fan blades"
+      }
+     }
+    },
+    {
+     "Value": "Aluminium",
+     "Feature": {
+      "ID": "31133",
+      "Name": {
+       "Value": "Fins material"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "11385",
+      "Name": {
+       "Value": "Number of heat pipes"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "14001",
+      "Name": {
+       "Value": "Illumination LED"
+      }
+     }
+    },
+    {
+     "Value": "4-pin",
+     "Feature": {
+      "ID": "10834",
+      "Name": {
+       "Value": "Fan connector"
+      }
+     }
+    },
+    {
+     "Value": "Not applicable",
+     "Feature": {
+      "ID": "9104",
+      "Name": {
+       "Value": "Display type"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Power"
+    }
+   },
+   "Features": [
+    {
+     "Value": "3.84",
+     "Feature": {
+      "ID": "445",
+      "Name": {
+       "Value": "Power consumption (typical)"
+      }
+     }
+    },
+    {
+     "Value": "12",
+     "Feature": {
+      "ID": "18337",
+      "Name": {
+       "Value": "Rated voltage"
+      }
+     }
+    },
+    {
+     "Value": "0.32",
+     "Feature": {
+      "ID": "2908",
+      "Name": {
+       "Value": "Rated current"
+      }
+     }
+    },
+    {
+     "Value": "130",
+     "Feature": {
+      "ID": "11778",
+      "Name": {
+       "Value": "Thermal Design Power (TDP)"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "97",
+     "Feature": {
+      "ID": "1649",
+      "Name": {
+       "Value": "Width"
+      }
+     }
+    },
+    {
+     "Value": "58",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "135",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    },
+    {
+     "Value": "385",
+     "Feature": {
+      "ID": "94",
+      "Name": {
+       "Value": "Weight"
+      }
+     }
+    },
+    {
+     "Value": "92 x 92 x 25",
+     "Feature": {
+      "ID": "15254",
+      "Name": {
+       "Value": "Fan dimensions (W x D x H)"
+      }
+     }
+    },
+    {
+     "Value": "6",
+     "Feature": {
+      "ID": "11383",
+      "Name": {
+       "Value": "Heat pipes diameter"
+      }
+     }
+    },
+    {
+     "Value": "0.46",
+     "Feature": {
+      "ID": "1266",
+      "Name": {
+       "Value": "Cable length"
+      }
+     }
+    },
+    {
+     "Value": "126",
+     "Feature": {
+      "ID": "3808",
+      "Name": {
+       "Value": "Package width"
+      }
+     }
+    },
+    {
+     "Value": "159",
+     "Feature": {
+      "ID": "3806",
+      "Name": {
+       "Value": "Package depth"
+      }
+     }
+    },
+    {
+     "Value": "159",
+     "Feature": {
+      "ID": "3807",
+      "Name": {
+       "Value": "Package height"
+      }
+     }
+    },
+    {
+     "Value": "600",
+     "Feature": {
+      "ID": "762",
+      "Name": {
+       "Value": "Package weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Technical details"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "42512",
+      "Name": {
+       "Value": "Sustainability compliance"
+      }
+     }
+    },
+    {
+     "Value": "CE,RoHS",
+     "Feature": {
+      "ID": "48024",
+      "Name": {
+       "Value": "Compliance certificates"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging content"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "8165",
+      "Name": {
+       "Value": "Mounting kit"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "3965",
+      "Name": {
+       "Value": "Manual"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Other features"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Germany",
+     "Feature": {
+      "ID": "3294",
+      "Name": {
+       "Value": "Country of origin"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Logistics data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "84733080",
+     "Feature": {
+      "ID": "23731",
+      "Name": {
+       "Value": "Harmonized System (HS) code"
+      }
+     }
+    },
+    {
+     "Value": "16",
+     "Feature": {
+      "ID": "22664",
+      "Name": {
+       "Value": "Products per shipping (inner) case"
+      }
+     }
+    },
+    {
+     "Value": "334",
+     "Feature": {
+      "ID": "22660",
+      "Name": {
+       "Value": "Shipping (inner) case width"
+      }
+     }
+    },
+    {
+     "Value": "522",
+     "Feature": {
+      "ID": "22661",
+      "Name": {
+       "Value": "Shipping (inner) case length"
+      }
+     }
+    },
+    {
+     "Value": "340",
+     "Feature": {
+      "ID": "22662",
+      "Name": {
+       "Value": "Shipping (inner) case height"
+      }
+     }
+    },
+    {
+     "Value": "11000",
+     "Feature": {
+      "ID": "22663",
+      "Name": {
+       "Value": "Shipping (inner) case gross weight"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

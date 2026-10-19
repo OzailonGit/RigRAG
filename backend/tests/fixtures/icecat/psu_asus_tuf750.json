@@ -1,0 +1,557 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 103152351,
+  "Title": "ASUS TUF Gaming 750W Gold power supply unit 20+4 pin ATX ATX Black",
+  "Brand": "ASUS",
+  "ProductName": "TUF Gaming 750W Gold",
+  "BrandPartCode": "90YE00S3-B0NA00",
+  "GTIN": [
+   "4711081786733",
+   "0195553786737",
+   "195553786737"
+  ],
+  "Category": {
+   "CategoryID": "963",
+   "Name": {
+    "Value": "Power Supply Units",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": null
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Power"
+    }
+   },
+   "Features": [
+    {
+     "Value": "750",
+     "Feature": {
+      "ID": "10713",
+      "Name": {
+       "Value": "Total power"
+      }
+     }
+    },
+    {
+     "Value": "100 - 240",
+     "Feature": {
+      "ID": "8491",
+      "Name": {
+       "Value": "AC input voltage"
+      }
+     }
+    },
+    {
+     "Value": "130",
+     "Feature": {
+      "ID": "8119",
+      "Name": {
+       "Value": "Combined power (+3.3V)"
+      }
+     }
+    },
+    {
+     "Value": "744",
+     "Feature": {
+      "ID": "8120",
+      "Name": {
+       "Value": "Combined power (+12V)"
+      }
+     }
+    },
+    {
+     "Value": "130",
+     "Feature": {
+      "ID": "8121",
+      "Name": {
+       "Value": "Combined power (+5V)"
+      }
+     }
+    },
+    {
+     "Value": "9.6",
+     "Feature": {
+      "ID": "8122",
+      "Name": {
+       "Value": "Combined power (-12V)"
+      }
+     }
+    },
+    {
+     "Value": "15",
+     "Feature": {
+      "ID": "8123",
+      "Name": {
+       "Value": "Combined power (+5Vsb)"
+      }
+     }
+    },
+    {
+     "Value": "25",
+     "Feature": {
+      "ID": "8124",
+      "Name": {
+       "Value": "Max output current (+3.3V)"
+      }
+     }
+    },
+    {
+     "Value": "62",
+     "Feature": {
+      "ID": "8125",
+      "Name": {
+       "Value": "Max output current (+12V)"
+      }
+     }
+    },
+    {
+     "Value": "25",
+     "Feature": {
+      "ID": "8126",
+      "Name": {
+       "Value": "Max output current (+5V)"
+      }
+     }
+    },
+    {
+     "Value": "0.8",
+     "Feature": {
+      "ID": "8127",
+      "Name": {
+       "Value": "Max output current (-12V)"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "8128",
+      "Name": {
+       "Value": "Max output current (+5Vsb)"
+      }
+     }
+    },
+    {
+     "Value": "92",
+     "Feature": {
+      "ID": "5676",
+      "Name": {
+       "Value": "Efficiency"
+      }
+     }
+    },
+    {
+     "Value": "Over power,Over voltage,Overcharge,Overheating,Short circuit,Under voltage",
+     "Feature": {
+      "ID": "7370",
+      "Name": {
+       "Value": "Power protection features"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Ports & interfaces"
+    }
+   },
+   "Features": [
+    {
+     "Value": "20+4 pin ATX",
+     "Feature": {
+      "ID": "6945",
+      "Name": {
+       "Value": "Motherboard power connector"
+      }
+     }
+    },
+    {
+     "Value": "610",
+     "Feature": {
+      "ID": "24870",
+      "Name": {
+       "Value": "Motherboard power cable length"
+      }
+     }
+    },
+    {
+     "Value": "5",
+     "Feature": {
+      "ID": "7178",
+      "Name": {
+       "Value": "Number of SATA power connectors"
+      }
+     }
+    },
+    {
+     "Value": "120,400",
+     "Feature": {
+      "ID": "26029",
+      "Name": {
+       "Value": "SATA power cable length"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "7180",
+      "Name": {
+       "Value": "Peripheral (Molex) power connectors (4-pin)"
+      }
+     }
+    },
+    {
+     "Value": "150,400",
+     "Feature": {
+      "ID": "26031",
+      "Name": {
+       "Value": "Peripheral (Molex) power cable length"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "7183",
+      "Name": {
+       "Value": "PCI Express power connectors (8-pin)"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "45531",
+      "Name": {
+       "Value": "PCI Express power connectors (16-pin)"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7184",
+      "Name": {
+       "Value": "CPU power connector (4+4 pin)"
+      }
+     }
+    },
+    {
+     "Value": "650",
+     "Feature": {
+      "ID": "26030",
+      "Name": {
+       "Value": "CPU power cable length"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7182",
+      "Name": {
+       "Value": "ATX power connector (20+4 pin)"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2846",
+      "Name": {
+       "Value": "PCI Express connector"
+      }
+     }
+    },
+    {
+     "Value": "Fully-Modular",
+     "Feature": {
+      "ID": "8529",
+      "Name": {
+       "Value": "Cabling type"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Performance"
+    }
+   },
+   "Features": [
+    {
+     "Value": "80 PLUS Gold",
+     "Feature": {
+      "ID": "8110",
+      "Name": {
+       "Value": "80 PLUS certification"
+      }
+     }
+    },
+    {
+     "Value": "PC",
+     "Feature": {
+      "ID": "2585",
+      "Name": {
+       "Value": "Purpose"
+      }
+     }
+    },
+    {
+     "Value": "ATX",
+     "Feature": {
+      "ID": "34322",
+      "Name": {
+       "Value": "Power supply unit (PSU) form factor"
+      }
+     }
+    },
+    {
+     "Value": "3.1",
+     "Feature": {
+      "ID": "8107",
+      "Name": {
+       "Value": "ATX version"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Design"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Black",
+     "Feature": {
+      "ID": "1766",
+      "Name": {
+       "Value": "Product colour"
+      }
+     }
+    },
+    {
+     "Value": "Active",
+     "Feature": {
+      "ID": "6392",
+      "Name": {
+       "Value": "Cooling type"
+      }
+     }
+    },
+    {
+     "Value": "135",
+     "Feature": {
+      "ID": "7385",
+      "Name": {
+       "Value": "Fan diameter"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "4539",
+      "Name": {
+       "Value": "Number of fans"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "1861",
+      "Name": {
+       "Value": "Illumination"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "6306",
+      "Name": {
+       "Value": "On/off switch"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging content"
+    }
+   },
+   "Features": [
+    {
+     "Value": "AC,CPU,PCIe,Peripheral (Molex),SATA",
+     "Feature": {
+      "ID": "1830",
+      "Name": {
+       "Value": "Cables included"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "28844",
+      "Name": {
+       "Value": "Cable tie(s) included"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Certificates"
+    }
+   },
+   "Features": [
+    {
+     "Value": "RoHS",
+     "Feature": {
+      "ID": "48024",
+      "Name": {
+       "Value": "Compliance certificates"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "150",
+     "Feature": {
+      "ID": "1649",
+      "Name": {
+       "Value": "Width"
+      }
+     }
+    },
+    {
+     "Value": "150",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "86",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    },
+    {
+     "Value": "2380",
+     "Feature": {
+      "ID": "94",
+      "Name": {
+       "Value": "Weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "310",
+     "Feature": {
+      "ID": "3808",
+      "Name": {
+       "Value": "Package width"
+      }
+     }
+    },
+    {
+     "Value": "200",
+     "Feature": {
+      "ID": "3806",
+      "Name": {
+       "Value": "Package depth"
+      }
+     }
+    },
+    {
+     "Value": "108",
+     "Feature": {
+      "ID": "3807",
+      "Name": {
+       "Value": "Package height"
+      }
+     }
+    },
+    {
+     "Value": "3067",
+     "Feature": {
+      "ID": "762",
+      "Name": {
+       "Value": "Package weight"
+      }
+     }
+    },
+    {
+     "Value": "Box",
+     "Feature": {
+      "ID": "4463",
+      "Name": {
+       "Value": "Package type"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Technical details"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "42512",
+      "Name": {
+       "Value": "Sustainability compliance"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

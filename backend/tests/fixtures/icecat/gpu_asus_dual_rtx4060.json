@@ -1,0 +1,467 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 112655354,
+  "Title": "ASUS Dual -RTX4060-O8G NVIDIA GeForce RTX 4060 8 GB GDDR6",
+  "Brand": "ASUS",
+  "ProductName": "DUAL-RTX4060-O8G",
+  "BrandPartCode": "90YV0JC0-M0NA00",
+  "GTIN": [
+   "0197105244061",
+   "197105244061",
+   "4711387223734"
+  ],
+  "Category": {
+   "CategoryID": "170",
+   "Name": {
+    "Value": "Graphics Cards",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": "Dual"
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Processor"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "6583",
+      "Name": {
+       "Value": "CUDA"
+      }
+     }
+    },
+    {
+     "Value": "3072",
+     "Feature": {
+      "ID": "7991",
+      "Name": {
+       "Value": "CUDA cores"
+      }
+     }
+    },
+    {
+     "Value": "NVIDIA",
+     "Feature": {
+      "ID": "9787",
+      "Name": {
+       "Value": "Graphics processor family"
+      }
+     }
+    },
+    {
+     "Value": "GeForce RTX 4060",
+     "Feature": {
+      "ID": "1654",
+      "Name": {
+       "Value": "Graphics processor"
+      }
+     }
+    },
+    {
+     "Value": "2460",
+     "Feature": {
+      "ID": "10190",
+      "Name": {
+       "Value": "Processor boost clock speed"
+      }
+     }
+    },
+    {
+     "Value": "2490",
+     "Feature": {
+      "ID": "36511",
+      "Name": {
+       "Value": "Processor frequency (OC mode)"
+      }
+     }
+    },
+    {
+     "Value": "7680 x 4320",
+     "Feature": {
+      "ID": "1659",
+      "Name": {
+       "Value": "Maximum resolution"
+      }
+     }
+    },
+    {
+     "Value": "Not supported",
+     "Feature": {
+      "ID": "2926",
+      "Name": {
+       "Value": "Parallel processing technology support"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "6554",
+      "Name": {
+       "Value": "Maximum displays per videocard"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Memory"
+    }
+   },
+   "Features": [
+    {
+     "Value": "8",
+     "Feature": {
+      "ID": "18403",
+      "Name": {
+       "Value": "Discrete graphics card memory"
+      }
+     }
+    },
+    {
+     "Value": "GDDR6",
+     "Feature": {
+      "ID": "958",
+      "Name": {
+       "Value": "Graphics card memory type"
+      }
+     }
+    },
+    {
+     "Value": "128",
+     "Feature": {
+      "ID": "1630",
+      "Name": {
+       "Value": "Memory bus"
+      }
+     }
+    },
+    {
+     "Value": "17",
+     "Feature": {
+      "ID": "5945",
+      "Name": {
+       "Value": "Memory bandwidth (max)"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Ports & interfaces"
+    }
+   },
+   "Features": [
+    {
+     "Value": "PCI Express 4.0",
+     "Feature": {
+      "ID": "990",
+      "Name": {
+       "Value": "Interface type"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "3566",
+      "Name": {
+       "Value": "HDMI ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "2.1a",
+     "Feature": {
+      "ID": "5452",
+      "Name": {
+       "Value": "HDMI version"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "6611",
+      "Name": {
+       "Value": "DisplayPorts quantity"
+      }
+     }
+    },
+    {
+     "Value": "1.4a",
+     "Feature": {
+      "ID": "11111",
+      "Name": {
+       "Value": "DisplayPort version"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Performance"
+    }
+   },
+   "Features": [
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "2252",
+      "Name": {
+       "Value": "TV tuner integrated"
+      }
+     }
+    },
+    {
+     "Value": "4.6",
+     "Feature": {
+      "ID": "2928",
+      "Name": {
+       "Value": "OpenGL version"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "5636",
+      "Name": {
+       "Value": "HDCP"
+      }
+     }
+    },
+    {
+     "Value": "2.3",
+     "Feature": {
+      "ID": "9814",
+      "Name": {
+       "Value": "HDCP version"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "2968",
+      "Name": {
+       "Value": "Dual Link DVI"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Design"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Active",
+     "Feature": {
+      "ID": "6392",
+      "Name": {
+       "Value": "Cooling type"
+      }
+     }
+    },
+    {
+     "Value": "ASUS Axial-tech",
+     "Feature": {
+      "ID": "40807",
+      "Name": {
+       "Value": "Cooling technology"
+      }
+     }
+    },
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "4539",
+      "Name": {
+       "Value": "Number of fans"
+      }
+     }
+    },
+    {
+     "Value": "2.5",
+     "Feature": {
+      "ID": "1229",
+      "Name": {
+       "Value": "Number of slots"
+      }
+     }
+    },
+    {
+     "Value": "Black",
+     "Feature": {
+      "ID": "1766",
+      "Name": {
+       "Value": "Product colour"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Power"
+    }
+   },
+   "Features": [
+    {
+     "Value": "550",
+     "Feature": {
+      "ID": "3462",
+      "Name": {
+       "Value": "Minimum system power supply"
+      }
+     }
+    },
+    {
+     "Value": "1x 8-pin",
+     "Feature": {
+      "ID": "7992",
+      "Name": {
+       "Value": "Supplementary power connectors"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "616",
+     "Feature": {
+      "ID": "94",
+      "Name": {
+       "Value": "Weight"
+      }
+     }
+    },
+    {
+     "Value": "200",
+     "Feature": {
+      "ID": "2738",
+      "Name": {
+       "Value": "Length"
+      }
+     }
+    },
+    {
+     "Value": "38",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "123",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "303",
+     "Feature": {
+      "ID": "3808",
+      "Name": {
+       "Value": "Package width"
+      }
+     }
+    },
+    {
+     "Value": "220",
+     "Feature": {
+      "ID": "3806",
+      "Name": {
+       "Value": "Package depth"
+      }
+     }
+    },
+    {
+     "Value": "55",
+     "Feature": {
+      "ID": "3807",
+      "Name": {
+       "Value": "Package height"
+      }
+     }
+    },
+    {
+     "Value": "1121",
+     "Feature": {
+      "ID": "762",
+      "Name": {
+       "Value": "Package weight"
+      }
+     }
+    },
+    {
+     "Value": "Box",
+     "Feature": {
+      "ID": "4463",
+      "Name": {
+       "Value": "Package type"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging content"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "3965",
+      "Name": {
+       "Value": "Manual"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

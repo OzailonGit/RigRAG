@@ -23,7 +23,7 @@ class Psu(Base):
     product_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("products.id", ondelete="CASCADE"), primary_key=True)
 
     wattage: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
-    efficiency_rating: Mapped[EfficiencyRating] = mapped_column(Enum(EfficiencyRating, name="efficiency_rating"), nullable=False)
-    atx_version: Mapped[str] = mapped_column(String(16), nullable=False)
+    efficiency_rating: Mapped[EfficiencyRating | None] = mapped_column(Enum(EfficiencyRating, name="efficiency_rating"), nullable=True)
+    atx_version: Mapped[str | None] = mapped_column(String(16), nullable=True)
     pcie_connectors: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
     supports_12vhpwr: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)

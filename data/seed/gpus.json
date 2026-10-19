@@ -3,36 +3,42 @@
     "manufacturer": "NVIDIA", "model": "RTX 4060", "price_php": 18500, "price_type": "estimated",
     "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
     "vram_gb": 8, "vram_type": "GDDR6", "tdp_w": 115, "recommended_psu_w": 550,
-    "pcie_gen": "4.0", "length_mm": 200
+    "pcie_gen": "4.0", "length_mm": 200,
+    "chip": "RTX 4060", "chip_vendor": "NVIDIA"
   },
   {
     "manufacturer": "NVIDIA", "model": "RTX 4060 Ti 16GB", "price_php": 27000, "price_type": "estimated",
     "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
     "vram_gb": 16, "vram_type": "GDDR6", "tdp_w": 165, "recommended_psu_w": 550,
-    "pcie_gen": "4.0", "length_mm": 230
+    "pcie_gen": "4.0", "length_mm": 230,
+    "chip": "RTX 4060 Ti 16GB", "chip_vendor": "NVIDIA"
   },
   {
     "manufacturer": "AMD", "model": "Radeon RX 7600", "price_php": 16500, "price_type": "estimated",
     "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
     "vram_gb": 8, "vram_type": "GDDR6", "tdp_w": 165, "recommended_psu_w": 550,
-    "pcie_gen": "4.0", "length_mm": 220
+    "pcie_gen": "4.0", "length_mm": 220,
+    "chip": "Radeon RX 7600", "chip_vendor": "AMD"
   },
   {
     "manufacturer": "AMD", "model": "Radeon RX 7800 XT", "price_php": 33000, "price_type": "estimated",
     "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
     "vram_gb": 16, "vram_type": "GDDR6", "tdp_w": 263, "recommended_psu_w": 700,
-    "pcie_gen": "4.0", "length_mm": 267
+    "pcie_gen": "4.0", "length_mm": 267,
+    "chip": "Radeon RX 7800 XT", "chip_vendor": "AMD"
   },
   {
     "manufacturer": "NVIDIA", "model": "RTX 4070 Super", "price_php": 38000, "price_type": "estimated",
     "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "high",
     "vram_gb": 12, "vram_type": "GDDR6X", "tdp_w": 220, "recommended_psu_w": 650,
-    "pcie_gen": "4.0", "length_mm": 242
+    "pcie_gen": "4.0", "length_mm": 242,
+    "chip": "RTX 4070 Super", "chip_vendor": "NVIDIA"
   },
   {
     "manufacturer": "AMD", "model": "Radeon RX 9060 XT", "price_php": 24500, "price_type": "estimated",
     "source": "manual curation, public PH listings observed 2026-09-18", "performance_tier": "mid",
     "vram_gb": 16, "vram_type": "GDDR6", "tdp_w": 160, "recommended_psu_w": 550,
-    "pcie_gen": "4.0", "length_mm": 240
+    "pcie_gen": "4.0", "length_mm": 240,
+    "chip": "Radeon RX 9060 XT", "chip_vendor": "AMD"
   }
 ]

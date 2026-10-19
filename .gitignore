@@ -15,7 +15,9 @@ frontend/.vite/
 .vscode/
 qdrant_storage/
 pgdata/
+data/raw/
 
 # Local planning notes and tooling docs
 *.md
 !README.md
+data/combined/

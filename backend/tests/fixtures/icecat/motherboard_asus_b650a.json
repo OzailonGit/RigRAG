@@ -1,0 +1,809 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 101955784,
+  "Title": "ASUS ROG STRIX B650-A GAMING WIFI AMD B650 Socket AM5 ATX",
+  "Brand": "ASUS",
+  "ProductName": "ROG STRIX B650-A GAMING WIFI",
+  "BrandPartCode": "90MB1BP0-M0EAY0",
+  "GTIN": [
+   "4711081917762",
+   "0195553917766",
+   "195553917766"
+  ],
+  "Category": {
+   "CategoryID": "164",
+   "Name": {
+    "Value": "Motherboards",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": null
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Processor"
+    }
+   },
+   "Features": [
+    {
+     "Value": "AMD",
+     "Feature": {
+      "ID": "1013",
+      "Name": {
+       "Value": "Processor manufacturer"
+      }
+     }
+    },
+    {
+     "Value": "Socket AM5",
+     "Feature": {
+      "ID": "2325",
+      "Name": {
+       "Value": "Processor socket"
+      }
+     }
+    },
+    {
+     "Value": "AMD Ryzen 7",
+     "Feature": {
+      "ID": "1828",
+      "Name": {
+       "Value": "Compatible processor series"
+      }
+     }
+    },
+    {
+     "Value": "Socket AM5",
+     "Feature": {
+      "ID": "7443",
+      "Name": {
+       "Value": "Supported processor sockets"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Memory"
+    }
+   },
+   "Features": [
+    {
+     "Value": "DDR5-SDRAM",
+     "Feature": {
+      "ID": "7482",
+      "Name": {
+       "Value": "Supported memory types"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "18674",
+      "Name": {
+       "Value": "Number of memory slots"
+      }
+     }
+    },
+    {
+     "Value": "DIMM",
+     "Feature": {
+      "ID": "10042",
+      "Name": {
+       "Value": "Memory slots type"
+      }
+     }
+    },
+    {
+     "Value": "Dual-channel",
+     "Feature": {
+      "ID": "7788",
+      "Name": {
+       "Value": "Memory channels"
+      }
+     }
+    },
+    {
+     "Value": "ECC & non-ECC",
+     "Feature": {
+      "ID": "48433",
+      "Name": {
+       "Value": "ECC сompatibility"
+      }
+     }
+    },
+    {
+     "Value": "4800,5000,5200,5400,5600,5800,6000,6200,6400",
+     "Feature": {
+      "ID": "7389",
+      "Name": {
+       "Value": "Supported memory clock speeds"
+      }
+     }
+    },
+    {
+     "Value": "128",
+     "Feature": {
+      "ID": "1452",
+      "Name": {
+       "Value": "Maximum internal memory"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7925",
+      "Name": {
+       "Value": "Unbuffered memory"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Storage controllers"
+    }
+   },
+   "Features": [
+    {
+     "Value": "HDD & SSD",
+     "Feature": {
+      "ID": "16118",
+      "Name": {
+       "Value": "Supported storage drive types"
+      }
+     }
+    },
+    {
+     "Value": "M.2,SATA III",
+     "Feature": {
+      "ID": "19205",
+      "Name": {
+       "Value": "Supported storage drive interfaces"
+      }
+     }
+    },
+    {
+     "Value": "7",
+     "Feature": {
+      "ID": "9991",
+      "Name": {
+       "Value": "Number of storage drives supported"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7335",
+      "Name": {
+       "Value": "RAID support"
+      }
+     }
+    },
+    {
+     "Value": "0,1,10",
+     "Feature": {
+      "ID": "1470",
+      "Name": {
+       "Value": "RAID levels"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Graphics"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Not supported",
+     "Feature": {
+      "ID": "2926",
+      "Name": {
+       "Value": "Parallel processing technology support"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "9997",
+      "Name": {
+       "Value": "On-board graphics card"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Internal I/O"
+    }
+   },
+   "Features": [
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "2817",
+      "Name": {
+       "Value": "USB 2.0 connectors"
+      }
+     }
+    },
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "7757",
+      "Name": {
+       "Value": "USB 3.2 Gen 1 (3.1 Gen 1) connectors"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "22431",
+      "Name": {
+       "Value": "USB 3.2 Gen 2 (3.1 Gen 2) connectors"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "7826",
+      "Name": {
+       "Value": "Number of SATA III connectors"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2819",
+      "Name": {
+       "Value": "S/PDIF out connector"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "3044",
+      "Name": {
+       "Value": "Front panel audio connector"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2823",
+      "Name": {
+       "Value": "ATX Power connector (24-pin)"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2821",
+      "Name": {
+       "Value": "CPU fan connector"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "2829",
+      "Name": {
+       "Value": "Number of chassis fan connectors"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2828",
+      "Name": {
+       "Value": "Chassis intrusion connector"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "7180",
+      "Name": {
+       "Value": "Peripheral (Molex) power connectors (4-pin)"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7181",
+      "Name": {
+       "Value": "EPS power connector (8-pin)"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "2822",
+      "Name": {
+       "Value": "Number of COM connectors"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "21031",
+      "Name": {
+       "Value": "Thunderbolt headers"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "26519",
+      "Name": {
+       "Value": "12V power connector"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "36437",
+      "Name": {
+       "Value": "RGB LED pin header"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Rear panel I/O ports"
+    }
+   },
+   "Features": [
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "2308",
+      "Name": {
+       "Value": "USB 2.0 ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "22703",
+      "Name": {
+       "Value": "USB 3.2 Gen 2 (3.1 Gen 2) Type-A ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "22704",
+      "Name": {
+       "Value": "USB 3.2 Gen 2 (3.1 Gen 2) Type-C ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "2312",
+      "Name": {
+       "Value": "Ethernet LAN (RJ-45) ports"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "3566",
+      "Name": {
+       "Value": "HDMI ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "6611",
+      "Name": {
+       "Value": "DisplayPorts quantity"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "2313",
+      "Name": {
+       "Value": "Headphone outputs"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "1344",
+      "Name": {
+       "Value": "Line-in"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2314",
+      "Name": {
+       "Value": "Microphone in"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Network"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "1347",
+      "Name": {
+       "Value": "Ethernet LAN"
+      }
+     }
+    },
+    {
+     "Value": "2.5 Gigabit Ethernet",
+     "Feature": {
+      "ID": "7484",
+      "Name": {
+       "Value": "Ethernet interface type"
+      }
+     }
+    },
+    {
+     "Value": "Intel I225-V",
+     "Feature": {
+      "ID": "3143",
+      "Name": {
+       "Value": "LAN controller"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "3239",
+      "Name": {
+       "Value": "Wi-Fi"
+      }
+     }
+    },
+    {
+     "Value": "Wi-Fi 6E (802.11ax)",
+     "Feature": {
+      "ID": "24993",
+      "Name": {
+       "Value": "Top Wi-Fi standard"
+      }
+     }
+    },
+    {
+     "Value": "802.11a,802.11b,802.11g,Wi-Fi 4 (802.11n),Wi-Fi 5 (802.11ac),Wi-Fi 6 (802.11ax),Wi-Fi 6E (802.11ax)",
+     "Feature": {
+      "ID": "432",
+      "Name": {
+       "Value": "Wi-Fi standards"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "2183",
+      "Name": {
+       "Value": "Bluetooth"
+      }
+     }
+    },
+    {
+     "Value": "5.2",
+     "Feature": {
+      "ID": "1208",
+      "Name": {
+       "Value": "Bluetooth version"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Features"
+    }
+   },
+   "Features": [
+    {
+     "Value": "AMD B650",
+     "Feature": {
+      "ID": "436",
+      "Name": {
+       "Value": "Motherboard chipset"
+      }
+     }
+    },
+    {
+     "Value": "Realtek ALC4080",
+     "Feature": {
+      "ID": "25338",
+      "Name": {
+       "Value": "Audio chip"
+      }
+     }
+    },
+    {
+     "Value": "7.1",
+     "Feature": {
+      "ID": "2197",
+      "Name": {
+       "Value": "Audio output channels"
+      }
+     }
+    },
+    {
+     "Value": "Black,Silver",
+     "Feature": {
+      "ID": "1766",
+      "Name": {
+       "Value": "Product colour"
+      }
+     }
+    },
+    {
+     "Value": "PC",
+     "Feature": {
+      "ID": "9163",
+      "Name": {
+       "Value": "Component for"
+      }
+     }
+    },
+    {
+     "Value": "ATX",
+     "Feature": {
+      "ID": "1262",
+      "Name": {
+       "Value": "Motherboard form factor"
+      }
+     }
+    },
+    {
+     "Value": "AMD",
+     "Feature": {
+      "ID": "9001",
+      "Name": {
+       "Value": "Motherboard chipset family"
+      }
+     }
+    },
+    {
+     "Value": "Windows 11 x64",
+     "Feature": {
+      "ID": "7986",
+      "Name": {
+       "Value": "Windows operating systems supported"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Expansion slots"
+    }
+   },
+   "Features": [
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "40173",
+      "Name": {
+       "Value": "PCI Express x1 (Gen 4.x) slots"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "40174",
+      "Name": {
+       "Value": "PCI Express x16 (Gen 4.x) slots"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "44514",
+      "Name": {
+       "Value": "PCI Express x16 (Gen 5.x) slots"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "20894",
+      "Name": {
+       "Value": "Number of M.2 (M) slots"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "BIOS"
+    }
+   },
+   "Features": [
+    {
+     "Value": "UEFI AMI",
+     "Feature": {
+      "ID": "1829",
+      "Name": {
+       "Value": "BIOS type"
+      }
+     }
+    },
+    {
+     "Value": "256",
+     "Feature": {
+      "ID": "1056",
+      "Name": {
+       "Value": "BIOS memory size"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "8527",
+      "Name": {
+       "Value": "Clear CMOS button"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "280",
+     "Feature": {
+      "ID": "3808",
+      "Name": {
+       "Value": "Package width"
+      }
+     }
+    },
+    {
+     "Value": "265",
+     "Feature": {
+      "ID": "3806",
+      "Name": {
+       "Value": "Package depth"
+      }
+     }
+    },
+    {
+     "Value": "71",
+     "Feature": {
+      "ID": "3807",
+      "Name": {
+       "Value": "Package height"
+      }
+     }
+    },
+    {
+     "Value": "8997",
+     "Feature": {
+      "ID": "762",
+      "Name": {
+       "Value": "Package weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "305",
+     "Feature": {
+      "ID": "1649",
+      "Name": {
+       "Value": "Width"
+      }
+     }
+    },
+    {
+     "Value": "244",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging content"
+    }
+   },
+   "Features": [
+    {
+     "Value": "SATA",
+     "Feature": {
+      "ID": "1830",
+      "Name": {
+       "Value": "Cables included"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

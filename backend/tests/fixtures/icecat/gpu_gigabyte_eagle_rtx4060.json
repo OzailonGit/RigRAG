@@ -1,0 +1,422 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 112868553,
+  "Title": "GIGABYTE EAGLE GeForce RTX 4060 OC 8G NVIDIA 8 GB GDDR6",
+  "Brand": "GIGABYTE",
+  "ProductName": "GeForce RTX 4060 EAGLE OC 8G",
+  "BrandPartCode": "GV-N4060EAGLE OC-8GD",
+  "GTIN": [
+   "4719331313708",
+   "0889523038598",
+   "889523038598"
+  ],
+  "Category": {
+   "CategoryID": "170",
+   "Name": {
+    "Value": "Graphics Cards",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": "EAGLE"
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Processor"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "6583",
+      "Name": {
+       "Value": "CUDA"
+      }
+     }
+    },
+    {
+     "Value": "3072",
+     "Feature": {
+      "ID": "7991",
+      "Name": {
+       "Value": "CUDA cores"
+      }
+     }
+    },
+    {
+     "Value": "NVIDIA",
+     "Feature": {
+      "ID": "9787",
+      "Name": {
+       "Value": "Graphics processor family"
+      }
+     }
+    },
+    {
+     "Value": "GeForce RTX 4060",
+     "Feature": {
+      "ID": "1654",
+      "Name": {
+       "Value": "Graphics processor"
+      }
+     }
+    },
+    {
+     "Value": "2505",
+     "Feature": {
+      "ID": "5",
+      "Name": {
+       "Value": "Processor frequency"
+      }
+     }
+    },
+    {
+     "Value": "7680 x 4320",
+     "Feature": {
+      "ID": "1659",
+      "Name": {
+       "Value": "Maximum resolution"
+      }
+     }
+    },
+    {
+     "Value": "Not supported",
+     "Feature": {
+      "ID": "2926",
+      "Name": {
+       "Value": "Parallel processing technology support"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "6554",
+      "Name": {
+       "Value": "Maximum displays per videocard"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Memory"
+    }
+   },
+   "Features": [
+    {
+     "Value": "8",
+     "Feature": {
+      "ID": "18403",
+      "Name": {
+       "Value": "Discrete graphics card memory"
+      }
+     }
+    },
+    {
+     "Value": "GDDR6",
+     "Feature": {
+      "ID": "958",
+      "Name": {
+       "Value": "Graphics card memory type"
+      }
+     }
+    },
+    {
+     "Value": "128",
+     "Feature": {
+      "ID": "1630",
+      "Name": {
+       "Value": "Memory bus"
+      }
+     }
+    },
+    {
+     "Value": "17",
+     "Feature": {
+      "ID": "1551",
+      "Name": {
+       "Value": "Data transfer rate"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Ports & interfaces"
+    }
+   },
+   "Features": [
+    {
+     "Value": "PCI Express 4.0",
+     "Feature": {
+      "ID": "990",
+      "Name": {
+       "Value": "Interface type"
+      }
+     }
+    },
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "3566",
+      "Name": {
+       "Value": "HDMI ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "2.1a",
+     "Feature": {
+      "ID": "5452",
+      "Name": {
+       "Value": "HDMI version"
+      }
+     }
+    },
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "6611",
+      "Name": {
+       "Value": "DisplayPorts quantity"
+      }
+     }
+    },
+    {
+     "Value": "1.4a",
+     "Feature": {
+      "ID": "11111",
+      "Name": {
+       "Value": "DisplayPort version"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Performance"
+    }
+   },
+   "Features": [
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "2252",
+      "Name": {
+       "Value": "TV tuner integrated"
+      }
+     }
+    },
+    {
+     "Value": "12 Ultimate",
+     "Feature": {
+      "ID": "2927",
+      "Name": {
+       "Value": "DirectX version"
+      }
+     }
+    },
+    {
+     "Value": "4.6",
+     "Feature": {
+      "ID": "2928",
+      "Name": {
+       "Value": "OpenGL version"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "5636",
+      "Name": {
+       "Value": "HDCP"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "2968",
+      "Name": {
+       "Value": "Dual Link DVI"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "20783",
+      "Name": {
+       "Value": "NVIDIA G-SYNC"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "29607",
+      "Name": {
+       "Value": "AMD FreeSync"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Design"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Active",
+     "Feature": {
+      "ID": "6392",
+      "Name": {
+       "Value": "Cooling type"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "4539",
+      "Name": {
+       "Value": "Number of fans"
+      }
+     }
+    },
+    {
+     "Value": "Full-Height/Full-Length (FH/FL)",
+     "Feature": {
+      "ID": "771",
+      "Name": {
+       "Value": "Form factor"
+      }
+     }
+    },
+    {
+     "Value": "Black",
+     "Feature": {
+      "ID": "1766",
+      "Name": {
+       "Value": "Product colour"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Power"
+    }
+   },
+   "Features": [
+    {
+     "Value": "450",
+     "Feature": {
+      "ID": "3462",
+      "Name": {
+       "Value": "Minimum system power supply"
+      }
+     }
+    },
+    {
+     "Value": "1x 8-pin",
+     "Feature": {
+      "ID": "7992",
+      "Name": {
+       "Value": "Supplementary power connectors"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "272",
+     "Feature": {
+      "ID": "2738",
+      "Name": {
+       "Value": "Length"
+      }
+     }
+    },
+    {
+     "Value": "40",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "115",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Box",
+     "Feature": {
+      "ID": "4463",
+      "Name": {
+       "Value": "Package type"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging content"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "4921",
+      "Name": {
+       "Value": "Quick installation guide"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

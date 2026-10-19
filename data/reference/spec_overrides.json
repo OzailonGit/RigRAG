@@ -1,0 +1,11 @@
+{
+  "source": "Manual corrections where an imported datasheet disagrees with the manufacturer's own spec page. Keyed by manufacturer part number (mpn); each entry cites the page it came from.",
+  "overrides": [
+    {
+      "mpn": "90YV0JC0-M0NA00",
+      "note": "Icecat lists 200 mm; ASUS lists 227.2 x 123.24 x 49.6 mm.",
+      "url": "https://www.asus.com/motherboards-components/graphics-cards/dual/dual-rtx4060-o8g/techspec/",
+      "spec": {"length_mm": 228}
+    }
+  ]
+}

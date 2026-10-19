@@ -1,0 +1,381 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 37656306,
+  "Title": "Seagate Barracuda ST2000DM008 internal hard drive 2 TB 7200 RPM 256 MB 3.5\" Serial ATA III",
+  "Brand": "Seagate",
+  "ProductName": "ST2000DM008",
+  "BrandPartCode": "ST2000DM008",
+  "GTIN": [
+   "0763649100165",
+   "763649100165",
+   "0763649113653",
+   "763649113653",
+   "8719706011280",
+   "0763649129081",
+   "763649129081"
+  ],
+  "Category": {
+   "CategoryID": "219",
+   "Name": {
+    "Value": "Internal Hard Drives",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": "Barracuda"
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Features"
+    }
+   },
+   "Features": [
+    {
+     "Value": "2000",
+     "Feature": {
+      "ID": "7",
+      "Name": {
+       "Value": "HDD capacity"
+      }
+     }
+    },
+    {
+     "Value": "7200",
+     "Feature": {
+      "ID": "430",
+      "Name": {
+       "Value": "HDD speed"
+      }
+     }
+    },
+    {
+     "Value": "256",
+     "Feature": {
+      "ID": "37958",
+      "Name": {
+       "Value": "Storage drive buffer size"
+      }
+     }
+    },
+    {
+     "Value": "3.5",
+     "Feature": {
+      "ID": "1926",
+      "Name": {
+       "Value": "HDD size"
+      }
+     }
+    },
+    {
+     "Value": "Serial ATA III",
+     "Feature": {
+      "ID": "21",
+      "Name": {
+       "Value": "Interface"
+      }
+     }
+    },
+    {
+     "Value": "HDD",
+     "Feature": {
+      "ID": "31",
+      "Name": {
+       "Value": "Type"
+      }
+     }
+    },
+    {
+     "Value": "PC",
+     "Feature": {
+      "ID": "9163",
+      "Name": {
+       "Value": "Component for"
+      }
+     }
+    },
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "980",
+      "Name": {
+       "Value": "HDD number of heads"
+      }
+     }
+    },
+    {
+     "Value": "6",
+     "Feature": {
+      "ID": "1548",
+      "Name": {
+       "Value": "Average latency"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7100",
+      "Name": {
+       "Value": "SMART technology"
+      }
+     }
+    },
+    {
+     "Value": "4096",
+     "Feature": {
+      "ID": "3100",
+      "Name": {
+       "Value": "Bytes per sector"
+      }
+     }
+    },
+    {
+     "Value": "600000",
+     "Feature": {
+      "ID": "3147",
+      "Name": {
+       "Value": "Start/stop cycles"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Power"
+    }
+   },
+   "Features": [
+    {
+     "Value": "5 / 12",
+     "Feature": {
+      "ID": "48762",
+      "Name": {
+       "Value": "Operating voltage"
+      }
+     }
+    },
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "2964",
+      "Name": {
+       "Value": "Start-up current"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Operational conditions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "0 - 60",
+     "Feature": {
+      "ID": "1112",
+      "Name": {
+       "Value": "Operating temperature (T-T)"
+      }
+     }
+    },
+    {
+     "Value": "-40 - 70",
+     "Feature": {
+      "ID": "757",
+      "Name": {
+       "Value": "Storage temperature (T-T)"
+      }
+     }
+    },
+    {
+     "Value": "5 - 90",
+     "Feature": {
+      "ID": "703",
+      "Name": {
+       "Value": "Operating relative humidity (H-H)"
+      }
+     }
+    },
+    {
+     "Value": "5 - 95",
+     "Feature": {
+      "ID": "1383",
+      "Name": {
+       "Value": "Storage relative humidity (H-H)"
+      }
+     }
+    },
+    {
+     "Value": "0.25",
+     "Feature": {
+      "ID": "3336",
+      "Name": {
+       "Value": "Operating vibration"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "3335",
+      "Name": {
+       "Value": "Non-operating vibration"
+      }
+     }
+    },
+    {
+     "Value": "-304 - 3048",
+     "Feature": {
+      "ID": "667",
+      "Name": {
+       "Value": "Operating altitude"
+      }
+     }
+    },
+    {
+     "Value": "-304 - 12192",
+     "Feature": {
+      "ID": "1449",
+      "Name": {
+       "Value": "Non-operating altitude"
+      }
+     }
+    },
+    {
+     "Value": "80",
+     "Feature": {
+      "ID": "1637",
+      "Name": {
+       "Value": "Operating shock"
+      }
+     }
+    },
+    {
+     "Value": "350",
+     "Feature": {
+      "ID": "2965",
+      "Name": {
+       "Value": "Non-operating shock"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "101.6",
+     "Feature": {
+      "ID": "1649",
+      "Name": {
+       "Value": "Width"
+      }
+     }
+    },
+    {
+     "Value": "20.17",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    },
+    {
+     "Value": "147",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "415",
+     "Feature": {
+      "ID": "94",
+      "Name": {
+       "Value": "Weight"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Packaging data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "20228",
+      "Name": {
+       "Value": "Quantity per pack"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Logistics data"
+    }
+   },
+   "Features": [
+    {
+     "Value": "84717050",
+     "Feature": {
+      "ID": "23731",
+      "Name": {
+       "Value": "Harmonized System (HS) code"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Other features"
+    }
+   },
+   "Features": [
+    {
+     "Value": "8",
+     "Feature": {
+      "ID": "3146",
+      "Name": {
+       "Value": "Drive ready time"
+      }
+     }
+    },
+    {
+     "Value": "RoHS",
+     "Feature": {
+      "ID": "48024",
+      "Name": {
+       "Value": "Compliance certificates"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}
