@@ -41,6 +41,46 @@ python -m app.ingestion.embed_and_index  # embed products and index them in Qdra
 uvicorn app.main:app --reload
 ```
 
+### Growing the catalog
+
+The seed catalog is small. Real products come from [Open Icecat](https://icecat.biz) (specs) and Shopee and Lazada (prices).
+
+**Specs (Open Icecat).** Single products work with the built-in demo account:
+
+```bash
+python -m app.ingestion.import_icecat --product ASUS:90YV0JC0-M0NA00 --gtin 4711387223734
+```
+
+Importing whole categories reads Icecat's index file, which needs a free account ([register here](https://icecat.biz/registration)). Set `ICECAT_USERNAME` and `ICECAT_PASSWORD`, then:
+
+```bash
+python -m app.ingestion.import_icecat --index --categories gpu,motherboard --country PH --limit 500
+python -m app.ingestion.import_icecat --index --categories gpu --dry-run   # see what would be skipped and why
+```
+
+Every datasheet is mapped, checked against plausible ranges, and skipped with a reason if a field the compatibility rules need is missing. Imported parts have no price yet, so they show up in listings but are never recommended.
+
+**Prices (Shopee and Lazada).** Needs affiliate API credentials for at least one of them (see `.env.example`):
+
+```bash
+python -m app.ingestion.prices.refresh --only-missing --dry-run
+python -m app.ingestion.prices.refresh --category gpu --limit 50
+```
+
+Each product is searched by name, and listings are kept only if they match the brand, model numbers, and capacity, and aren't used, refurbished, or bundled. Every accepted listing is stored in `price_observations`. The product's price becomes the median, using official stores (Shopee Mall, LazMall) when there are any.
+
+**Combined public datasets.** One command downloads ten public PC-part datasets (official AMD/Intel specs, Wikipedia and TechPowerUp GPU tables, two PCPartPicker dumps, and others) and merges them into one file per part type:
+
+```bash
+python -m app.ingestion.datasets.build
+```
+
+Output goes to `data/combined/` (CSV and JSONL for each part type, plus `manifest.json` with every source's license). Rows that appear in several datasets are merged, and each field takes the value most sources agree on. Every row lists its `sources`, any `conflicts` between them, and `derived_fields` that were inferred rather than stated. The folder is gitignored because the sources have mixed licenses.
+
+**Reference data you maintain by hand:**
+- `data/reference/gpu_chips.json`: TDP and tier for each GPU chip, since Icecat lists cards but not chip power. A card on a chip missing from this file is skipped until the chip is added.
+- `data/reference/spec_overrides.json`: corrections where Icecat disagrees with the manufacturer's spec page, each with its source URL.
+
 ### Choosing an LLM
 
 **Groq (easiest).** No local model download needed. Get a key at https://console.groq.com/keys and set:
@@ -106,17 +146,28 @@ backend/app/
 │   └── engine.py         Single entry point for recommendations
 ├── rag/                  Embeddings, Qdrant store, document building, hybrid retrieval, evaluation
 ├── llm/                  Providers, prompts, intent parsing, explanations, tool calling
-└── ingestion/            Seeding and indexing scripts
+└── ingestion/
+    ├── sources/          Open Icecat API client
+    ├── parsers/          Icecat index file parser
+    ├── normalization/    Icecat field mapping, GPU chip lookup, manual overrides
+    ├── validation/       Required-field and range checks before import
+    ├── prices/           Shopee and Lazada clients, listing matching, price refresh
+    └── import_icecat.py  Catalog import command
 backend/alembic/          Database migrations
 backend/tests/            pytest suite
-data/seed/                Curated part catalog
+data/seed/                Curated starter catalog
+data/reference/           GPU chip data and manual spec corrections
 docker/                   Docker Compose for Postgres, Qdrant, and the backend
 ```
 
 ## Known limitations
 
-- **The catalog is small.** 36 parts is enough to exercise every compatibility rule, but with only a few CPUs and GPUs per socket or brand, the "cheaper" and "higher performance" alternatives sometimes land on the same family.
-- **Prices are estimates.** Seed prices are curated estimates, not live quotes.
+- **The seed catalog is small.** 36 parts is enough to exercise every compatibility rule, but with only a few CPUs and GPUs per socket or brand, the "cheaper" and "higher performance" alternatives sometimes land on the same family. Use the Icecat import to grow it.
+- **Open Icecat skips some major brands.** Only brands that sponsor Open Icecat are included (ASUS, MSI, Gigabyte, Kingston, Samsung, be quiet!, and Seagate, among others). AMD, Intel, Corsair, Cooler Master, Noctua, Crucial, and Lian Li need paid Full Icecat, so CPUs still come from the seed catalog.
+- **Icecat dimensions aren't always right.** Icecat lists the ASUS DUAL-RTX4060-O8G as 200 mm long; ASUS says 227.2 mm. That's corrected in `spec_overrides.json`, but other errors like it may exist, and an under-reported length can let a card pass a case clearance check it should fail.
+- **The Lazada client is unverified.** Lazada only shows its affiliate API docs to approved apps, so the search endpoint and response field names in `prices/lazada.py` are best guesses until checked against the real docs. Request signing follows Lazada's standard scheme.
+- **Seed prices are estimates.** Prices refreshed from Shopee or Lazada are marked `observed`; seed prices are curated estimates, not live quotes.
+- **Icecat terms apply.** Icecat data must be credited as "Specs Icecat" wherever it's shown (product `source` fields carry that credit), and their terms forbid using it to train AI models. Retrieval isn't training, but check the terms before relying on it.
 - **Performance tiers and scoring weights are hand-tuned.** They are not derived from benchmarks, so they are only used as a relative signal and never presented as FPS numbers.
 - **Evaluation covers retrieval only.** Answer faithfulness isn't measured automatically. An LLM judge would add its own noise.
 - **The LLM can still misquote a number in its prose.** One explanation listed a ₱1,800 part as ₱11,800 even though the correct price was in its input. Structured fields like `total_price_php` are always the numbers to trust.
