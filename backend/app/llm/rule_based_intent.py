@@ -5,11 +5,14 @@ Deliberately conservative: it only fills fields it can read from explicit
 keywords or patterns and leaves everything else as the existing
 conversational state had it. It cannot infer a budget; if no turn has
 stated one, the caller asks for it.
+
+classify_message_rule_based() decides the message kind from a list of PC
+terms, so off-topic messages are still caught without the LLM.
 """
 
 import re
 
-from app.schemas import BuildRequest, Resolution, UseCase
+from app.schemas import BuildRequest, MessageKind, Resolution, UseCase
 
 _BUDGET_PATTERN = re.compile(
     r"(?:₱|php\s*)?([\d,]+(?:\.\d+)?)\s*(k)?(?:\s*(?:php|pesos))?(p)?", re.IGNORECASE
@@ -24,6 +27,31 @@ _DECREASE_KEYWORDS = ("decrease", "lower", "reduce", "cut", "drop")
 _TRAILING_DELTA_PATTERN = re.compile(
     r"(?:₱|php\s*)?([\d,]+(?:\.\d+)?)\s*(k)?\s*(?:more|extra|additional)\b", re.IGNORECASE
 )
+
+# Words that put a message in PC territory. Ambiguous ones ("build", "case",
+# "recommend") are left out so "build me a website" or "recommend a movie"
+# don't count; a real build request nearly always has one of these too.
+_PC_TERMS = re.compile(
+    r"\b(pcs?|computers?|desktops?|rigs?|cpus?|processors?|gpus?|graphics|video cards?|motherboards?|mobo|"
+    r"ram|memory|ssds?|hdds?|nvme|m\.2|storage|psus?|power supply|coolers?|cooling|aio|pc case|chassis|"
+    r"fans?|gaming|games?|fps|1080p?|1440p?|4k|2k|ryzen|intel|amd|nvidia|geforce|rtx|gtx|radeon|core i\d|"
+    r"core ultra|wi-?fi|bluetooth|budget|pesos?|php|upgrade|sockets?|ddr\d|a?rgb|editing|rendering|blender|"
+    r"streaming|workstation|parts?|specs?|bottleneck|overclock\w*|compatib\w*)\b"
+)
+_SMALL_TALK = re.compile(
+    r"^(hi|hello|hey|yo|good (morning|afternoon|evening)|thanks|thank you|ty|bye|goodbye|"
+    r"what can you do|who are you|help)\b"
+)
+# Replies to "do you have a budget in mind?" that don't contain one.
+_ANSWER_WITHOUT_BUDGET = re.compile(
+    r"\b(not sure|no idea|don'?t know|dunno|you (pick|choose|decide)|anything|whatever|"
+    r"yes|yeah|yep|sure|ok(ay)?|go ahead|recommend|suggest)\b"
+)
+# With a build on screen, "why that one?" or "anything cheaper?" is about it.
+_BUILD_REFERENCE = re.compile(r"\b(this|that|these|those|it|cheaper|better|instead|alternatives?|why|swap|change)\b")
+_BUILD_REQUEST_KEYWORDS = ("build", "recommend", "suggest", "put together", "what should i get", "pc for")
+
+_BUILD_REQUEST_KEYWORDS_RE = re.compile("|".join(re.escape(kw) for kw in _BUILD_REQUEST_KEYWORDS))
 
 _USE_CASE_KEYWORDS = {
     "gaming": UseCase.gaming, "game": UseCase.gaming,
@@ -100,6 +128,30 @@ def _find_budget_delta(text: str) -> float | None:
         return value * 1000 if k_suffix else value
 
     return None
+
+
+def classify_message_rule_based(message: str, has_build: bool, awaiting_budget: bool) -> MessageKind:
+    """Fallback for MessageKind when the LLM is unavailable or omits it.
+
+    `awaiting_budget` means the last reply asked for a budget, so "not sure"
+    or "go ahead" is an answer to it rather than an off-topic message.
+    """
+    text = message.lower().strip()
+    budget = _find_budget(text)
+    # Short greetings and thanks, even ones that mention the build ("thanks
+    # for the build"), so they never re-run the engine.
+    if _SMALL_TALK.match(text) and budget is None and len(text.split()) <= 5:
+        return MessageKind.small_talk
+    about_pcs = bool(_PC_TERMS.search(text)) or "₱" in text or (budget is not None and budget >= 5000)
+    if not about_pcs and has_build and _BUILD_REFERENCE.search(text) and not _BUILD_REQUEST_KEYWORDS_RE.search(text):
+        return MessageKind.followup
+    if not about_pcs:
+        if awaiting_budget and _ANSWER_WITHOUT_BUDGET.search(text):
+            return MessageKind.build_request
+        return MessageKind.off_topic
+    if not has_build or any(kw in text for kw in _BUILD_REQUEST_KEYWORDS):
+        return MessageKind.build_request
+    return MessageKind.followup
 
 
 def parse_intent_rule_based(message: str, existing: BuildRequest | None = None) -> BuildRequest:

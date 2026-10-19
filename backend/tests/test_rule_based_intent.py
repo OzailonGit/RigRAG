@@ -1,7 +1,7 @@
 import pytest
 
-from app.llm.rule_based_intent import parse_intent_rule_based
-from app.schemas import Resolution, UseCase
+from app.llm.rule_based_intent import classify_message_rule_based, parse_intent_rule_based
+from app.schemas import MessageKind, Resolution, UseCase
 
 
 def test_extracts_budget_with_peso_sign():
@@ -76,3 +76,26 @@ def test_trailing_more_phrasing_without_verb():
     first = parse_intent_rule_based("70000 pesos for gaming")
     second = parse_intent_rule_based("10000 more please", existing=first)
     assert second.budget_php == 80000
+
+
+# --- Message classification without the LLM ---
+
+@pytest.mark.parametrize("message,has_build,awaiting,kind", [
+    ("hi", False, False, MessageKind.small_talk),
+    ("Thanks for the build!", True, False, MessageKind.small_talk),
+    ("what can you do?", False, False, MessageKind.small_talk),
+    ("Recommend a movie for tonight", False, False, MessageKind.off_topic),
+    ("Build me a website", True, False, MessageKind.off_topic),
+    ("Tell me a joke", True, False, MessageKind.off_topic),
+    ("What year did WW2 end, 1945?", False, False, MessageKind.off_topic),
+    ("I'm not sure yet, what can you recommend?", False, True, MessageKind.build_request),
+    ("I'm not sure", False, False, MessageKind.off_topic),
+    ("70k gaming PC for 1440p", False, False, MessageKind.build_request),
+    ("Build me something for 50k", False, False, MessageKind.build_request),
+    ("Why this GPU?", True, False, MessageKind.followup),
+    ("Is there anything cheaper?", True, False, MessageKind.followup),
+    ("What if I increase my budget by 30000?", True, False, MessageKind.followup),
+    ("Recommend a new build with an Intel CPU", True, False, MessageKind.build_request),
+])
+def test_classifies_message_kind(message, has_build, awaiting, kind):
+    assert classify_message_rule_based(message, has_build, awaiting) is kind

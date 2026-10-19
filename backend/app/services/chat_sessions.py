@@ -15,6 +15,9 @@ from app.schemas import BuildRequest
 class ChatSession:
     state: BuildRequest | None = None
     last_result: BuildResult | None = None
+    # Set once the user has been quoted a starting budget, so a second
+    # budget-less message gets that build instead of the same question.
+    offered_starting_budget: bool = False
 
 
 _SESSIONS: dict[str, ChatSession] = {}

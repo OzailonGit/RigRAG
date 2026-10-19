@@ -67,6 +67,28 @@ def test_asks_for_budget_when_none_given(db):
 
     assert result.build is None
     assert "budget" in result.reply.lower()
+    # The question comes with a real price to anchor on, not a bare "what's your budget?".
+    assert "₱" in result.reply
+
+
+def test_builds_starting_point_when_user_still_has_no_budget(db):
+    no_budget = {
+        "budget_php": 1, "currency": "PHP", "use_case": ["gaming"], "resolution": "1080p",
+        "target_fps": None, "games": [], "cpu_brand": None, "gpu_brand": None,
+        "wifi_required": True, "small_form_factor": False, "quiet": False,
+        "low_power": False, "prioritize_upgradeability": False, "existing_parts": {},
+    }
+    llm = FakeLLMProvider(intent_json=no_budget, explanation="Here is the build.")
+    session = ChatSession()
+
+    first = handle_chat_message(db, llm, session, "Gaming PC for 1080p, I need Wi-Fi")
+    second = handle_chat_message(db, llm, session, "I'm not sure yet, what can you recommend?")
+
+    assert first.build is None and "1080p gaming with Wi-Fi" in first.reply
+    assert second.build is not None
+    assert second.build.primary.components.motherboard["wifi"] is True
+    assert second.state.budget_php >= second.build.primary.score.total_price_php
+    assert second.reply.startswith("Since you don't have a budget yet")
 
 
 def test_build_request_runs_engine_and_returns_grounded_explanation(db):
@@ -194,3 +216,91 @@ def test_plain_lookup_question_does_not_trigger_engine_rerun(db):
 
     assert result.reply == "Final tool-loop answer."
     assert any(c["tools"] for c in lookup_llm.calls)
+
+
+# --- Message kinds: small talk and off-topic never reach the engine ---
+
+def _state(budget: float, **overrides) -> dict:
+    return {
+        "budget_php": budget, "currency": "PHP", "use_case": ["gaming"], "resolution": None,
+        "target_fps": None, "games": [], "cpu_brand": None, "gpu_brand": None,
+        "wifi_required": False, "small_form_factor": False, "quiet": False,
+        "low_power": False, "prioritize_upgradeability": False, "existing_parts": {}, **overrides,
+    }
+
+
+class UnreachableLLMProvider(LLMProvider):
+    def chat(self, messages, tools=None, json_mode=False) -> LLMResponse:
+        raise ConnectionError("provider is down")
+
+
+def _session_with_build(db) -> ChatSession:
+    session = ChatSession()
+    handle_chat_message(db, FakeLLMProvider(intent_json=_state(70000)), session, "Build me a 70k gaming PC")
+    assert session.last_result is not None
+    return session
+
+
+def test_off_topic_message_gets_fixed_reply_and_changes_nothing(db):
+    from app.llm.chat_orchestrator import OFF_TOPIC_REPLY
+
+    session = _session_with_build(db)
+    state_before, build_before = session.state, session.last_result
+    # The parser misreads a budget out of the message; an off-topic kind must still win.
+    llm = FakeLLMProvider(intent_json={**_state(5), "message_kind": "off_topic"})
+
+    result = handle_chat_message(db, llm, session, "Recommend a movie under 5 bucks")
+
+    assert result.reply == OFF_TOPIC_REPLY
+    assert result.build is None
+    assert session.state is state_before and session.last_result is build_before
+    assert len(llm.calls) == 1 and llm.calls[0]["json_mode"]  # no model-written answer
+
+
+def test_small_talk_greets_without_quoting_a_budget(db):
+    session = ChatSession()
+    llm = FakeLLMProvider(intent_json={**_state(1), "message_kind": "small_talk"})
+
+    result = handle_chat_message(db, llm, session, "hi")
+
+    assert "budget" in result.reply and "₱" not in result.reply
+    assert result.build is None
+    assert session.offered_starting_budget is False
+    # The next message without a budget still gets the starting-budget offer, not a build.
+    llm.intent_json = _state(1, resolution="1080p")
+    offer = handle_chat_message(db, llm, session, "gaming PC for 1080p")
+    assert offer.build is None and "₱" in offer.reply
+
+
+def test_greeting_works_when_the_llm_is_down(db):
+    result = handle_chat_message(db, UnreachableLLMProvider(), ChatSession(), "hello")
+    assert "budget" in result.reply
+
+
+def test_build_request_kind_from_llm_reruns_engine_without_keywords(db):
+    session = _session_with_build(db)
+    llm = FakeLLMProvider(intent_json={**_state(60000), "message_kind": "build_request"},
+                          explanation="Here is the 60k build.")
+
+    result = handle_chat_message(db, llm, session, "Make it 60k")
+
+    assert result.reply == "Here is the 60k build."
+    assert result.build.primary.score.total_price_php <= 60000
+
+
+def test_followup_prompt_tells_the_model_to_decline_unrelated_questions(db):
+    from app.llm.chat_orchestrator import OFF_TOPIC_REPLY
+
+    session = _session_with_build(db)
+    llm = FakeLLMProvider(intent_json={**_state(70000), "message_kind": "followup"})
+
+    handle_chat_message(db, llm, session, "Why this GPU?")
+
+    tool_loop_system = next(c for c in llm.calls if c["tools"])["messages"][0]["content"]
+    assert OFF_TOPIC_REPLY in tool_loop_system
+
+
+def test_small_talk_kind_is_kept_when_llm_omits_the_state(db):
+    llm = FakeLLMProvider(intent_json={"message_kind": "small_talk"})
+    result = handle_chat_message(db, llm, ChatSession(), "hey there, how are you doing today")
+    assert result.build is None and "budget" in result.reply
