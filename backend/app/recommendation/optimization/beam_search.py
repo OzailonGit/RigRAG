@@ -10,7 +10,6 @@ next role, so cost grows linearly with roles x candidates x beam width.
 from app.recommendation.compatibility import rules
 from app.recommendation.compatibility.build_components import BuildComponents
 from app.recommendation.compatibility.power import recommended_psu_watts
-from app.recommendation.optimization.budget_allocator import allocate_budget
 from app.recommendation.optimization.candidate_generation import fetch_candidates
 from app.recommendation.optimization.sizing import psu_wattage_range
 from app.recommendation.scoring.scoring import W_UNVERIFIED
@@ -71,32 +70,48 @@ def _partial_heuristic(partial: dict, bands: dict[str, tuple[float, float]], req
     target = 0.0
     fits = []
     for role, value in partial.items():
+        if role == "cpu":
+            fits.append(performance_fit(value.get("performance_tier"), needed_cpu_tier(request)))
+        elif role == "gpu":
+            fits.append(performance_fit(value.get("performance_tier"), needed_gpu_tier(request)))
+        # Owned and pinned roles have no band; their price is fixed and says
+        # nothing about how well the rest of the budget is being spent.
+        if role not in bands:
+            continue
         if role == "storage":
             price += sum(float(item["price_php"]) for item in value)
         else:
             price += float(value["price_php"])
-            if role == "cpu":
-                fits.append(performance_fit(value.get("performance_tier"), needed_cpu_tier(request)))
-            elif role == "gpu":
-                fits.append(performance_fit(value.get("performance_tier"), needed_gpu_tier(request)))
-        if role in bands:
-            target += sum(bands[role]) / 2
+        target += sum(bands[role]) / 2
 
     fit_score = sum(fits) / len(fits) if fits else 0.5
     price_deviation = abs(price - target) / target if target else 0.0
     return fit_score - PRICE_DEVIATION_WEIGHT * price_deviation
 
 
-def generate_builds(db, request: BuildRequest) -> list[BuildComponents]:
-    bands = allocate_budget(request)
-    owned = request.existing_parts
+def load_fixed_parts(db, request: BuildRequest) -> dict[str, dict] | None:
+    """Parts the user owns or pinned, by role. None when one of them no
+    longer exists, isn't in the role it was given for, or (when pinned) has
+    no price to count."""
+    fixed = {}
+    for role, product_id in {**request.pinned_parts, **request.existing_parts}.items():
+        part = parts_service.get_part(db, product_id)
+        if part is None or part["category"] != role:
+            return None
+        if role not in request.existing_parts and part.get("price_php") is None:
+            return None
+        fixed[role] = part
+    return fixed
+
+
+def generate_builds(db, request: BuildRequest, fixed: dict[str, dict],
+                    bands: dict[str, tuple[float, float]]) -> list[BuildComponents]:
+    """Candidate builds for `request`, with `fixed` (see load_fixed_parts)
+    used as-is and every other role shopped for within `bands`."""
 
     def candidates_for(role: str, beam: list[dict]) -> list:
-        if role in owned:
-            part = parts_service.get_part(db, owned[role])
-            if part is None:
-                return []
-            return [[part] if role == "storage" else part]
+        if role in fixed:
+            return [[fixed[role]] if role == "storage" else fixed[role]]
         band = bands.get(role, (0.0, request.budget_php))
         constraint_of = _ROLE_CONSTRAINTS.get(role)
         constraint_sets = {tuple(constraint_of(p).items()) for p in beam} if constraint_of else {()}

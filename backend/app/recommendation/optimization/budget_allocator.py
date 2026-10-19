@@ -60,23 +60,25 @@ def _blended_template(use_cases: list[UseCase]) -> dict[str, float]:
     return {cat: pct / total for cat, pct in blended.items()}  # renormalize to 1.0
 
 
-def allocate_budget(request: BuildRequest) -> dict[str, tuple[float, float]]:
-    """Returns {category: (band_min_php, band_max_php)} for categories the
-    user doesn't already own. Owned categories (request.existing_parts) get
-    their allocation redistributed proportionally across the rest.
+def allocate_budget(request: BuildRequest, pinned_spend: float = 0.0) -> dict[str, tuple[float, float]]:
+    """Returns {category: (band_min_php, band_max_php)} for the categories
+    still being shopped for.
+
+    Owned categories (request.existing_parts) cost nothing, so their share
+    is redistributed proportionally across the rest. Pinned categories
+    (request.pinned_parts) are already bought at their own price:
+    `pinned_spend` comes off the budget before the remainder is split.
     """
     template = _blended_template(request.use_case)
 
-    owned = set(request.existing_parts.keys())
-    shopping_for = [c for c in CATEGORIES if c not in owned]
-    reclaimed_pct = sum(template[c] for c in owned)
-
+    fixed = set(request.existing_parts) | set(request.pinned_parts)
+    shopping_for = [c for c in CATEGORIES if c not in fixed]
     shopping_total_pct = sum(template[c] for c in shopping_for) or 1.0
+    remaining = max(request.budget_php - pinned_spend, 0.0)
+
     bands = {}
     for cat in shopping_for:
-        # redistribute the owned categories' share proportionally to what's left
-        adjusted_pct = template[cat] + reclaimed_pct * (template[cat] / shopping_total_pct)
-        target = request.budget_php * adjusted_pct
+        target = remaining * template[cat] / shopping_total_pct
         bands[cat] = (target * (1 - BAND_FLEX), target * (1 + BAND_FLEX))
 
     return bands
