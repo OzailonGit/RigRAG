@@ -696,6 +696,17 @@ textarea {
   line-height: 1.4;
 }
 
+.build-part-link {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--accent-ink) 35%, transparent);
+  text-underline-offset: 3px;
+}
+
+.build-part-link:hover {
+  text-decoration-color: currentColor;
+}
+
 .build-part-specs {
   display: block;
   margin-top: 2px;

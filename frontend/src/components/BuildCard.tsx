@@ -70,7 +70,14 @@ function PartsTable({ build }: { build: ScoredBuild }) {
             <tr key={`${key}-${part.id}`}>
               <th scope="row">{i === 0 ? label : ''}</th>
               <td>
-                <span className="build-part-name">{partName(part)}</span>
+                {part.url ? (
+                  <a className="build-part-name build-part-link" href={part.url} target="_blank" rel="noopener noreferrer">
+                    {partName(part)}
+                    <span className="visually-hidden"> (opens in a new tab)</span>
+                  </a>
+                ) : (
+                  <span className="build-part-name">{partName(part)}</span>
+                )}
                 <span className="build-part-specs">{partSpecs(part)}</span>
               </td>
               <td className="build-part-price">{formatPeso(part.price_php)}</td>

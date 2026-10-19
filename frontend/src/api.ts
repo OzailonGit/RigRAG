@@ -30,6 +30,8 @@ export type Part = Record<string, unknown> & {
   /** Serialized from a Python Decimal, so it arrives as a string like "11500.00". */
   price_php: number | string | null
   price_type?: string
+  /** Retailer listing or PCPartPicker product page; null when the catalog has none. */
+  url?: string | null
 }
 
 export interface BuildComponents {
@@ -69,6 +71,8 @@ export interface BuildRequest {
   quiet: boolean
   low_power: boolean
   prioritize_upgradeability: boolean
+  existing_parts: Record<string, string>
+  pinned_parts: Record<string, string>
 }
 
 export interface ChatResponse {
