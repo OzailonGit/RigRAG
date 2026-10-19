@@ -1,7 +1,7 @@
 import enum
 import uuid
 
-from sqlalchemy import inspect, select
+from sqlalchemy import inspect, or_, select
 from sqlalchemy.orm import Session
 
 from app.models.case import Case
@@ -68,8 +68,11 @@ def list_parts(
     if max_price_php is not None:
         stmt = stmt.where(Product.price_php <= max_price_php)
     if manufacturer is not None:
-        stmt = stmt.where(Product.manufacturer.ilike(manufacturer))
-    stmt = stmt.order_by(Product.category, Product.price_php).offset(offset).limit(limit)
+        # "NVIDIA" should also find ASUS/MSI/... cards built on NVIDIA chips.
+        stmt = stmt.outerjoin(Gpu, Gpu.product_id == Product.id).where(
+            or_(Product.manufacturer.ilike(manufacturer), Gpu.chip_vendor.ilike(manufacturer))
+        )
+    stmt = stmt.order_by(Product.category, Product.price_php.asc().nulls_last()).offset(offset).limit(limit)
 
     products = db.scalars(stmt).all()
     return [to_full_dict(db, p) for p in products]

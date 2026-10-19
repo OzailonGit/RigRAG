@@ -63,6 +63,35 @@ def test_build_cpu_document_mentions_igpu():
     assert "Includes integrated graphics." in doc
 
 
+def test_board_partner_gpu_document_names_the_chip():
+    card = {**GPU_PRODUCT, "manufacturer": "ASUS", "model": "DUAL-RTX4060-O8G", "chip": "GeForce RTX 4060"}
+    assert "ASUS DUAL-RTX4060-O8G is a GeForce RTX 4060 graphics card" in build_product_document(card)
+    assert "is a graphics card" in build_product_document({**GPU_PRODUCT, "chip": "Radeon RX 9060 XT"})
+
+
+def test_unpriced_product_document_says_so():
+    doc = build_product_document({**GPU_PRODUCT, "price_php": None, "source": "Specs Icecat, product 1 (https://icecat.biz)"})
+    assert "No retailer price yet" in doc
+    assert "₱" not in doc
+
+
+def test_observed_price_is_attributed_to_retailer_listings():
+    doc = build_product_document({**GPU_PRODUCT, "price_type": "observed"})
+    assert "median of current Shopee/Lazada listings" in doc
+    assert "Estimated price" not in doc
+
+
+def test_storage_without_speed_figures_omits_them():
+    hdd = {
+        "id": uuid.uuid4(), "category": "storage", "manufacturer": "Seagate", "model": "Barracuda ST2000DM008 2TB",
+        "price_php": None, "source": "Specs Icecat", "type": "HDD", "capacity_gb": 2000, "interface": "SATA",
+        "read_mb_s": None, "write_mb_s": None,
+    }
+    doc = build_product_document(hdd)
+    assert "2000GB HDD drive (SATA)." in doc
+    assert "None" not in doc
+
+
 def test_document_never_invents_fps_claims():
     doc = build_product_document(GPU_PRODUCT)
     assert "fps" not in doc.lower()

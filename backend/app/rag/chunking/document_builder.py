@@ -14,7 +14,7 @@ CATEGORY_TEMPLATES = {
         "{igpu_clause}"
     ),
     "gpu": (
-        "{manufacturer} {model} is a graphics card with {vram_gb}GB {vram_type} VRAM, "
+        "{manufacturer} {model} is a{chip_clause} graphics card with {vram_gb}GB {vram_type} VRAM, "
         "{tdp_w}W TDP, {pcie_gen} interface, {length_mm}mm long. "
         "Manufacturer-recommended PSU: {recommended_psu_w}W."
     ),
@@ -26,14 +26,13 @@ CATEGORY_TEMPLATES = {
     ),
     "ram": (
         "{manufacturer} {model} is a {capacity_gb}GB {ddr_gen} memory kit ({sticks} sticks) "
-        "rated at {speed_mhz}MHz, CL{cas_latency}, {voltage}V."
+        "rated at {speed_mhz}MHz{timing_clause}."
     ),
     "storage": (
-        "{manufacturer} {model} is a {capacity_gb}GB {type} drive ({interface}) rated at "
-        "{read_mb_s}MB/s read and {write_mb_s}MB/s write."
+        "{manufacturer} {model} is a {capacity_gb}GB {type} drive ({interface}){speed_clause}."
     ),
     "psu": (
-        "{manufacturer} {model} is a {wattage}W {efficiency_rating} power supply ({atx_version})."
+        "{manufacturer} {model} is a {wattage}W{efficiency_clause} power supply{atx_clause}."
         "{connector_clause}"
     ),
     "cooler": (
@@ -60,6 +59,25 @@ def build_product_document(product: dict) -> str:
     template = CATEGORY_TEMPLATES[category]
 
     fields = dict(product)
+    if category == "gpu":
+        chip = product.get("chip")
+        mention_chip = chip and chip.lower() not in product.get("model", "").lower()
+        fields["chip_clause"] = f" {chip}" if mention_chip else ""
+    if category == "ram":
+        timing = []
+        if product.get("cas_latency"):
+            timing.append(f"CL{product['cas_latency']}")
+        if product.get("voltage"):
+            timing.append(f"{product['voltage']}V")
+        fields["timing_clause"] = ", " + ", ".join(timing) if timing else ""
+    if category == "storage":
+        if product.get("read_mb_s") and product.get("write_mb_s"):
+            fields["speed_clause"] = f" rated at {product['read_mb_s']}MB/s read and {product['write_mb_s']}MB/s write"
+        else:
+            fields["speed_clause"] = ""
+    if category == "psu":
+        fields["efficiency_clause"] = f" {product['efficiency_rating']}" if product.get("efficiency_rating") else ""
+        fields["atx_clause"] = f" ({product['atx_version']})" if product.get("atx_version") else ""
     if category == "cpu":
         fields["igpu_clause"] = " Includes integrated graphics." if product.get("has_igpu") else " No integrated graphics."
     if category == "motherboard":
@@ -84,8 +102,15 @@ def build_product_document(product: dict) -> str:
 
     text = template.format(**fields)
 
-    price = f" Estimated price: {product.get('price_type', 'estimated')} ₱{product['price_php']:,.0f} PHP (source: {product['source']})."
-    text += price
+    if product.get("price_php") is None:
+        text += f" No retailer price yet (specs source: {product['source']})."
+    elif product.get("price_type") == "observed":
+        text += (
+            f" Price: ₱{product['price_php']:,.0f} PHP, the median of current Shopee/Lazada listings"
+            f" (specs source: {product['source']})."
+        )
+    else:
+        text += f" Estimated price: {product.get('price_type', 'estimated')} ₱{product['price_php']:,.0f} PHP (source: {product['source']})."
 
     tier = product.get("performance_tier")
     if tier and tier in TIER_BLURBS:
