@@ -5,6 +5,7 @@ score = w_perf * performance_fit
       + w_pref * preference_match
       + w_upgrade * upgrade_headroom
       - w_power * power_penalty
+      - w_unverified * unverified_checks
       - budget_overrun_penalty
 
 Weights are hand-tuned against the example requests in
@@ -14,6 +15,8 @@ tests/test_recommendation.py, not derived from data.
 from pydantic import BaseModel
 
 from app.recommendation.compatibility.build_components import BuildComponents
+from app.recommendation.compatibility.results import CompatibilityResult
+from app.recommendation.compatibility.rules import is_unverified
 from app.recommendation.compatibility.power import recommended_psu_watts
 from app.recommendation.scoring.tiers import needed_cpu_tier, needed_gpu_tier, performance_fit, tier_ordinal
 from app.schemas import BuildRequest
@@ -23,10 +26,13 @@ W_VALUE = 0.25
 W_PREF = 0.15
 W_UPGRADE = 0.15
 W_POWER = 0.10
+# Per compatibility check that couldn't run for lack of specs. Large enough
+# that a verified case or cooler wins unless the unverified one is much cheaper.
+W_UNVERIFIED = 0.05
 BUDGET_OVERRUN_SCALE = 2.0
 
 SMALL_FORM_FACTORS = {"Micro-ATX", "Mini-ITX"}
-MODERN_SOCKETS = {"AM5", "LGA1700"}
+MODERN_SOCKETS = {"AM5", "LGA1700", "LGA1851"}
 
 
 class ScoreBreakdown(BaseModel):
@@ -36,6 +42,7 @@ class ScoreBreakdown(BaseModel):
     preference_match: float
     upgrade_headroom: float
     power_penalty: float
+    unverified_penalty: float = 0.0
     budget_overrun_penalty: float
     total_price_php: float
 
@@ -101,7 +108,12 @@ def _budget_overrun_penalty(total_price: float, budget: float) -> float:
     return min(BUDGET_OVERRUN_SCALE * overrun_ratio**2, 5.0)
 
 
-def score_build(build: BuildComponents, request: BuildRequest, bands: dict[str, tuple[float, float]]) -> ScoreBreakdown:
+def score_build(
+    build: BuildComponents,
+    request: BuildRequest,
+    bands: dict[str, tuple[float, float]],
+    compatibility: list[CompatibilityResult] = (),
+) -> ScoreBreakdown:
     cpu_fit = performance_fit(build.cpu.get("performance_tier"), needed_cpu_tier(request))
     gpu_fit = performance_fit(build.gpu.get("performance_tier") if build.gpu else None, needed_gpu_tier(request))
     perf_fit = (cpu_fit + gpu_fit) / 2 if build.gpu else cpu_fit
@@ -112,6 +124,7 @@ def score_build(build: BuildComponents, request: BuildRequest, bands: dict[str, 
     power_pen = _power_penalty(build, request)
     total_price = _total_price(build)
     overrun_pen = _budget_overrun_penalty(total_price, request.budget_php)
+    unverified_pen = W_UNVERIFIED * sum(1 for r in compatibility if is_unverified(r))
 
     total = (
         W_PERF * perf_fit
@@ -119,6 +132,7 @@ def score_build(build: BuildComponents, request: BuildRequest, bands: dict[str, 
         + W_PREF * pref
         + W_UPGRADE * upgrade
         - W_POWER * power_pen
+        - unverified_pen
         - overrun_pen
     )
 
@@ -129,6 +143,7 @@ def score_build(build: BuildComponents, request: BuildRequest, bands: dict[str, 
         preference_match=pref,
         upgrade_headroom=upgrade,
         power_penalty=power_pen,
+        unverified_penalty=unverified_pen,
         budget_overrun_penalty=overrun_pen,
         total_price_php=total_price,
     )

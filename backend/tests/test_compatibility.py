@@ -7,8 +7,11 @@ from tests.conftest import (
     AM4_CPU,
     AM5_CPU,
     AM5_DDR5_MOBO,
+    CASE_ATX,
+    COOLER_UNIVERSAL_AIR,
     DDR4_RAM,
     DDR5_RAM,
+    GPU,
     LGA1700_CPU,
     LGA1700_MOBO,
     PSU_250,
@@ -111,3 +114,51 @@ def test_storage_exceeding_m2_slots_is_incompatible():
 def test_lga1700_cpu_with_lga1700_motherboard_is_compatible():
     result = rules.check_cpu_motherboard(LGA1700_CPU, LGA1700_MOBO)
     assert result.compatible is True
+
+
+def test_case_without_listed_clearance_warns_instead_of_blocking():
+    case = {**copy.deepcopy(CASE_ATX), "max_gpu_length_mm": None}
+    result = rules.check_gpu_case(copy.deepcopy(GPU), case)
+    assert result.compatible is True
+    assert result.severity == "warning"
+    assert rules.is_unverified(result)
+    assert "couldn't be checked" in result.message
+
+
+def test_cooler_without_listed_sockets_warns_instead_of_blocking():
+    cooler = {**copy.deepcopy(COOLER_UNIVERSAL_AIR), "socket_support": []}
+    result = rules.check_cooler_cpu(cooler, copy.deepcopy(AM5_CPU))
+    assert result.compatible is True and rules.is_unverified(result)
+    assert "AM5" in result.message
+
+
+def test_air_cooler_without_height_or_case_without_clearance_is_unverified():
+    no_height = {**copy.deepcopy(COOLER_UNIVERSAL_AIR), "height_mm": None}
+    no_clearance = {**copy.deepcopy(CASE_ATX), "max_cooler_height_mm": None}
+    assert rules.is_unverified(rules.check_cooler_case(no_height, copy.deepcopy(CASE_ATX)))
+    assert rules.is_unverified(rules.check_cooler_case(copy.deepcopy(COOLER_UNIVERSAL_AIR), no_clearance))
+
+
+def test_aio_in_case_without_listed_radiator_mounts_is_unverified():
+    aio = {"manufacturer": "ARCTIC", "model": "Liquid Freezer III 360", "type": "aio",
+           "socket_support": ["AM5"], "radiator_mm": 360}
+    case = {**copy.deepcopy(CASE_ATX), "radiator_support": {}}
+    assert rules.is_unverified(rules.check_cooler_case(aio, case))
+
+
+def test_unverified_checks_lower_the_build_score(base_build_kwargs):
+    from app.recommendation.scoring.scoring import W_UNVERIFIED, score_build
+    from app.schemas import BuildRequest, UseCase
+
+    priced = {role: [{**s, "price_php": 2000} for s in part] if role == "storage" else {**part, "price_php": 5000}
+              for role, part in base_build_kwargs.items()}
+    build = BuildComponents(**priced)
+    request = BuildRequest(budget_php=70000, use_case=[UseCase.gaming])
+    bands = {"cpu": (10000, 15000)}
+    verified = CompatibilityChecker.run(build)
+    unverified_build = BuildComponents(**{**priced, "case": {**priced["case"], "max_gpu_length_mm": None}})
+    unverified = CompatibilityChecker.run(unverified_build)
+
+    assert not CompatibilityChecker.has_blocking_issue(unverified)
+    gap = score_build(build, request, bands, verified).total - score_build(unverified_build, request, bands, unverified).total
+    assert abs(gap - W_UNVERIFIED) < 1e-9

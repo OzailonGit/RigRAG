@@ -1,0 +1,978 @@
+{
+  "source": "Case clearances for the most popular cases in the combined datasets, which don't list them. Values come from each manufacturer's spec page, or from retailer and review listings that agree with each other when the manufacturer page couldn't be read (source_kind says which). Where a clearance depends on configuration, the GPU length is the figure with a front radiator installed unless the top mount takes a 360mm radiator, and the cooler height is the lowest listed.",
+  "cases": [
+    {
+      "manufacturer": "Lian Li",
+      "model": "Lancool 207",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 375,
+      "max_cooler_height_mm": 180,
+      "radiator_support": {
+        "top": 360
+      },
+      "source": "https://lian-li.com/product/lancool-207/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "Lancool 216",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 392,
+      "max_cooler_height_mm": 180,
+      "radiator_support": {
+        "front": 360,
+        "top": 360,
+        "bottom": 240
+      },
+      "source": "https://lian-li.com/product/lancool-216/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "Lancool 215",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 370,
+      "max_cooler_height_mm": 166,
+      "radiator_support": {
+        "front": 360,
+        "top": 280
+      },
+      "source": "https://lian-li.com/product/lancool-215/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "Lancool III",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 435,
+      "max_cooler_height_mm": 187,
+      "radiator_support": {
+        "front": 420,
+        "top": 420,
+        "bottom": 360
+      },
+      "source": "https://lian-li.com/product/lancool-iii/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "O11 Vision",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 430,
+      "max_cooler_height_mm": 174,
+      "radiator_support": {
+        "side": 360,
+        "bottom": 360,
+        "rear": 240
+      },
+      "source": "https://lian-li.com/product/o11-vision/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "O11 Air Mini",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 362,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "top": 280,
+        "side": 240,
+        "bottom": 280,
+        "front": 280
+      },
+      "source": "https://lian-li.com/product/o11-air-mini/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "Lancool 217",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 380,
+      "max_cooler_height_mm": 180,
+      "radiator_support": {
+        "top": 360
+      },
+      "source": "https://lian-li.com/product/lancool-217/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Lian Li",
+      "model": "A3-mATX",
+      "aliases": [],
+      "form_factor_support": [
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 415,
+      "max_cooler_height_mm": 165,
+      "radiator_support": {
+        "top": 360,
+        "side": 360,
+        "bottom": 240
+      },
+      "source": "https://lian-li.com/product/a3-matx/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "NZXT",
+      "model": "H6 Flow",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 365,
+      "max_cooler_height_mm": 163,
+      "radiator_support": {
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://nzxt.com/product/h6-flow",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "NZXT",
+      "model": "H9 Flow (2025)",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 410,
+      "max_cooler_height_mm": 165,
+      "radiator_support": {
+        "front": 420,
+        "top": 420,
+        "bottom": 360,
+        "rear": 120
+      },
+      "source": "https://nzxt.com/product/h9-flow",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "NZXT",
+      "model": "H5 Flow (2024)",
+      "aliases": [
+        "H5 Flow RGB (2024)"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 410,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 360,
+        "top": 240
+      },
+      "source": "https://nzxt.com/product/h5-flow",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "NZXT",
+      "model": "H7 Flow (2024)",
+      "aliases": [
+        "H7 Flow RGB (2024)"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 410,
+      "max_cooler_height_mm": 185,
+      "radiator_support": {
+        "front": 420,
+        "top": 360,
+        "rear": 140
+      },
+      "source": "https://nzxt.com/product/h7-flow",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "4000D Airflow",
+      "aliases": [
+        "4000D",
+        "iCUE 4000D RGB AIRFLOW"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 340,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 360,
+        "top": 280,
+        "rear": 120
+      },
+      "source": "https://www.corsair.com/us/en/p/pc-cases/cc-9011200-ww/4000d-airflow-tempered-glass-mid-tower-atx-case-black-cc-9011200-ww",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "3000D AIRFLOW",
+      "aliases": [
+        "3000D RGB AIRFLOW"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 360,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 360,
+        "top": 280,
+        "rear": 120
+      },
+      "source": "https://www.corsair.com/us/en/p/pc-cases/cc-9011251-ww/3000d-airflow-tempered-glass-mid-tower-black-cc-9011251-ww",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "5000D AIRFLOW",
+      "aliases": [
+        "iCUE 5000D RGB AIRFLOW"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 400,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 360,
+        "side": 360,
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://www.corsair.com/us/en/p/pc-cases/cc-9011210-ww/5000d-airflow-tempered-glass-mid-tower-atx-pc-case-black-cc-9011210-ww",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "2500X",
+      "aliases": [],
+      "form_factor_support": [
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 400,
+      "max_cooler_height_mm": 180,
+      "radiator_support": {
+        "top": 360,
+        "bottom": 360,
+        "side": 240,
+        "rear": 120
+      },
+      "source": "https://www.corsair.com/us/en/p/pc-cases/cc-9011265-ww/3500x-tempered-glass-mid-tower-pc-case-black-cc-9011265-ww",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "North",
+      "aliases": [
+        "North Momentum Edition"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 300,
+      "max_cooler_height_mm": 145,
+      "radiator_support": {
+        "front": 360,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://www.fractal-design.com/products/cases/north/north/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "Pop Air",
+      "aliases": [
+        "Pop Air RGB"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 405,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 280,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://www.fractal-design.com/products/cases/pop/pop-air/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "Meshify 2 Compact",
+      "aliases": [
+        "Meshify 2 Compact RGB",
+        "Meshify 2 Compact Lite RGB"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 341,
+      "max_cooler_height_mm": 169,
+      "radiator_support": {
+        "front": 360,
+        "top": 240,
+        "bottom": 120,
+        "rear": 120
+      },
+      "source": "https://www.fractal-design.com/products/cases/meshify/meshify-2-compact/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "Focus 2",
+      "aliases": [
+        "Focus 2 RGB"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 405,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 360,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://www.fractal-design.com/products/cases/focus/focus-2/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "Torrent",
+      "aliases": [
+        "Torrent RGB"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 461,
+      "max_cooler_height_mm": 188,
+      "radiator_support": {
+        "front": 420,
+        "bottom": 420,
+        "rear": 140
+      },
+      "source": "https://www.fractal-design.com/products/cases/torrent/torrent/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "Pop Mini Air",
+      "aliases": [],
+      "form_factor_support": [
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 365,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "front": 240,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://www.fractal-design.com/products/cases/pop/pop-mini-air/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Fractal Design",
+      "model": "Define 7 Compact",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 341,
+      "max_cooler_height_mm": 169,
+      "radiator_support": {
+        "front": 360,
+        "top": 240,
+        "bottom": 120,
+        "rear": 120
+      },
+      "source": "https://www.fractal-design.com/products/cases/define/define-7-compact/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "AIR 903 MAX",
+      "aliases": [
+        "AIR 903 BASE"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 400,
+      "max_cooler_height_mm": 180,
+      "radiator_support": {
+        "front": 360,
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://lanoc.org/news/hardware-news/montech-launches-the-ultimate-cooling-beast-air-903-max-and-air-903-base",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "AIR 100 ARGB",
+      "aliases": [
+        "AIR 100 LITE"
+      ],
+      "form_factor_support": [
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 330,
+      "max_cooler_height_mm": 161,
+      "radiator_support": {
+        "front": 280,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://www.montechpc.com/air-100-ARGB",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "SKY TWO",
+      "aliases": [
+        "SKY TWO GX"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 400,
+      "max_cooler_height_mm": 168,
+      "radiator_support": {
+        "top": 360,
+        "side": 240,
+        "rear": 120
+      },
+      "source": "https://www.watercoolinguk.co.uk/product/montech-sky-two-mid-tower-white/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "KING 95 PRO",
+      "aliases": [
+        "KING 95"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 420,
+      "max_cooler_height_mm": 175,
+      "radiator_support": {
+        "top": 360,
+        "side": 240
+      },
+      "source": "https://www.paradigit.ie/montech-king-95-pro-white/80070869/product",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "XR",
+      "aliases": [
+        "XR Wood"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 420,
+      "max_cooler_height_mm": 175,
+      "radiator_support": {
+        "top": 360,
+        "side": 240,
+        "rear": 120
+      },
+      "source": "https://www.digitec.ch/en/s1/product/montech-xr-atx-matx-mini-itx-pc-case-47334624",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "CH560",
+      "aliases": [
+        "CH560 DIGITAL"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 380,
+      "max_cooler_height_mm": 175,
+      "radiator_support": {
+        "front": 360,
+        "top": 360,
+        "rear": 140
+      },
+      "source": "https://deepcool.com/products/Cases/CH560-New-Generation-of-Airflow-Case/2023/17101.shtml",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "CH370",
+      "aliases": [],
+      "form_factor_support": [
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 320,
+      "max_cooler_height_mm": 165,
+      "radiator_support": {
+        "front": 360,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://www.dateks.lv/en/cenas/korpusi/904223-deepcool-ch370-tempered-glass-black",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "CC560 V2",
+      "aliases": [
+        "CC560 ARGB V2"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 370,
+      "max_cooler_height_mm": 165,
+      "radiator_support": {
+        "front": 360,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://deepcool.com/products/Cases/CC560-V2-Mid-Tower-Airflow-Case/2023/17782.shtml",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "CH510",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 380,
+      "max_cooler_height_mm": 175,
+      "radiator_support": {
+        "front": 360,
+        "top": 360,
+        "rear": 140
+      },
+      "source": "https://www.deepcool.com/products/Cases/fulltowercases/CH510-Mid-Tower-ATX-Case/2022/15764.shtml",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Phanteks",
+      "model": "XT PRO",
+      "aliases": [
+        "XT PRO ULTRA"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 415,
+      "max_cooler_height_mm": 184,
+      "radiator_support": {
+        "top": 360,
+        "front": 240,
+        "rear": 120
+      },
+      "source": "https://phanteks.com/?p=15854",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Phanteks",
+      "model": "NV7",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 450,
+      "max_cooler_height_mm": 185,
+      "radiator_support": {
+        "top": 360,
+        "side": 360,
+        "bottom": 360,
+        "rear": 240
+      },
+      "source": "https://www.phanteks.com/assets/manuals/NV7_Manual_v1.0.pdf",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Phanteks",
+      "model": "XT View",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 415,
+      "max_cooler_height_mm": 184,
+      "radiator_support": {
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://phanteks.com/?p=16049",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "MasterBox TD500 Mesh V2",
+      "aliases": [],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 410,
+      "max_cooler_height_mm": 165,
+      "radiator_support": {
+        "front": 360,
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://overclockers.co.uk/cooler-master-masterbox-td500-mesh-v2-mid-tower-e-atx-case-white-tempered-ca-38n-cm.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "MasterBox 520 Mesh",
+      "aliases": [
+        "Masterbox 520",
+        "MasterBox MB520 ARGB"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 410,
+      "max_cooler_height_mm": 165,
+      "radiator_support": {
+        "front": 360,
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://www.guru3d.com/news-story/cooler-master-masterbox-520-mesh-blackout-edition-high-airflow-middle-tower-pc-case.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "be quiet!",
+      "model": "Pure Base 500DX",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 369,
+      "max_cooler_height_mm": 190,
+      "radiator_support": {
+        "front": 360,
+        "top": 240
+      },
+      "source": "https://www.pbtech.com/pacific/product/CHABQT5007/about",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Antec",
+      "model": "C8",
+      "aliases": [
+        "C8 ARGB",
+        "C8 Wood",
+        "C8 Curve Wood"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 440,
+      "max_cooler_height_mm": 175,
+      "radiator_support": {
+        "top": 360,
+        "side": 360,
+        "bottom": 360,
+        "rear": 120
+      },
+      "source": "https://www.digitec.ch/en/s1/product/antec-c8-atx-itx-matx-pc-case-47482166",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "HYTE",
+      "model": "Y60",
+      "aliases": [
+        "Y60 Snow White"
+      ],
+      "form_factor_support": [
+        "E-ATX",
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 375,
+      "max_cooler_height_mm": 160,
+      "radiator_support": {
+        "side": 280,
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://www.guru3d.com/review/hyte-y60-chassis-review/page-2/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Jonsbo",
+      "model": "D41 MESH",
+      "aliases": [
+        "D41 MESH SCREEN",
+        "D41 STD",
+        "D41 STD SCREEN"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 330,
+      "max_cooler_height_mm": 168,
+      "radiator_support": {
+        "top": 360,
+        "bottom": 360,
+        "front": 120
+      },
+      "source": "https://www.watercoolinguk.co.uk/product/jonsbo-d41-mesh-atx-case-tempered-glass-white/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Asus",
+      "model": "Prime AP201",
+      "aliases": [],
+      "form_factor_support": [
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 338,
+      "max_cooler_height_mm": 170,
+      "radiator_support": {
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://www.asus.com/me-en/motherboards-components/cases/prime/asus-prime-ap201-tempered-glass-microatx-case/techspec/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Asus",
+      "model": "TUF Gaming GT502",
+      "aliases": [
+        "TUF Gaming GT502 Horizon",
+        "TUF Gaming GT502 Horizon ARGB",
+        "TUF Gaming GT502 Plus"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 400,
+      "max_cooler_height_mm": 163,
+      "radiator_support": {
+        "top": 360,
+        "rear": 120
+      },
+      "source": "https://www.asus.com/uk/motherboards-components/cases/tuf-gaming/tuf-gaming-gt502/techspec/",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Deepcool",
+      "model": "MATREXX 55 MESH ADD-RGB 4F",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 370,
+      "max_cooler_height_mm": 160,
+      "radiator_support": {
+        "front": 360,
+        "top": 280,
+        "rear": 120
+      },
+      "source": "https://www.bhphotovideo.com/c/product/1592990-REG/deepcool_matrexx_55_mesh_mid_tower.html",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Montech",
+      "model": "X3 Mesh",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 305,
+      "max_cooler_height_mm": 160,
+      "radiator_support": {},
+      "source": "https://www.montechpc.com/x3-mesh",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "MSI",
+      "model": "MAG FORGE 120A AIRFLOW",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 330,
+      "max_cooler_height_mm": 160,
+      "radiator_support": {
+        "front": 240,
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://storage-asset.msi.com/datasheet/pcc/uk/MAG-FORGE-120A-AIRFLOW.pdf",
+      "source_kind": "manufacturer"
+    },
+    {
+      "manufacturer": "Corsair",
+      "model": "6500X",
+      "aliases": [
+        "iCUE LINK 6500X RGB"
+      ],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 400,
+      "max_cooler_height_mm": 190,
+      "radiator_support": {
+        "side": 360,
+        "top": 360,
+        "rear": 140
+      },
+      "source": "https://hwbusters.com/chassis/corsair-6500x-case-review-thermal-noise-damping-output-evaluation/",
+      "source_kind": "retailer"
+    },
+    {
+      "manufacturer": "Cooler Master",
+      "model": "MasterBox Q500L",
+      "aliases": [],
+      "form_factor_support": [
+        "ATX",
+        "Micro-ATX",
+        "Mini-ITX"
+      ],
+      "max_gpu_length_mm": 270,
+      "max_cooler_height_mm": 160,
+      "radiator_support": {
+        "top": 240,
+        "rear": 120
+      },
+      "source": "https://pcper.com/2019/04/cooler-master-masterbox-q500l-compact-atx-case-review/",
+      "source_kind": "retailer"
+    }
+  ]
+}

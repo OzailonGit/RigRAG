@@ -4,10 +4,29 @@ Each function inspects the concrete part dicts (see build_components.py)
 and returns a single CompatibilityResult. One function per part
 relationship keeps each rule independently testable against known-good
 and known-bad combinations.
+
+When a spec a rule needs is unknown (a case with no listed clearance, a
+cooler with no listed sockets), the rule can't pass or fail the pair. It
+returns a warning whose rule name ends in UNVERIFIED_SUFFIX instead, so the
+user is told what to check and scoring can prefer verified parts.
 """
 
 from app.recommendation.compatibility.power import recommended_psu_watts, round_up_to_common_tier
 from app.recommendation.compatibility.results import CompatibilityResult
+
+UNVERIFIED_SUFFIX = "_unverified"
+
+
+def _part_name(part: dict) -> str:
+    return f"{part['manufacturer']} {part['model']}"
+
+
+def _unverified(rule: str, message: str) -> CompatibilityResult:
+    return CompatibilityResult(rule=rule + UNVERIFIED_SUFFIX, compatible=True, severity="warning", message=message)
+
+
+def is_unverified(result: CompatibilityResult) -> bool:
+    return result.rule.endswith(UNVERIFIED_SUFFIX)
 
 
 def check_cpu_motherboard(cpu: dict, motherboard: dict) -> CompatibilityResult:
@@ -106,6 +125,12 @@ def check_gpu_case(gpu: dict | None, case: dict) -> CompatibilityResult:
             severity="info",
             message="No discrete GPU selected; clearance check not applicable.",
         )
+    if case.get("max_gpu_length_mm") is None:
+        return _unverified(
+            "gpu_case_clearance",
+            f"{_part_name(case)} doesn't list a GPU clearance, so the {gpu['length_mm']}mm "
+            f"{_part_name(gpu)} couldn't be checked. Confirm the case fits it before buying.",
+        )
     if gpu["length_mm"] > case["max_gpu_length_mm"]:
         return CompatibilityResult(
             rule="gpu_case_clearance",
@@ -125,6 +150,12 @@ def check_gpu_case(gpu: dict | None, case: dict) -> CompatibilityResult:
 
 
 def check_cooler_cpu(cooler: dict, cpu: dict) -> CompatibilityResult:
+    if not cooler.get("socket_support"):
+        return _unverified(
+            "cooler_cpu_socket",
+            f"{_part_name(cooler)} doesn't list its supported sockets, so {cpu['socket']} support "
+            f"couldn't be checked. Confirm it ships with a {cpu['socket']} mounting kit.",
+        )
     if cpu["socket"] not in cooler["socket_support"]:
         return CompatibilityResult(
             rule="cooler_cpu_socket",
@@ -155,7 +186,14 @@ def check_cooler_cpu(cooler: dict, cpu: dict) -> CompatibilityResult:
 
 def check_cooler_case(cooler: dict, case: dict) -> CompatibilityResult:
     if cooler["type"] == "air":
-        if cooler.get("height_mm") and cooler["height_mm"] > case["max_cooler_height_mm"]:
+        if cooler.get("height_mm") is None or case.get("max_cooler_height_mm") is None:
+            missing = _part_name(cooler) + "'s height" if cooler.get("height_mm") is None else _part_name(case) + "'s cooler clearance"
+            return _unverified(
+                "cooler_case_clearance",
+                f"{missing} isn't listed, so the cooler couldn't be checked against the case. "
+                f"Compare the two before buying.",
+            )
+        if cooler["height_mm"] > case["max_cooler_height_mm"]:
             return CompatibilityResult(
                 rule="cooler_case_clearance",
                 compatible=False,
@@ -168,7 +206,13 @@ def check_cooler_case(cooler: dict, case: dict) -> CompatibilityResult:
     elif cooler["type"] == "aio":
         radiator = cooler.get("radiator_mm")
         supported_sizes = [v for v in case.get("radiator_support", {}).values() if v]
-        if radiator and not any(radiator <= size for size in supported_sizes):
+        if not radiator or not supported_sizes:
+            return _unverified(
+                "cooler_case_clearance",
+                f"The radiator size or {_part_name(case)}'s radiator mounts aren't listed, so the "
+                f"AIO couldn't be checked against the case. Confirm there's a mount for it before buying.",
+            )
+        if not any(radiator <= size for size in supported_sizes):
             return CompatibilityResult(
                 rule="cooler_case_clearance",
                 compatible=False,

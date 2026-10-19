@@ -1,7 +1,8 @@
 """Turns a structured product dict into the natural-language document that
 gets embedded for semantic search.
 
-Only facts present in the structured row are stated as fact. Use-case
+Only facts present in the structured row are stated as fact, and fields
+listed in `assumed_fields` are given as minimums ("at least 1 M.2 slot"). Use-case
 framing derived from `performance_tier` is hedged as an estimated tier
 rather than presented as a benchmark result.
 """
@@ -21,7 +22,7 @@ CATEGORY_TEMPLATES = {
     "motherboard": (
         "{manufacturer} {model} is a {form_factor} motherboard for {socket} socket CPUs "
         "with the {chipset} chipset, supporting {ram_type} RAM up to {max_ram_gb}GB across "
-        "{ram_slots} slots, {m2_slots} M.2 slot(s), and {sata_ports} SATA port(s)."
+        "{ram_slots} slots, {m2_clause}{m2_slots} M.2 slot(s), and {sata_clause}{sata_ports} SATA port(s)."
         "{wifi_clause}"
     ),
     "ram": (
@@ -36,13 +37,11 @@ CATEGORY_TEMPLATES = {
         "{connector_clause}"
     ),
     "cooler": (
-        "{manufacturer} {model} is a{aio_clause} CPU cooler supporting sockets: {socket_support}."
+        "{manufacturer} {model} is a{aio_clause} CPU cooler{socket_clause}."
         "{height_clause}"
     ),
     "case": (
-        "{manufacturer} {model} is a case supporting {form_factor_support} motherboards, "
-        "clearing GPUs up to {max_gpu_length_mm}mm long and coolers up to "
-        "{max_cooler_height_mm}mm tall."
+        "{manufacturer} {model} is a case supporting {form_factor_support} motherboards{clearance_clause}."
     ),
 }
 
@@ -86,12 +85,19 @@ def build_product_document(product: dict) -> str:
             wifi_bits.append("Wi-Fi")
         if product.get("bluetooth"):
             wifi_bits.append("Bluetooth")
+        assumed = product.get("assumed_fields") or []
+        fields["m2_clause"] = "at least " if "m2_slots" in assumed else ""
+        fields["sata_clause"] = "at least " if "sata_ports" in assumed else ""
         fields["wifi_clause"] = f" Includes {' and '.join(wifi_bits)}." if wifi_bits else " No built-in Wi-Fi/Bluetooth."
     if category == "psu":
         fields["connector_clause"] = (
             " Supports 12VHPWR/12V-2x6." if product.get("supports_12vhpwr") else ""
         )
     if category == "cooler":
+        sockets = product.get("socket_support")
+        fields["socket_clause"] = (
+            f" supporting sockets: {sockets}" if sockets else "; its supported sockets aren't listed by any source"
+        )
         fields["aio_clause"] = "n AIO liquid" if product.get("type") == "aio" else "n air"
         if product.get("type") == "aio" and product.get("radiator_mm"):
             fields["height_clause"] = f" Radiator size: {product['radiator_mm']}mm."
@@ -99,6 +105,14 @@ def build_product_document(product: dict) -> str:
             fields["height_clause"] = f" Height: {product['height_mm']}mm."
         else:
             fields["height_clause"] = ""
+
+    if category == "case":
+        gpu, cooler = product.get("max_gpu_length_mm"), product.get("max_cooler_height_mm")
+        fields["clearance_clause"] = (
+            f", clearing GPUs up to {gpu}mm long and coolers up to {cooler}mm tall"
+            if gpu is not None and cooler is not None
+            else "; its GPU and cooler clearances aren't listed by any source"
+        )
 
     text = template.format(**fields)
 

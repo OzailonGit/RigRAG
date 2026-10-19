@@ -10,6 +10,13 @@ Return ONLY a single JSON object matching this schema (no prose, no markdown fen
 
 {_SCHEMA_JSON}
 
+Also include a top-level "message_kind" field in the same object, set to exactly one of:
+- "build_request": the user asks for a build, gives or changes requirements as a request ("70k gaming PC", "make it 60k", "switch to Intel"), or answers a question the assistant asked about them, including answers without a value ("not sure", "you pick", "go ahead").
+- "followup": the user asks about the current build or about PC hardware in general, including what-if questions ("why this GPU?", "what if I add 10k?", "is the 7600 better than the 12400?").
+- "small_talk": greetings, thanks, goodbyes, or questions about what you can do, with no build content.
+- "off_topic": anything not about PCs or PC hardware (movies, homework, coding help, other products).
+For "small_talk" and "off_topic", return the CURRENT state unchanged.
+
 Rules:
 - You are given the CURRENT structured state (accumulated from earlier turns in the conversation) and the user's NEWEST message. Return the full, updated state: copy every field from the current state unchanged unless the newest message clearly changes it.
 - Only set a field if the user actually said something that implies it. Never invent a budget, resolution, or brand the user didn't mention or hasn't mentioned in an earlier turn.

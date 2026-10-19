@@ -15,6 +15,15 @@ class UseCase(str, enum.Enum):
     mixed = "mixed"
 
 
+class MessageKind(str, enum.Enum):
+    """What a chat message is asking for; decides which path a turn takes."""
+
+    build_request = "build_request"  # wants a build, or gives/answers build requirements
+    followup = "followup"            # asks about the current build or PC parts
+    small_talk = "small_talk"        # greetings, thanks, "what can you do"
+    off_topic = "off_topic"          # anything unrelated to PCs
+
+
 class Resolution(str, enum.Enum):
     r1080p = "1080p"
     r1440p = "1440p"

@@ -68,7 +68,7 @@ class RecommendationEngine:
             compatibility = CompatibilityChecker.run(components)
             if CompatibilityChecker.has_blocking_issue(compatibility):
                 continue  # re-verify on the final build; never trust a stale check
-            score = score_build(components, request, bands)
+            score = score_build(components, request, bands, compatibility)
             scored.append(ScoredBuild(label="Recommended", components=components, score=score, compatibility=compatibility))
 
         if not scored:
