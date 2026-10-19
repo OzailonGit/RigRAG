@@ -8,7 +8,7 @@ Most "AI PC builder" demos let a language model pick the parts, which means they
 
 1. **Parse the request.** The LLM turns the message into a `BuildRequest` (budget, use case, resolution, brand preferences, and so on). If the model is unavailable or returns something invalid, a rule-based parser takes over.
 2. **Find candidates.** SQL filters handle hard constraints like price and brand. Semantic search over Qdrant handles fuzzy ones like "quiet" or "good for 1440p". Every result is re-read from Postgres, so a stale vector entry can never leak an old price.
-3. **Build and score.** The budget is split into soft per-category bands. A beam search assembles full builds, dropping incompatible combinations as it goes, and each finished build is scored on fit to the use case, value, preferences, upgrade headroom, and power.
+3. **Build and score.** The budget is split into soft per-category bands. A beam search assembles full builds, dropping incompatible combinations as it goes, and each finished build is scored on fit to the use case, measured speed, performance per peso, preferences, upgrade headroom, and power. CPU and GPU speed come from published benchmarks (Tom's Hardware's hierarchies): GPUs by rasterization at the requested resolution, CPUs by gaming or multithreaded score depending on the use case, and their tiers follow from those scores. A build that uses less than 85% of the budget is retried with higher CPU and GPU tiers, and the reply says why when budget is still left over. Alternatives are separate runs: a build at least 5% (and ₱2,000) cheaper, the next tier up when it costs up to 20% over budget, and a noticeably more upgradeable one.
 4. **Check compatibility.** Rules for CPU socket, RAM type, case clearance, and PSU headroom (25% margin) run once while searching and again on the final build.
 5. **Explain.** The LLM gets a compact summary of the chosen build and writes the explanation. It never sees the raw catalog, so it has nothing to make specs up from.
 
@@ -39,7 +39,8 @@ pip install -r requirements.txt
 python -m alembic upgrade head
 python -m app.ingestion.seed             # load data/seed/*.json into Postgres
 python -m app.ingestion.datasets.build   # optional: download and merge the public datasets
-python -m app.ingestion.import_datasets  # optional: add them to the catalog (~18,800 parts)
+python -m app.ingestion.import_datasets  # optional: add them to the catalog (~25,000 parts)
+python -m app.ingestion.import_benchmarks  # CPU and GPU benchmark scores (import_datasets also runs this)
 python -m app.ingestion.embed_and_index  # embed products and index them in Qdrant
 
 uvicorn app.main:app --reload
@@ -104,13 +105,14 @@ That adds about 18,800 parts on current platforms (AM4, AM5, LGA1200, LGA1700, L
 - **What's skipped.** Server and laptop parts, DDR3 and older, SFX PSUs, M.2 SATA drives, and GPUs on chips missing from `gpu_chips.json`.
 - **Prices.** They're estimates converted from the PCPartPicker listings in the datasets. The French euro price (May 2026) is used when there is one, otherwise the US dollar price (July 2025), and both are adjusted to Philippine VAT. A listing more than 1.5x the part's launch MSRP is dropped, since that's usually leftover stock.
 - **Re-runs.** Specs and estimated prices update in place. A price observed from Shopee or Lazada is never overwritten.
-- **Links.** Each part links to its PCPartPicker product page, and seed or Icecat parts borrow the link of a dataset row with the same name. A price refresh replaces the link with the Shopee or Lazada listing priced closest to the quoted median. Seed parts named generically (an "NVIDIA RTX 4060" rather than a specific card, or a RAM kit sold in several latencies) have no link.
+- **Links.** Each part links to its PCPartPicker product page, and seed or Icecat parts borrow the link of a dataset row with the same name. A price refresh replaces the link with the Shopee or Lazada listing priced closest to the quoted median. Links point at the main pcpartpicker.com site, rewritten from the French listings the datasets came from. Seed parts named generically (an "NVIDIA RTX 4060" rather than a specific card, or a RAM kit sold in several latencies) have no link. Generic seed GPUs are left out of builds once the catalog has priced cards on the same chip and memory size.
 - **Board slots.** No dataset lists SATA ports, and few list M.2 slots, so boards get a floor of 1 M.2 slot and 2 SATA ports. Those fields are recorded in `assumed_fields`, and the search documents say "at least".
 - **Cases and coolers.** The datasets don't list case clearances or cooler sockets. The 100 most popular models get them from `case_specs.json` and `cooler_specs.json` (below). Every other tower case and cooler is imported **unverified**. The rules can't check those parts, so they return a warning telling the user what to confirm instead of passing or failing them, and both the beam search and final scoring penalize each unverified check. Desktop, slim, and small ITX cases without verified specs are skipped, since they may need an SFX PSU.
 
 **Reference data you maintain by hand:**
 - `data/reference/gpu_chips.json`: TDP and tier for each GPU chip, since Icecat lists cards but not chip power. A card on a chip missing from this file is skipped until the chip is added.
 - `data/reference/spec_overrides.json`: corrections where Icecat disagrees with the manufacturer's spec page, each with its source URL.
+- `data/reference/benchmarks.json`: relative benchmark scores for 48 GPUs (rasterization at 1080p, 1440p, and 4K, as a percentage of the RTX 5090) and 95 CPUs (1080p gaming and multithreaded, as a percentage of the fastest CPU tested), from Tom's Hardware's GPU and CPU hierarchies. Older CPUs' gaming scores come from the previous hierarchy, rescaled by the CPUs both tables test, and are marked `rescaled`. `import_benchmarks` matches GPUs by chip and VRAM and CPUs by model (Intel F and KF chips share the plain chip's score). An unbenchmarked part gets the lowest score of its tier and is marked `benchmark_estimated`.
 - `data/reference/case_specs.json` and `cooler_specs.json`: GPU and cooler clearances, radiator mounts, supported sockets, and cooler heights for 48 cases and 52 coolers, matched to dataset rows by name and aliases. Each entry has a source URL and a `source_kind` of `manufacturer` or `retailer`; the second marks values taken from retailer or review listings that agreed with each other when the manufacturer page couldn't be read. Where a figure depends on configuration, the conservative one is used.
 
 ### Choosing an LLM
@@ -186,12 +188,13 @@ backend/app/
     ├── prices/           Shopee and Lazada clients, listing matching, price refresh
     ├── datasets/         Public dataset downloads and merging (build.py)
     ├── import_icecat.py  Catalog import from Open Icecat
+    ├── import_benchmarks.py
     └── import_datasets.py
                           Catalog import from the merged public datasets
 backend/alembic/          Database migrations
 backend/tests/            pytest suite
 data/seed/                Curated starter catalog
-data/reference/           GPU chip data and manual spec corrections
+data/reference/           GPU chip data, benchmark scores, and manual spec corrections
 docker/                   Docker Compose for Postgres, Qdrant, and the backend
 frontend/                 React + Vite chat UI (components in src/components/, tokens in src/index.css)
 ```
@@ -199,16 +202,17 @@ frontend/                 React + Vite chat UI (components in src/components/, t
 ## Known limitations
 
 - **Most cases and coolers are unverified.** Only the 100 models in the reference files (plus the seed parts) have checked clearances and sockets. Builds prefer them, but an unverified part can still win when it's much cheaper, and then the build carries a warning to check it by hand. 44 of the 100 reference entries come from retailer listings rather than the manufacturer's own page.
-- **Tiers are coarse on a big catalog.** All parts in a tier count as equal, and candidates are narrowed to the cheapest part at each tier and capacity. So a 4K build picks the cheapest "enthusiast" card (an RTX 3080 Ti) over an RTX 5080, and often comes in well under budget.
+- **Benchmarks cover most GPUs but few budget CPUs.** 865 of 905 priced GPUs have measured scores, but only about 40 of 149 priced CPUs have both a gaming and a multithreaded score: budget chips like the Ryzen 5 5600 and 7500F and the Core i3-12100F aren't in Tom's tables, so they get their tier's lowest score. The scores are relative to one review suite and one test system, so a CPU's gaming score reflects 1080p with an RTX 5090, where CPU differences are largest. See TODO.md.
+- **The top tier is still a ceiling.** A ₱600,000 gaming build stops at about ₱216,000 (a Ryzen 7 9850X3D and an RTX 5090): nothing faster exists, and the reply says so.
 - **Open Icecat skips some major brands.** Only brands that sponsor Open Icecat are included (ASUS, MSI, Gigabyte, Kingston, Samsung, be quiet!, and Seagate, among others). AMD, Intel, Corsair, Cooler Master, Noctua, Crucial, and Lian Li need paid Full Icecat, so CPUs still come from the seed catalog.
 - **Icecat dimensions aren't always right.** Icecat lists the ASUS DUAL-RTX4060-O8G as 200 mm long; ASUS says 227.2 mm. That's corrected in `spec_overrides.json`, but other errors like it may exist, and an under-reported length can let a card pass a case clearance check it should fail.
 - **The Lazada client is unverified.** Lazada only shows its affiliate API docs to approved apps, so the search endpoint and response field names in `prices/lazada.py` are best guesses until checked against the real docs. Request signing follows Lazada's standard scheme.
 - **Most prices are estimates.** Seed prices are curated estimates. Dataset prices are converted from European and US listings, so they don't reflect local markups or availability. Only prices refreshed from Shopee or Lazada (marked `observed`) are local quotes.
 - **Icecat terms apply.** Icecat data must be credited as "Specs Icecat" wherever it's shown (product `source` fields carry that credit), and their terms forbid using it to train AI models. Retrieval isn't training, but check the terms before relying on it.
-- **Performance tiers and scoring weights are hand-tuned.** They are not derived from benchmarks, so they are only used as a relative signal and never presented as FPS numbers.
+- **Scoring weights and tier thresholds are hand-tuned.** The scores are measured, but how much speed, value, and fit each count for, and where one tier ends, are judgment calls. Benchmark percentages are relative, never presented as FPS.
 - **Evaluation covers retrieval only.** Answer faithfulness isn't measured automatically. An LLM judge would add its own noise.
 - **The LLM can still misquote a number in its prose.** One explanation listed a ₱1,800 part as ₱11,800 even though the correct price was in its input. Structured fields like `total_price_php` are always the numbers to trust.
-- **Chat sessions live in memory.** They're lost on restart and not shared between workers. A production setup would keep them in Postgres or Redis.
+- **Chat sessions are never cleaned up.** Each one is a row in `chat_sessions`, kept indefinitely.
 - **Chat memory is short.** Only the last six messages are kept, with long replies cut to their first 800 characters, so "the GPU you mentioned earlier" can stop resolving after a few turns. Parts are only remembered when a follow-up answer names one it looked up, so a part the model names from its own knowledge can't be pinned.
 - **Local 8B models are slow on small GPUs.** On a 4GB laptop GPU, `qwen3:8b` splits across GPU and CPU and runs slowly. `qwen3:4b` or Groq is the practical choice there, and the hardware probe recommends accordingly.
 - **The Groq retry is minimal.** It retries a rate limit once, but there's no automatic fallback to another provider.

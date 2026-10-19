@@ -53,7 +53,7 @@ TEMPLATES: dict[UseCase, dict[str, float]] = {
 BAND_FLEX = 0.35  # candidates within +/-35% of a category's soft allocation are considered
 
 
-def _blended_template(use_cases: list[UseCase]) -> dict[str, float]:
+def blended_template(use_cases: list[UseCase]) -> dict[str, float]:
     templates = [TEMPLATES[uc] for uc in use_cases if uc in TEMPLATES] or [TEMPLATES[UseCase.general]]
     blended = {cat: sum(t[cat] for t in templates) / len(templates) for cat in CATEGORIES}
     total = sum(blended.values())
@@ -69,7 +69,7 @@ def allocate_budget(request: BuildRequest, pinned_spend: float = 0.0) -> dict[st
     (request.pinned_parts) are already bought at their own price:
     `pinned_spend` comes off the budget before the remainder is split.
     """
-    template = _blended_template(request.use_case)
+    template = blended_template(request.use_case)
 
     fixed = set(request.existing_parts) | set(request.pinned_parts)
     shopping_for = [c for c in CATEGORIES if c not in fixed]

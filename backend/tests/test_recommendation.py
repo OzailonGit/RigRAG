@@ -95,3 +95,79 @@ def test_pin_for_a_missing_part_returns_none(db):
 
     request = BuildRequest(budget_php=70000, use_case=[UseCase.gaming], pinned_parts={"cpu": uuid.uuid4()})
     assert RecommendationEngine.recommend(db, request) is None
+
+
+@pytest.mark.parametrize("budget", [50000, 120000, 600000])
+def test_budget_is_spent_or_the_reason_it_isnt_is_given(db, budget):
+    request = BuildRequest(budget_php=budget, use_case=[UseCase.gaming])
+    result = RecommendationEngine.recommend(db, request)
+
+    assert result is not None
+    total = result.primary.score.total_price_php
+    assert total <= budget
+    assert total >= 0.85 * budget or result.unspent_reason in ("top_tier", "next_tier_over_budget")
+
+
+def test_bigger_budget_buys_at_least_as_fast_a_build(db):
+    from app.recommendation.scoring.tiers import tier_ordinal
+
+    def tiers(budget):
+        components = RecommendationEngine.recommend(db, BuildRequest(budget_php=budget, use_case=[UseCase.gaming])).primary.components
+        return tier_ordinal(components.cpu["performance_tier"]), tier_ordinal(components.gpu["performance_tier"])
+
+    small, large = tiers(50000), tiers(300000)
+    assert large[0] >= small[0] and large[1] >= small[1]
+
+
+@pytest.mark.parametrize("budget", [40000, 70000, 120000])
+def test_alternatives_differ_meaningfully_from_the_primary(db, budget):
+    from app.recommendation.engine import MIN_SAVING_PHP, MIN_SAVING_SHARE
+
+    result = RecommendationEngine.recommend(db, BuildRequest(budget_php=budget, use_case=[UseCase.gaming], resolution=Resolution.r1440p))
+    price = result.primary.score.total_price_php
+    warnings = sum(1 for r in result.primary.compatibility if r.severity == "warning")
+    for alt in result.alternatives:
+        alt_price = alt.score.total_price_php
+        if alt.label == "Lower cost":
+            assert price - alt_price >= max(MIN_SAVING_PHP, price * MIN_SAVING_SHARE)
+            assert sum(1 for r in alt.compatibility if r.severity == "warning") <= warnings
+        elif alt.label == "Higher performance":
+            assert alt_price > price
+
+
+def test_owned_parts_are_not_counted_in_the_total(db):
+    owned_case = (db.query(Product).filter(Product.category == "case", Product.price_php.is_not(None))
+                  .order_by(Product.price_php.desc()).first())
+    request = BuildRequest(budget_php=60000, use_case=[UseCase.gaming], existing_parts={"case": owned_case.id})
+    result = RecommendationEngine.recommend(db, request)
+
+    components = result.primary.components
+    assert components.case.get("owned") is True
+    paid = [components.cpu, components.motherboard, components.ram, components.psu, components.cooler, *components.storage]
+    if components.gpu:
+        paid.append(components.gpu)
+    assert result.primary.score.total_price_php == pytest.approx(sum(float(p["price_php"]) for p in paid))
+
+
+def test_generic_seed_gpus_give_way_to_real_cards(db):
+    from app.models.gpu import Gpu
+
+    if db.query(Product).filter(Product.category == "gpu", Product.dataset_key.is_not(None)).count() == 0:
+        pytest.skip("Only the seed catalog is loaded")
+    for budget in (40000, 70000, 120000):
+        gpu = RecommendationEngine.recommend(db, BuildRequest(budget_php=budget, use_case=[UseCase.gaming])).primary.components.gpu
+        product = db.get(Product, gpu["id"])
+        chip_vendor = db.get(Gpu, gpu["id"]).chip_vendor
+        assert not (product.dataset_key is None and product.icecat_id is None
+                    and product.manufacturer.lower() == (chip_vendor or "").lower())
+
+
+def test_bigger_budget_buys_a_measurably_faster_build(db):
+    def speed(budget):
+        return RecommendationEngine.recommend(
+            db, BuildRequest(budget_php=budget, use_case=[UseCase.gaming], resolution=Resolution.r1440p)
+        ).primary.score.speed
+
+    speeds = [speed(b) for b in (50000, 80000, 120000, 200000)]
+    assert speeds == sorted(speeds)
+    assert speeds[-1] > speeds[0]

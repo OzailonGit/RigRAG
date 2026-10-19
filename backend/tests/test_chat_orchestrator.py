@@ -6,6 +6,7 @@ data, without depending on real model latency or output variance.
 """
 
 import json
+from decimal import Decimal
 
 import pytest
 
@@ -460,3 +461,76 @@ def test_tool_loop_answers_on_its_last_round_instead_of_giving_up(db):
 
     assert result.reply == "Answer from lookups."
     assert not llm.calls[-1]["tools"]
+
+
+
+def test_switching_to_a_part_that_fits_keeps_the_rest_of_the_build(db):
+    from app.models.product import Category
+    from app.services import parts_service
+
+    session = _session_with_build(db)
+    before = session.last_result.primary.components
+    # Same socket, no hotter, and still on budget: a swap the rest of the build fits.
+    room = 70000 - session.last_result.primary.score.total_price_php
+    cheaper = None
+    for product in db.query(Product).filter(Product.category == Category.cpu, Product.price_php.is_not(None)):
+        part = parts_service.get_part(db, product.id)
+        if (part["socket"] == before.cpu["socket"] and part["id"] != before.cpu["id"]
+                and part["price_php"] <= before.cpu["price_php"] + Decimal(str(room))
+                and part["tdp_w"] <= before.cpu["tdp_w"]):
+            cheaper = part
+            break
+    if cheaper is None:
+        pytest.skip("No other CPU on the same socket fits the rest of the build")
+    session.remember_parts([{"id": str(cheaper["id"]), "category": "cpu", "name": cheaper["model"], "price_php": float(cheaper["price_php"])}])
+
+    llm = FakeLLMProvider(intent_json={**_state(70000, pinned_parts={"cpu": str(cheaper["id"])}), "message_kind": "build_request"})
+    after = handle_chat_message(db, llm, session, "Switch to it").build.primary.components
+
+    assert after.cpu["id"] == cheaper["id"]
+    for role in ("gpu", "motherboard", "ram", "psu", "cooler", "case"):
+        assert getattr(after, role)["id"] == getattr(before, role)["id"], role
+
+
+def test_followups_cannot_run_the_engine_themselves(db):
+    session = _session_with_build(db)
+    llm = FakeLLMProvider(intent_json={**_state(70000), "message_kind": "followup"})
+
+    handle_chat_message(db, llm, session, "What would a 100k build look like?")
+
+    offered = {t["function"]["name"] for c in llm.calls if c["tools"] for t in c["tools"]}
+    assert offered and "generate_build" not in offered
+
+
+def test_reply_explains_unspent_budget():
+    from app.llm.chat_orchestrator import _unspent_note
+    from app.recommendation.engine import BuildResult
+
+    result = BuildResult.model_construct(
+        primary=type("P", (), {"score": type("S", (), {"total_price_php": 204940.0})()})(),
+        alternatives=[], unspent_reason="top_tier",
+    )
+    note = _unspent_note(result, BuildRequest(budget_php=600000))
+    assert "₱204,940" in note and "₱395,060" in note and "top performance tier" in note
+    assert _unspent_note(result.model_copy(update={"unspent_reason": None}), BuildRequest(budget_php=600000)) == ""
+
+
+def test_session_survives_a_save_and_reload(db):
+    from app.models.chat_session import ChatSessionRecord
+    from app.services.chat_sessions import get_session, save_session
+
+    session = _session_with_build(db)
+    session.remember_parts([{"id": "x", "category": "cpu", "name": "AMD Ryzen 5 7600", "price_php": 11500.0}])
+    try:
+        save_session(db, "test-roundtrip", session)
+        loaded = get_session(db, "test-roundtrip")
+    finally:
+        db.query(ChatSessionRecord).filter_by(id="test-roundtrip").delete()
+        db.commit()
+
+    assert loaded.state == session.state
+    assert loaded.history == session.history and loaded.mentioned_parts == session.mentioned_parts
+    assert loaded.last_result.primary.score == session.last_result.primary.score
+    # Prices come back numeric, so explanations can format them.
+    assert isinstance(loaded.last_result.primary.components.cpu["price_php"], float)
+    assert get_session(db, "test-roundtrip").state is None  # deleted: a fresh session

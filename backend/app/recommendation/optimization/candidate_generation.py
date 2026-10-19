@@ -1,5 +1,5 @@
-from sqlalchemy import func, literal, or_, select
-from sqlalchemy.orm import Session
+from sqlalchemy import and_, exists, func, literal, or_, select
+from sqlalchemy.orm import Session, aliased
 
 from app.models.case import Case
 from app.models.cooler import CpuCooler
@@ -10,6 +10,7 @@ from app.models.psu import Psu
 from app.models.ram import RamKit
 from app.models.storage import StorageDevice, StorageType
 from app.recommendation.optimization.sizing import ram_capacity_range, storage_capacity_range
+from app.recommendation.scoring.performance import speed_column, speed_tier, tier_columns
 from app.recommendation.scoring.tiers import tier_ordinal
 from app.schemas import BuildRequest
 from app.services.parts_service import SPEC_MODEL_BY_CATEGORY, to_full_dict
@@ -36,6 +37,33 @@ VERIFIED_EXPR = {
 }
 
 
+def _chip_key(chip_column):
+    """"GeForce RTX 4060 Ti" and the seed's "RTX 4060 Ti 16GB" both become
+    "rtx 4060 ti"; VRAM is compared separately."""
+    return func.regexp_replace(func.lower(chip_column), r"^geforce |\s*\d+\s*gb$", "", "g")
+
+
+def _generic_gpu_with_real_cards():
+    """A seed GPU named after its chip ("NVIDIA RTX 4060") stands for no
+    card in particular. Once the catalog has priced cards on that chip and
+    memory size, those are recommended instead, so a build names a card the
+    user can buy."""
+    real_gpu, real_product = aliased(Gpu), aliased(Product)
+    has_real_cards = exists().where(
+        real_gpu.product_id == real_product.id,
+        real_product.price_php.is_not(None),
+        or_(real_product.dataset_key.is_not(None), real_product.icecat_id.is_not(None)),
+        _chip_key(real_gpu.chip) == _chip_key(Gpu.chip),
+        real_gpu.vram_gb == Gpu.vram_gb,
+    )
+    return and_(
+        Product.dataset_key.is_(None),
+        Product.icecat_id.is_(None),
+        func.lower(Product.manufacturer) == func.lower(Gpu.chip_vendor),
+        has_real_cards,
+    )
+
+
 def _filters(category: str, request: BuildRequest, constraints: dict) -> list:
     filters = [
         Product.category == Category(category),
@@ -46,6 +74,8 @@ def _filters(category: str, request: BuildRequest, constraints: dict) -> list:
         filters.append(Product.manufacturer.ilike(request.cpu_brand))
     elif category == "gpu" and request.gpu_brand:
         filters.append(Gpu.chip_vendor.ilike(request.gpu_brand))
+    if category == "gpu":
+        filters.append(~_generic_gpu_with_real_cards())
     if category == "motherboard" and request.wifi_required:
         filters.append(Motherboard.wifi.is_(True))
 
@@ -77,17 +107,19 @@ def _filters(category: str, request: BuildRequest, constraints: dict) -> list:
 
 def _frontier(rows: list[tuple]) -> list[tuple]:
     """Drops dominated parts: those where a cheaper part is at least as good
-    on tier, capacity, and verified specs. Without this, a large catalog's
-    overpriced discontinued parts win whenever their price sits near the band
-    target.
+    on performance, capacity, and verified specs. Without this, a large
+    catalog's overpriced discontinued parts win whenever their price sits
+    near the band target.
 
-    Rows are (id, price, tier, capacity, verified) sorted by price. Checking
-    only kept rows is enough, since dominance is transitive.
+    Rows are (id, price, performance, capacity, verified, ...) sorted by
+    price, where performance is the benchmark score for CPUs and GPUs and
+    the tier for everything else. Checking only kept rows is enough, since
+    dominance is transitive.
     """
     kept: list[tuple] = []
     for row in rows:
-        _, _, tier, capacity, verified = row
-        if not any(k[2] >= tier and k[3] >= capacity and k[4] >= verified for k in kept):
+        _, _, performance, capacity, verified = row[:5]
+        if not any(k[2] >= performance and k[3] >= capacity and k[4] >= verified for k in kept):
             kept.append(row)
     return kept
 
@@ -121,27 +153,36 @@ def fetch_candidates(
     spec_model = SPEC_MODEL_BY_CATEGORY[Category(category)]
     capacity = CAPACITY_COLUMN.get(category)
 
+    speed = speed_column(category, request)
     columns = [
         Product.id,
         Product.price_php,
         Product.performance_tier,
         capacity if capacity is not None else literal(0),
         VERIFIED_EXPR.get(category, literal(True)),
+        speed if speed is not None else literal(None),
     ]
+    scored_fields = tier_columns(category, request)
+    columns += list(scored_fields.values())
     stmt = (
         select(*columns)
         .join(spec_model, spec_model.product_id == Product.id)
         .where(*_filters(category, request, constraints or {}))
         .order_by(Product.price_php, Product.id)
     )
-    rows = [
-        (r[0], float(r[1]), tier_ordinal(r[2].value if r[2] else None), r[3] or 0, bool(r[4]))
-        for r in db.execute(stmt)
-    ]
+    rows = []
+    for r in db.execute(stmt):
+        # The tier the benchmark scores give for this request, as scoring
+        # uses; the stored tier on a catalog without benchmarks.
+        scores = dict(zip(scored_fields, r[6:]))
+        tier = speed_tier(scores, category, request) or tier_ordinal(r[2].value if r[2] else None)
+        performance = float(r[5]) if r[5] is not None else tier * 20.0
+        rows.append((r[0], float(r[1]), performance, r[3] or 0, bool(r[4]), tier))
 
+    frontier = _frontier(rows)
     by_tier: dict[tuple, list[tuple]] = {}
-    for row in _frontier(rows):
-        by_tier.setdefault((row[2], row[4]), []).append(row)
+    for row in frontier:
+        by_tier.setdefault((row[5], row[4]), []).append(row)
     chosen = {}
     for tier_rows in by_tier.values():
         closest = min(tier_rows, key=lambda r: abs(r[1] - band_mid))
@@ -149,5 +190,12 @@ def fetch_candidates(
         chosen[closest[0]] = closest
 
     ranked = sorted(chosen.values(), key=lambda r: (abs(r[1] - band_mid), r[1]))[:MAX_CANDIDATES_PER_CATEGORY]
+    # The fastest part the band can pay for always gets a slot, so a large
+    # budget has something to spend on.
+    affordable = [r for r in frontier if r[1] <= band_max]
+    if speed is not None and affordable:
+        fastest = max(affordable, key=lambda r: (r[2], -r[1]))
+        if fastest not in ranked:
+            ranked = [*ranked[: MAX_CANDIDATES_PER_CATEGORY - 1], fastest]
     products = {p.id: p for p in db.scalars(select(Product).where(Product.id.in_([r[0] for r in ranked])))}
     return [to_full_dict(db, products[r[0]]) for r in ranked]
