@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-small-en-v1.5"
     embedding_dim: int = 384
 
+    # Catalog: Open Icecat. The demo account works for single-product lookups;
+    # downloading index files needs a registered (free) account and password.
+    icecat_username: str = "openIcecat-live"
+    icecat_password: str = ""
+    icecat_cache_dir: str = ""  # empty: <repo>/data/raw/icecat
+    icecat_request_interval_s: float = 0.25
+
     # App
     app_env: str = "development"
     default_currency: str = "PHP"

@@ -1,0 +1,332 @@
+{
+ "GeneralInfo": {
+  "IcecatId": 101287130,
+  "Title": "ASUS PRIME AP201 MicroATX Mini Tower Black",
+  "Brand": "ASUS",
+  "ProductName": "AP201 MicroATX",
+  "BrandPartCode": "90DC00G0-B39000",
+  "GTIN": [
+   "4711081771821",
+   "0195553771825",
+   "195553771825"
+  ],
+  "Category": {
+   "CategoryID": "237",
+   "Name": {
+    "Value": "Computer Cases",
+    "Language": "EN"
+   }
+  },
+  "ProductFamily": {
+   "Value": "PRIME"
+  }
+ },
+ "FeaturesGroups": [
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Design"
+    }
+   },
+   "Features": [
+    {
+     "Value": "Mini Tower",
+     "Feature": {
+      "ID": "771",
+      "Name": {
+       "Value": "Form factor"
+      }
+     }
+    },
+    {
+     "Value": "PC",
+     "Feature": {
+      "ID": "31",
+      "Name": {
+       "Value": "Type"
+      }
+     }
+    },
+    {
+     "Value": "Black",
+     "Feature": {
+      "ID": "1766",
+      "Name": {
+       "Value": "Product colour"
+      }
+     }
+    },
+    {
+     "Value": "Micro ATX,Mini-ITX",
+     "Feature": {
+      "ID": "5605",
+      "Name": {
+       "Value": "Supported motherboard form factors"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "7595",
+      "Name": {
+       "Value": "Number of 3.5\" bays"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "10206",
+      "Name": {
+       "Value": "Number of 2.5\" bays"
+      }
+     }
+    },
+    {
+     "Value": "3",
+     "Feature": {
+      "ID": "9646",
+      "Name": {
+       "Value": "Number of internal 3.5\" bays"
+      }
+     }
+    },
+    {
+     "Value": "4",
+     "Feature": {
+      "ID": "9650",
+      "Name": {
+       "Value": "Number of expansion slots"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "9645",
+      "Name": {
+       "Value": "Side window"
+      }
+     }
+    },
+    {
+     "Value": "Gaming",
+     "Feature": {
+      "ID": "9202",
+      "Name": {
+       "Value": "Suitable for"
+      }
+     }
+    },
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "1861",
+      "Name": {
+       "Value": "Illumination"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "7264",
+      "Name": {
+       "Value": "Anti-dust filter"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "3185",
+      "Name": {
+       "Value": "Cable management"
+      }
+     }
+    },
+    {
+     "Value": "170",
+     "Feature": {
+      "ID": "9648",
+      "Name": {
+       "Value": "Maximum CPU cooler height"
+      }
+     }
+    },
+    {
+     "Value": "338",
+     "Feature": {
+      "ID": "9649",
+      "Name": {
+       "Value": "Maximum graphics card length"
+      }
+     }
+    },
+    {
+     "Value": "180",
+     "Feature": {
+      "ID": "9774",
+      "Name": {
+       "Value": "Maximum PSU length"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Power supply"
+    }
+   },
+   "Features": [
+    {
+     "Value": "N",
+     "Feature": {
+      "ID": "9644",
+      "Name": {
+       "Value": "Power supply included"
+      }
+     }
+    },
+    {
+     "Value": "ATX",
+     "Feature": {
+      "ID": "23947",
+      "Name": {
+       "Value": "Supported power supply form factors"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Ports & interfaces"
+    }
+   },
+   "Features": [
+    {
+     "Value": "2",
+     "Feature": {
+      "ID": "22701",
+      "Name": {
+       "Value": "USB 3.2 Gen 1 (3.1 Gen 1) Type-A ports quantity"
+      }
+     }
+    },
+    {
+     "Value": "1",
+     "Feature": {
+      "ID": "22704",
+      "Name": {
+       "Value": "USB 3.2 Gen 2 (3.1 Gen 2) Type-C ports quantity"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Cooling"
+    }
+   },
+   "Features": [
+    {
+     "Value": "1x 120 mm",
+     "Feature": {
+      "ID": "8150",
+      "Name": {
+       "Value": "Rear fans installed"
+      }
+     }
+    },
+    {
+     "Value": "120",
+     "Feature": {
+      "ID": "8140",
+      "Name": {
+       "Value": "Rear fans diameters supported"
+      }
+     }
+    },
+    {
+     "Value": "Y",
+     "Feature": {
+      "ID": "9651",
+      "Name": {
+       "Value": "Liquid cooling capability"
+      }
+     }
+    },
+    {
+     "Value": "120",
+     "Feature": {
+      "ID": "21313",
+      "Name": {
+       "Value": "Rear radiator sizes supported"
+      }
+     }
+    },
+    {
+     "Value": "120,140,240,280,360",
+     "Feature": {
+      "ID": "21318",
+      "Name": {
+       "Value": "Top radiator sizes supported"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "FeatureGroup": {
+    "Name": {
+     "Value": "Weight & dimensions"
+    }
+   },
+   "Features": [
+    {
+     "Value": "205",
+     "Feature": {
+      "ID": "1649",
+      "Name": {
+       "Value": "Width"
+      }
+     }
+    },
+    {
+     "Value": "350",
+     "Feature": {
+      "ID": "1650",
+      "Name": {
+       "Value": "Depth"
+      }
+     }
+    },
+    {
+     "Value": "460",
+     "Feature": {
+      "ID": "1464",
+      "Name": {
+       "Value": "Height"
+      }
+     }
+    },
+    {
+     "Value": "5800",
+     "Feature": {
+      "ID": "94",
+      "Name": {
+       "Value": "Weight"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}
