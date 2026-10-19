@@ -32,6 +32,8 @@ export type Part = Record<string, unknown> & {
   price_type?: string
   /** Retailer listing or PCPartPicker product page; null when the catalog has none. */
   url?: string | null
+  /** Already owned by the user, so not counted in the total. */
+  owned?: boolean
 }
 
 export interface BuildComponents {

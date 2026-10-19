@@ -80,7 +80,7 @@ function PartsTable({ build }: { build: ScoredBuild }) {
                 )}
                 <span className="build-part-specs">{partSpecs(part)}</span>
               </td>
-              <td className="build-part-price">{formatPeso(part.price_php)}</td>
+              <td className="build-part-price">{part.owned ? 'Owned' : formatPeso(part.price_php)}</td>
             </tr>
           ))
         })}
