@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     qdrant_host: str = "localhost"
     qdrant_port: int = 6333
     qdrant_collection: str = "pc_parts"
+    qdrant_notes_collection: str = "knowledge_notes"
+    qdrant_reviews_collection: str = "review_passages"
+    qdrant_timeout_s: int = 60  # the client's default (5s) times out upserts into large collections
 
     # LLM
     llm_provider: str = "ollama"

@@ -35,7 +35,8 @@ def _build_filter(filters: dict[str, Any] | None) -> qmodels.Filter | None:
 class QdrantVectorStore(VectorStore):
     def __init__(self, host: str | None = None, port: int | None = None, collection: str | None = None):
         settings = get_settings()
-        self._client = QdrantClient(host=host or settings.qdrant_host, port=port or settings.qdrant_port)
+        self._client = QdrantClient(host=host or settings.qdrant_host, port=port or settings.qdrant_port,
+                                    timeout=settings.qdrant_timeout_s)
         self._collection = collection or settings.qdrant_collection
 
     def ensure_collection(self, dimension: int) -> None:
@@ -46,6 +47,18 @@ class QdrantVectorStore(VectorStore):
             collection_name=self._collection,
             vectors_config=qmodels.VectorParams(size=dimension, distance=qmodels.Distance.COSINE),
         )
+
+    def recreate_collection(self, dimension: int) -> None:
+        if self._client.collection_exists(self._collection):
+            self._client.delete_collection(self._collection)
+        self._client.create_collection(
+            collection_name=self._collection,
+            vectors_config=qmodels.VectorParams(size=dimension, distance=qmodels.Distance.COSINE),
+        )
+
+    def create_keyword_index(self, field: str) -> None:
+        self._client.create_payload_index(self._collection, field_name=field,
+                                          field_schema=qmodels.PayloadSchemaType.KEYWORD)
 
     def upsert(self, points: list[VectorPoint]) -> None:
         self._client.upsert(
