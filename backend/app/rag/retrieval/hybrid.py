@@ -33,7 +33,7 @@ def build_qdrant_filters(
     if max_price_php is not None:
         filters["price_php"] = {"lte": max_price_php}
     if manufacturer is not None:
-        filters["manufacturer"] = manufacturer
+        filters["brand_keys"] = manufacturer.lower()  # see payload_builder.build_payload
     return filters
 
 
