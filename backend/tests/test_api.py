@@ -143,3 +143,24 @@ def test_chat_reports_a_rate_limited_llm_as_503(monkeypatch):
     response = client.post("/api/chat", json={"session_id": "rate-limit-test", "message": "Why this GPU?"})
     assert response.status_code == 503
     assert "rate-limited" in response.json()["detail"]
+
+
+def test_chat_returns_cited_sources_under_the_reply(monkeypatch):
+    from app.api.routers import chat as chat_router
+    from app.llm.chat_orchestrator import ChatTurnResult
+    from app.schemas import BuildRequest
+
+    cited = [{"ref": 1, "note_id": "arc-a-series-resizable-bar", "title": "Arc needs Resizable BAR",
+              "checked": "2026-10-20", "sources": [{"publisher": "Intel", "title": "Support article",
+                                                    "url": "https://www.intel.com/x", "kind": "manufacturer"}]}]
+
+    def answered(*args, **kwargs):
+        return ChatTurnResult(reply="Turn on Resizable BAR [1].", state=BuildRequest(budget_php=40000),
+                              build=None, sources=cited)
+
+    monkeypatch.setattr(chat_router, "handle_chat_message", answered)
+    monkeypatch.setattr(chat_router, "save_session", lambda *args: None)
+    body = client.post("/api/chat", json={"session_id": "sources-test", "message": "Anything to know?"}).json()
+    assert body["reply"].startswith("Turn on Resizable BAR [1].\n\n**Sources**")
+    assert "[Intel](https://www.intel.com/x)" in body["reply"]
+    assert body["sources"][0]["note_id"] == "arc-a-series-resizable-bar"

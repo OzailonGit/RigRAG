@@ -549,3 +549,50 @@ def test_favored_build_is_explained_against_the_balanced_one(db):
     balanced = RecommendationEngine.recommend(db, result.state.model_copy(update={"favor": None}), explore=False)
     differs = balanced.primary.components.cpu["id"] != result.build.primary.components.cpu["id"]
     assert ("balanced_build" in explanation_input) == differs
+
+
+def _cpu_note_retriever():
+    from app.rag.knowledge.notes import Note
+    from app.rag.knowledge.retrieval import NoteRetriever
+
+    note = Note(id="any-cpu", title="A note about every CPU", topic="quirk", text="Update the BIOS first.",
+                applies_to=({"category": "cpu"},), checked="2026-10-20",
+                sources=({"publisher": "Maker", "title": "Support", "url": "https://example.com", "kind": "manufacturer"},))
+    return NoteRetriever((note,), use_vectors=False)
+
+
+def test_build_explanation_cites_notes_and_returns_their_sources(db, monkeypatch):
+    from app.rag.knowledge import retrieval
+
+    monkeypatch.setattr(retrieval, "_default", _cpu_note_retriever())
+    llm = FakeLLMProvider(intent_json=_state(70000), explanation="Update the BIOS before first boot [1]. Invented [5].")
+    result = handle_chat_message(db, llm, ChatSession(), "Build me a 70k gaming PC")
+
+    explanation_call = next(c for c in llm.calls if not c["json_mode"])
+    payload = json.loads(explanation_call["messages"][1]["content"])
+    assert payload["notes"][0]["title"] == "A note about every CPU"
+    assert result.reply.startswith("Update the BIOS before first boot [1]. Invented.")
+    assert [s["note_id"] for s in result.sources] == ["any-cpu"]
+
+
+def test_followup_gets_notes_and_can_search_for_more(db, monkeypatch):
+    from app.rag.knowledge import retrieval
+
+    monkeypatch.setattr(retrieval, "_default", _cpu_note_retriever())
+    session = ChatSession()
+    handle_chat_message(db, FakeLLMProvider(intent_json=_state(70000)), session, "Build me a 70k gaming PC")
+    cpu_id = str(session.last_result.primary.components.cpu["id"])
+
+    llm = FakeLLMProvider(
+        intent_json={**_state(70000), "message_kind": "followup"},
+        tool_call_sequence=[[ToolCall(id="n", name="search_notes",
+                                      arguments={"query": "bios", "product_ids": [cpu_id]})]],
+        tool_answer="Yes, update the BIOS [1].",
+    )
+    result = handle_chat_message(db, llm, session, "Anything to know about this CPU?")
+
+    tool_call = next(c for c in llm.calls if c["tools"])
+    assert "A note about every CPU" in tool_call["messages"][0]["content"]
+    tool_result = next(m for m in llm.calls[-1]["messages"] if m["role"] == "tool")
+    assert json.loads(tool_result["content"])["notes"][0]["ref"] == 1  # the same note keeps its number
+    assert [s["note_id"] for s in result.sources] == ["any-cpu"]
