@@ -7,8 +7,8 @@ Most "AI PC builder" demos let a language model pick the parts, which means they
 ## How it works
 
 1. **Parse the request.** The LLM turns the message into a `BuildRequest` (budget, use case, resolution, brand preferences, and so on). If the model is unavailable or returns something invalid, a rule-based parser takes over.
-2. **Find candidates.** SQL filters handle hard constraints like price and brand. Semantic search over Qdrant handles fuzzy ones like "quiet" or "good for 1440p". Every result is re-read from Postgres, so a stale vector entry can never leak an old price.
-3. **Build and score.** The budget is split into soft per-category bands. A beam search assembles full builds, dropping incompatible combinations as it goes, and each finished build is scored on fit to the use case, measured speed, performance per peso, preferences, upgrade headroom, and power. CPU and GPU speed come from published benchmarks (Tom's Hardware's hierarchies): GPUs by rasterization at the requested resolution, CPUs by gaming or multithreaded score depending on the use case, and their tiers follow from those scores. A build that uses less than 85% of the budget is retried with higher CPU and GPU tiers, and the reply says why when budget is still left over. Alternatives are separate runs: a build at least 5% (and ₱2,000) cheaper, the next tier up when it costs up to 20% over budget, and a noticeably more upgradeable one.
+2. **Find candidates.** SQL filters pick each part's candidates from structured specs: price, brand, socket, memory type, form factor, Wi-Fi, PSU wattage, and benchmark speed. Semantic search over Qdrant isn't part of build selection. It backs `/api/search` and the chat's part lookups ("a short GPU for a small case"), with metadata filters for category, price, and manufacturer, and every hit is re-read from Postgres so a stale vector entry can never leak an old price. Preferences the catalog has no data for, like `quiet` (there are no noise figures), are parsed but don't change the build.
+3. **Build and score.** The budget is split into soft per-category bands. A beam search assembles full builds, dropping incompatible combinations as it goes, and each finished build is scored on fit to the use case, measured speed, performance per peso, preferences, upgrade headroom, and power. CPU and GPU speed come from published benchmarks (Tom's Hardware's hierarchies): GPUs by rasterization at the requested resolution, CPUs by gaming or multithreaded score depending on the use case, and their tiers follow from those scores. A build that uses less than 85% of the budget is retried with higher CPU and GPU tiers, and the reply says why when budget is still left over. Alternatives are separate runs: a build at least 5% (and ₱2,000) cheaper, the next tier up when it costs up to 20% over budget and is at least 5% faster, and a noticeably more upgradeable one. Asking for "the fastest CPU" (or GPU) sets `favor`: the engine tries that part from fastest down and keeps the first one a complete in-budget build fits around, as long as the other part still meets the request's need, and the reply compares it with the balanced build.
 4. **Check compatibility.** Rules for CPU socket, RAM type, case clearance, and PSU headroom (25% margin) run once while searching and again on the final build.
 5. **Explain.** The LLM gets a compact summary of the chosen build and writes the explanation. It never sees the raw catalog, so it has nothing to make specs up from.
 
@@ -53,6 +53,16 @@ cd frontend
 npm install
 npm run dev        # http://localhost:5173, proxies /api to the backend on :8000
 ```
+
+To run everything in containers instead (API on :8000, UI on :8080; set `BACKEND_PORT` or `FRONTEND_PORT` to move them):
+
+```bash
+docker compose -f docker/docker-compose.yml up -d --build
+docker compose -f docker/docker-compose.yml exec backend python -m alembic upgrade head
+docker compose -f docker/docker-compose.yml exec backend python -m app.ingestion.seed
+```
+
+The backend image is built from the repo root, since it needs `data/reference` and `data/seed`; Compose also mounts `backend/` and `data/` so code and data changes apply without a rebuild. Inside the container, Ollama is reached at `host.docker.internal` (override with `OLLAMA_BASE_URL_DOCKER`).
 
 The UI keeps conversations in the browser's local storage and shows each recommended build as a parts table, with tabs for the alternatives and the compatibility warnings underneath.
 
@@ -113,6 +123,7 @@ That adds about 18,800 parts on current platforms (AM4, AM5, LGA1200, LGA1700, L
 - `data/reference/gpu_chips.json`: TDP and tier for each GPU chip, since Icecat lists cards but not chip power. A card on a chip missing from this file is skipped until the chip is added.
 - `data/reference/spec_overrides.json`: corrections where Icecat disagrees with the manufacturer's spec page, each with its source URL.
 - `data/reference/benchmarks.json`: relative benchmark scores for 48 GPUs (rasterization at 1080p, 1440p, and 4K, as a percentage of the RTX 5090) and 95 CPUs (1080p gaming and multithreaded, as a percentage of the fastest CPU tested), from Tom's Hardware's GPU and CPU hierarchies. Older CPUs' gaming scores come from the previous hierarchy, rescaled by the CPUs both tables test, and are marked `rescaled`. `import_benchmarks` matches GPUs by chip and VRAM and CPUs by model (Intel F and KF chips share the plain chip's score). An unbenchmarked part gets the lowest score of its tier and is marked `benchmark_estimated`.
+- `data/reference/chipsets.json`: the PCIe generation of the graphics slot and CPU-attached M.2 slot for each AMD chipset, from AMD's AM5 and AM4 spec tables (B650 and B650E from a Corsair comparison, since AMD's table no longer lists them). Board descriptions state these so explanations don't guess. Intel chipsets are left out: on LGA1700 and LGA1851 the slot's generation depends on the board, and descriptions say so.
 - `data/reference/case_specs.json` and `cooler_specs.json`: GPU and cooler clearances, radiator mounts, supported sockets, and cooler heights for 48 cases and 52 coolers, matched to dataset rows by name and aliases. Each entry has a source URL and a `source_kind` of `manufacturer` or `retailer`; the second marks values taken from retailer or review listings that agreed with each other when the manufacturer page couldn't be read. Where a figure depends on configuration, the conservative one is used.
 
 ### Choosing an LLM
@@ -158,13 +169,25 @@ cd backend
 python -m pytest tests/ -v
 ```
 
-`test_compatibility.py`, `test_rag_documents.py`, and the other LLM unit tests run on their own. The rest need the seeded Postgres from the setup steps. The chat tests use a fake LLM, so no model needs to be running.
+`test_compatibility.py`, `test_rag_documents.py`, and the other LLM unit tests run on their own. The rest need the seeded Postgres from the setup steps. The chat tests use a fake LLM, so no model needs to be running. A few tests need the full dataset catalog and skip themselves on the seed catalog.
 
-To measure retrieval quality (Hit@k and MRR on a hand-built query set) against the Qdrant index:
+CI (`.github/workflows/ci.yml`) runs on every push: the backend tests against a fresh Postgres with the seed catalog and benchmark scores, the frontend lint and build, and a build of both Docker images.
+
+**Retrieval evaluation.** 25 queries across every part category, each with a relevance rule written by hand over the part's specs ("AM5 socket and built-in Wi-Fi") and checked against the results it accepts and rejects. It reports precision@5, Hit@5, MRR, and search latency against the Qdrant index:
 
 ```bash
-python -m app.rag.evaluation.run_eval
+python -m app.rag.evaluation.run_eval            # add --verbose to see every result judged
 ```
+
+On the full catalog (2026-10-20): precision@5 50%, Hit@5 17/25, MRR 0.56, about 110ms per query. Structured needs that the text embeddings can't tell apart are where it fails: "AM5" returns Intel boards, "integrated graphics" returns CPUs without it, and "power efficient" returns 300W cards. Parts missing the spec a rule needs (no read speed, no cooler height) count as misses.
+
+**Build evaluation.** 18 requests from ₱25k to ₱600k across gaming, editing, rendering, AI, and brand, Wi-Fi, small form factor, favored-part, and owned-part constraints. Every build shown must be compatible and on budget, and the engine must answer within 3 seconds; each case also sets the lowest CPU and GPU tier its budget can buy, checked by pricing those parts in the catalog. It exits non-zero on any failure:
+
+```bash
+python -m app.recommendation.evaluation.build_eval
+```
+
+On the full catalog: 16/18 pass, median 0.9s per request. The two failures are real: the ₱25k and ₱30k builds use a dual-core Athlon 3000G, because CPUs like the Ryzen 5 5600 have no benchmark yet and rate entry tier, and the engine always adds a graphics card where an APU alone would do. Times are for the engine; chat replies add the language model's time.
 
 ## Project layout
 
@@ -176,9 +199,10 @@ backend/app/
 ├── recommendation/
 │   ├── compatibility/    Rules, checker, power estimation
 │   ├── optimization/     Budget bands, candidate generation, beam search
-│   ├── scoring/          Build scoring and performance tiers
+│   ├── scoring/          Build scoring, performance tiers, benchmark speed
+│   ├── evaluation/       Build evaluation set and runner
 │   └── engine.py         Single entry point for recommendations
-├── rag/                  Embeddings, Qdrant store, document building, hybrid retrieval, evaluation
+├── rag/                  Embeddings, Qdrant store, document building, hybrid retrieval, retrieval evaluation
 ├── llm/                  Providers, prompts, intent parsing, explanations, tool calling
 └── ingestion/
     ├── sources/          Open Icecat API client
@@ -210,11 +234,12 @@ frontend/                 React + Vite chat UI (components in src/components/, t
 - **Most prices are estimates.** Seed prices are curated estimates. Dataset prices are converted from European and US listings, so they don't reflect local markups or availability. Only prices refreshed from Shopee or Lazada (marked `observed`) are local quotes.
 - **Icecat terms apply.** Icecat data must be credited as "Specs Icecat" wherever it's shown (product `source` fields carry that credit), and their terms forbid using it to train AI models. Retrieval isn't training, but check the terms before relying on it.
 - **Scoring weights and tier thresholds are hand-tuned.** The scores are measured, but how much speed, value, and fit each count for, and where one tier ends, are judgment calls. Benchmark percentages are relative, never presented as FPS.
-- **Evaluation covers retrieval only.** Answer faithfulness isn't measured automatically. An LLM judge would add its own noise.
+- **Explanations aren't evaluated.** The evaluations cover retrieval and the engine's builds; whether a reply describes its build faithfully isn't measured automatically. An LLM judge would add its own noise.
+- **Every build gets a graphics card.** A general-use build that an APU alone would serve still pays for a discrete GPU.
 - **The LLM can still misquote a number in its prose.** One explanation listed a ₱1,800 part as ₱11,800 even though the correct price was in its input. Structured fields like `total_price_php` are always the numbers to trust.
 - **Chat sessions are never cleaned up.** Each one is a row in `chat_sessions`, kept indefinitely.
 - **Chat memory is short.** Only the last six messages are kept, with long replies cut to their first 800 characters, so "the GPU you mentioned earlier" can stop resolving after a few turns. Parts are only remembered when a follow-up answer names one it looked up, so a part the model names from its own knowledge can't be pinned.
 - **Local 8B models are slow on small GPUs.** On a 4GB laptop GPU, `qwen3:8b` splits across GPU and CPU and runs slowly. `qwen3:4b` or Groq is the practical choice there, and the hardware probe recommends accordingly.
 - **The Groq retry is minimal.** It retries a rate limit once, but there's no automatic fallback to another provider.
 - **Replies arrive all at once.** The chat API doesn't stream, so a slow local model shows a waiting indicator for up to a minute before the reply appears.
-- **The Docker Compose `backend` service hasn't been tested in a container.** Development so far has run the API from a local venv against the Postgres and Qdrant containers, and the frontend isn't in Compose yet.
+- **CI tests the seed catalog only.** The dataset import needs files that aren't in the repo, so the evaluations, which need the full catalog, run locally rather than in CI.
