@@ -19,7 +19,7 @@ from app.recommendation.compatibility.build_components import BuildComponents
 from app.recommendation.compatibility.results import CompatibilityResult
 from app.recommendation.compatibility.rules import is_unverified
 from app.recommendation.compatibility.power import recommended_psu_watts
-from app.recommendation.optimization.budget_allocator import blended_template
+from app.recommendation.optimization.budget_allocator import role_template
 from app.recommendation.scoring.performance import cpu_speed, gpu_speed, part_tier
 from app.recommendation.scoring.tiers import needed_cpu_tier, needed_gpu_tier, ordinal_fit, tier_ordinal
 from app.schemas import BuildRequest
@@ -98,10 +98,11 @@ def _price_to_performance(build: BuildComponents, bands: dict[str, tuple[float, 
 
 def build_speed(cpu: dict | None, gpu: dict | None, request: BuildRequest, gpu_pending: bool = False) -> float:
     """CPU and GPU speed, weighted by how the use case splits its budget
-    between them (a gaming build leans on the GPU, a workstation on the CPU).
+    between them (a gaming build leans on the GPU, a workstation on the CPU,
+    and request.favor shifts it further).
     A build without a GPU is all CPU, unless the GPU just isn't chosen yet
     (`gpu_pending`, mid-search), when the CPU keeps only its share."""
-    template = blended_template(request.use_case)
+    template = role_template(request)
     cpu_share = template["cpu"] / (template["cpu"] + template["gpu"])
     cpu_part = cpu_speed(cpu, request) if cpu else 0.0
     if gpu is None:

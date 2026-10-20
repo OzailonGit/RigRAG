@@ -1,22 +1,26 @@
 from app.json_utils import to_prompt_json
-from app.llm.build_summary import summarize_build_result
+from app.llm.build_summary import summarize_build_result, summarize_scored_build
 from app.llm.prompts.system_prompts import EXPLANATION_SYSTEM, FOLLOWUP_EXPLANATION_SYSTEM
 from app.llm.providers.base import LLMProvider
 from app.recommendation.engine import BuildResult
 from app.schemas import BuildRequest
 
 
-def explain_build(llm: LLMProvider, result: BuildResult, request: BuildRequest) -> str:
+def explain_build(llm: LLMProvider, result: BuildResult, request: BuildRequest,
+                  balanced: BuildResult | None = None) -> str:
     """Turns an already-computed, already-validated BuildResult into a
     natural-language explanation.
 
     The LLM sees only a compact summary of the build (see build_summary.py),
     never the raw catalog, so every spec it mentions comes from the result.
+    `balanced` is the same request without request.favor, for comparison.
     """
     payload = {
         "user_request": request.model_dump(mode="json"),
         "build": summarize_build_result(result),
     }
+    if balanced is not None:
+        payload["balanced_build"] = summarize_scored_build(balanced.primary)
     messages = [
         {"role": "system", "content": EXPLANATION_SYSTEM},
         {"role": "user", "content": to_prompt_json(payload)},

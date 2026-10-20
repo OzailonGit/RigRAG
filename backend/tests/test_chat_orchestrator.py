@@ -534,3 +534,18 @@ def test_session_survives_a_save_and_reload(db):
     # Prices come back numeric, so explanations can format them.
     assert isinstance(loaded.last_result.primary.components.cpu["price_php"], float)
     assert get_session(db, "test-roundtrip").state is None  # deleted: a fresh session
+
+
+
+def test_favored_build_is_explained_against_the_balanced_one(db):
+    from app.recommendation.engine import RecommendationEngine
+
+    llm = FakeLLMProvider(intent_json={**_state(50000, favor="cpu"), "message_kind": "build_request"})
+    result = handle_chat_message(db, llm, ChatSession(), "What's the fastest CPU I can get in a 50k gaming PC?")
+
+    explanation_input = json.loads(next(c for c in llm.calls if not c["json_mode"] and not c["tools"])["messages"][1]["content"])
+    assert explanation_input["user_request"]["favor"] == "cpu"
+    # The comparison is attached exactly when favoring the CPU changed the build.
+    balanced = RecommendationEngine.recommend(db, result.state.model_copy(update={"favor": None}), explore=False)
+    differs = balanced.primary.components.cpu["id"] != result.build.primary.components.cpu["id"]
+    assert ("balanced_build" in explanation_input) == differs

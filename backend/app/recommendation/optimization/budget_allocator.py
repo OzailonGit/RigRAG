@@ -60,6 +60,20 @@ def blended_template(use_cases: list[UseCase]) -> dict[str, float]:
     return {cat: pct / total for cat, pct in blended.items()}  # renormalize to 1.0
 
 
+# Share of the disfavored part's allocation that moves to the favored one.
+FAVOR_SHIFT = 0.5
+
+
+def role_template(request: BuildRequest) -> dict[str, float]:
+    """The use case's budget split, with request.favor applied."""
+    template = blended_template(request.use_case)
+    if request.favor:
+        other = "gpu" if request.favor == "cpu" else "cpu"
+        moved = template[other] * FAVOR_SHIFT
+        template = {**template, other: template[other] - moved, request.favor: template[request.favor] + moved}
+    return template
+
+
 def allocate_budget(request: BuildRequest, pinned_spend: float = 0.0) -> dict[str, tuple[float, float]]:
     """Returns {category: (band_min_php, band_max_php)} for the categories
     still being shopped for.
@@ -69,7 +83,7 @@ def allocate_budget(request: BuildRequest, pinned_spend: float = 0.0) -> dict[st
     (request.pinned_parts) are already bought at their own price:
     `pinned_spend` comes off the budget before the remainder is split.
     """
-    template = blended_template(request.use_case)
+    template = role_template(request)
 
     fixed = set(request.existing_parts) | set(request.pinned_parts)
     shopping_for = [c for c in CATEGORIES if c not in fixed]

@@ -12,7 +12,9 @@ from app.recommendation.compatibility.checker import CompatibilityChecker
 from app.recommendation.compatibility.results import CompatibilityResult
 from app.recommendation.optimization.beam_search import generate_builds, load_fixed_parts
 from app.recommendation.optimization.budget_allocator import allocate_budget
+from app.recommendation.optimization.candidate_generation import fastest_parts
 from app.recommendation.scoring.scoring import ScoreBreakdown, score_build
+from app.recommendation.scoring.performance import part_tier
 from app.recommendation.scoring.tiers import needed_cpu_tier, needed_gpu_tier
 from app.schemas import BuildRequest
 
@@ -41,6 +43,7 @@ MIN_SAVING_SHARE = 0.05
 MIN_SAVING_PHP = 2_000
 MAX_OVER_BUDGET_SHARE = 0.20
 MIN_HEADROOM_GAIN = 0.15
+MIN_SPEED_GAIN = 0.05
 
 
 def _warning_count(build: ScoredBuild) -> int:
@@ -109,13 +112,38 @@ def _alternatives(db: Session, request: BuildRequest, primary: ScoredBuild, pool
     cheaper = _lower_cost(db, request, primary, boost)
     if cheaper:
         alternates.append(cheaper)
-    if next_tier and next_tier.score.total_price_php > primary.score.total_price_php:
+    # Higher tiers alone don't make a build faster (a pricier board can be
+    # what pushes it up a tier), so it has to beat the primary's measured speed.
+    if next_tier and next_tier.score.speed >= primary.score.speed * (1 + MIN_SPEED_GAIN):
         alternates.append(next_tier.model_copy(update={"label": "Higher performance"}))
     roomier = [b for b in pool if b.score.upgrade_headroom >= primary.score.upgrade_headroom + MIN_HEADROOM_GAIN]
     if roomier:
         pick = max(roomier, key=lambda b: b.score.upgrade_headroom)
         alternates.append(pick.model_copy(update={"label": "More upgradeable"}))
     return alternates
+
+
+def _with_fastest_favored(db: Session, request: BuildRequest) -> BuildRequest:
+    """For "the fastest CPU I can get": the request with its favored part
+    pinned to the fastest one a complete in-budget build fits around, where
+    the other part (GPU for a favored CPU, and the reverse) still meets the
+    request's own need. Once pinned, the rest of the budget is split the
+    usual way, so the other part isn't starved twice. When no part fits
+    both, the favor is dropped."""
+    role = request.favor
+    if role is None or role in request.pinned_parts or role in request.existing_parts:
+        return request
+    other = "gpu" if role == "cpu" else "cpu"
+    needed = needed_gpu_tier(request) if other == "gpu" else needed_cpu_tier(request)
+    for part_id in fastest_parts(db, role, request):
+        trial = request.model_copy(update={"pinned_parts": {**request.pinned_parts, role: part_id}, "favor": None})
+        ranked = _rank(db, trial, 0)
+        if not ranked or ranked[0].score.total_price_php > request.budget_php:
+            continue
+        if part_tier(getattr(ranked[0].components, other), other, request) >= needed:
+            return trial
+    # Nothing fits both: a balanced build beats a lopsided one.
+    return request.model_copy(update={"favor": None})
 
 
 class RecommendationEngine:
@@ -130,6 +158,7 @@ class RecommendationEngine:
         Without it, only the cheapest build that meets the request's own
         needs comes back, as find_starting_budget wants.
         """
+        request = _with_fastest_favored(db, request)
         boost = 0
         pool = _rank(db, request, boost)
         if pool is None:

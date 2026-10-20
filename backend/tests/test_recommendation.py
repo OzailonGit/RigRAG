@@ -171,3 +171,31 @@ def test_bigger_budget_buys_a_measurably_faster_build(db):
     speeds = [speed(b) for b in (50000, 80000, 120000, 200000)]
     assert speeds == sorted(speeds)
     assert speeds[-1] > speeds[0]
+
+
+@pytest.mark.parametrize("favor,other", [("cpu", "gpu"), ("gpu", "cpu")])
+def test_favoring_a_part_buys_the_fastest_one_that_fits(db, favor, other):
+    from app.recommendation.scoring.performance import cpu_speed, gpu_speed, part_tier
+    from app.recommendation.scoring.tiers import needed_cpu_tier, needed_gpu_tier
+
+    balanced_request = BuildRequest(budget_php=50000, use_case=[UseCase.gaming])
+    favored_request = balanced_request.model_copy(update={"favor": favor})
+    balanced = RecommendationEngine.recommend(db, balanced_request).primary
+    favored = RecommendationEngine.recommend(db, favored_request).primary
+
+    speed = cpu_speed if favor == "cpu" else gpu_speed
+    assert speed(getattr(favored.components, favor), balanced_request) >= speed(getattr(balanced.components, favor), balanced_request)
+    assert favored.score.total_price_php <= 50000
+    # The other part still meets what the request needs.
+    needed = needed_gpu_tier(balanced_request) if other == "gpu" else needed_cpu_tier(balanced_request)
+    assert part_tier(getattr(favored.components, other), other, balanced_request) >= needed
+
+
+@pytest.mark.parametrize("budget", [50000, 70000, 120000])
+def test_higher_performance_alternative_is_measurably_faster(db, budget):
+    from app.recommendation.engine import MIN_SPEED_GAIN
+
+    result = RecommendationEngine.recommend(db, BuildRequest(budget_php=budget, use_case=[UseCase.gaming]))
+    for alt in result.alternatives:
+        if alt.label == "Higher performance":
+            assert alt.score.speed >= result.primary.score.speed * (1 + MIN_SPEED_GAIN)

@@ -73,6 +73,7 @@ export interface BuildRequest {
   quiet: boolean
   low_power: boolean
   prioritize_upgradeability: boolean
+  favor: 'cpu' | 'gpu' | null
   existing_parts: Record<string, string>
   pinned_parts: Record<string, string>
 }

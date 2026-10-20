@@ -15,7 +15,9 @@ import re
 from app.schemas import BuildRequest, MessageKind, Resolution, UseCase
 
 _BUDGET_PATTERN = re.compile(
-    r"(?:₱|php\s*)?([\d,]+(?:\.\d+)?)\s*(k)?(?:\s*(?:php|pesos))?(p)?", re.IGNORECASE
+    # "p" marks a resolution ("1440p") only when no letter follows, so the
+    # "p" of "peso" isn't one.
+    r"(?:₱|php\s*)?([\d,]+(?:\.\d+)?)\s*(k)?(?:\s*(?:php|pesos?))?(p(?![a-z]))?", re.IGNORECASE
 )
 _RESOLUTION_KEYWORDS = {
     "1080p": Resolution.r1080p, "1080": Resolution.r1080p, "fhd": Resolution.r1080p,
@@ -163,6 +165,12 @@ def classify_message_rule_based(message: str, has_build: bool, awaiting_budget: 
     return MessageKind.followup
 
 
+_FAVOR = {
+    "cpu": re.compile(r"\b(fastest|best|strongest|top|prioriti[sz]e (the )?)\s*(cpu|processor)\b"),
+    "gpu": re.compile(r"\b(fastest|best|strongest|top|prioriti[sz]e (the )?)\s*(gpu|graphics card|video card)\b"),
+}
+
+
 def parse_intent_rule_based(message: str, existing: BuildRequest | None = None) -> BuildRequest:
     text = message.lower()
     state = existing.model_copy(deep=True) if existing else None
@@ -199,6 +207,9 @@ def parse_intent_rule_based(message: str, existing: BuildRequest | None = None) 
 
     if use_cases:
         state.use_case = use_cases
+    favor = next((role for role, pattern in _FAVOR.items() if pattern.search(text)), None)
+    if favor:
+        state.favor = favor
     if resolution:
         state.resolution = resolution
     if cpu_brand:

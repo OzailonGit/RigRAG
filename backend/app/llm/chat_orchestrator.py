@@ -75,7 +75,7 @@ _FOLLOWUP_PROMPT_REPLY = (
 _ENGINE_RELEVANT_FIELDS = (
     "budget_php", "use_case", "resolution", "target_fps", "cpu_brand", "gpu_brand",
     "wifi_required", "small_form_factor", "quiet", "low_power",
-    "prioritize_upgradeability", "existing_parts", "pinned_parts",
+    "prioritize_upgradeability", "existing_parts", "pinned_parts", "favor",
 )
 
 _BUILD_ROLES = ["cpu", "gpu", "motherboard", "ram", "storage", "psu", "cooler", "case"]
@@ -198,6 +198,17 @@ def _swap_in_pins(db: Session, state: BuildRequest, result: BuildResult) -> Buil
     return swap
 
 
+def _balanced_counterpart(db: Session, state: BuildRequest, result: BuildResult) -> BuildResult | None:
+    """The build without state.favor, to show what favoring a part costs;
+    None when nothing is favored or the two builds come out the same."""
+    if not state.favor:
+        return None
+    balanced = RecommendationEngine.recommend(db, state.model_copy(update={"favor": None}), explore=False)
+    if balanced is None or _build_parts(balanced) == _build_parts(result):
+        return None
+    return balanced
+
+
 def _unspent_note(result: BuildResult, state: BuildRequest) -> str:
     """Says why a build leaves much of the budget unspent, so a ₱69,500
     answer to a ₱600,000 request doesn't look like a misread budget."""
@@ -245,7 +256,8 @@ def _describe_request(state: BuildRequest) -> str:
         extras.append("Wi-Fi")
     if state.small_form_factor:
         extras.append("a small case")
-    return f"{text} with {', '.join(extras)}" if extras else text
+    text = f"{text} with {', '.join(extras)}" if extras else text
+    return f"{text}, favoring the {state.favor.upper()}" if state.favor else text
 
 
 def _offer_starting_budget(state: BuildRequest, starting: StartingBudget) -> str:
@@ -361,7 +373,7 @@ def _run_turn(db: Session, llm: LLMProvider, session: ChatSession, message: str)
                 "Try raising the budget or relaxing a preference (brand, Wi-Fi, form factor)."
             )
             return ChatTurnResult(reply=reply, state=state, build=None), kind
-        reply = explain_build(llm, result, state) + _unspent_note(result, state)
+        reply = explain_build(llm, result, state, _balanced_counterpart(db, state, result)) + _unspent_note(result, state)
         return ChatTurnResult(reply=reply, state=state, build=result), kind
 
     # Follow-up / exploratory question against the existing build: let the
