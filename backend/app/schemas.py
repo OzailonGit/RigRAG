@@ -1,5 +1,6 @@
 import enum
 import uuid
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -54,6 +55,9 @@ class BuildRequest(BaseModel):
     quiet: bool = False
     low_power: bool = False
     prioritize_upgradeability: bool = False
+    # "Fastest CPU I can get": the favored part takes half of the other's
+    # share of the budget (see budget_allocator.role_template).
+    favor: Literal["cpu", "gpu"] | None = None
 
     # category -> product_id the user already owns; the engine builds around
     # these instead of shopping for them.

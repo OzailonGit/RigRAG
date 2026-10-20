@@ -111,7 +111,15 @@ def test_qdrant_filters_map_correctly():
     filters = build_qdrant_filters(category=Category.gpu, max_price_php=25000, manufacturer="AMD")
     assert filters["category"] == "gpu"
     assert filters["price_php"] == {"lte": 25000}
-    assert filters["manufacturer"] == "AMD"
+    assert filters["brand_keys"] == "amd"
+
+
+def test_brand_filter_ignores_case_and_matches_gpu_chip_vendor():
+    from app.rag.chunking.payload_builder import build_payload
+
+    card = build_payload({"id": "x", "category": "gpu", "manufacturer": "Asus", "chip_vendor": "NVIDIA"})
+    assert card["brand_keys"] == ["asus", "nvidia"]
+    assert build_qdrant_filters(manufacturer="ASUS")["brand_keys"] in card["brand_keys"]
 
 
 def test_qdrant_filters_empty_when_no_constraints():

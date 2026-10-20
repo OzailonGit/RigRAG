@@ -1,9 +1,10 @@
 """Tool definitions and executor for LLM function calling.
 
 Every tool is a thin wrapper around existing, tested code (parts_service,
-hybrid_search, CompatibilityChecker, RecommendationEngine). The LLM decides
-when to call them and how to phrase the answer; specs, prices, and
-compatibility verdicts only ever reach it as tool results.
+hybrid_search, the note retriever, CompatibilityChecker,
+RecommendationEngine). The LLM decides when to call them and how to phrase
+the answer; specs, prices, compatibility verdicts, and knowledge notes only
+ever reach it as tool results.
 """
 
 import uuid
@@ -12,8 +13,12 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.json_utils import to_jsonable
+from app.llm.citations import NoteSet
 from app.models.product import Category
 from app.rag.embeddings.factory import get_embedding_provider
+from app.rag.knowledge.notes import note_by_id, owner_review_note_id
+from app.rag.knowledge.retrieval import NoteRetriever, RetrievedNote, get_note_retriever
+from app.rag.knowledge.reviews import ReviewRetriever, ReviewUnavailable, get_review_retriever
 from app.rag.retrieval.hybrid import hybrid_search
 from app.rag.vectorstore.qdrant_store import QdrantVectorStore
 from app.recommendation.compatibility.build_components import BuildComponents
@@ -37,6 +42,38 @@ TOOL_DEFINITIONS: list[dict[str, Any]] = [
                     "max_price_php": {"type": "number"},
                     "manufacturer": {"type": "string"},
                     "limit": {"type": "integer", "default": 5},
+                },
+                "required": ["query"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_notes",
+            "description": "Search sourced hardware notes: known issues, trade-offs, power requirements, noise ratings, BIOS or driver needs, and upgrade paths. Pass product_ids to get only the notes about those parts. Each note has a ref number to cite as [n].",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string"},
+                    "product_ids": {"type": "array", "items": {"type": "string"}},
+                    "limit": {"type": "integer", "default": 4},
+                },
+                "required": ["query"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_reviews",
+            "description": "Search Amazon owner reviews (through September 2023) of specific parts for what owners experienced: noise, failures, temperatures, fit, setup problems. Returns the passages most similar to the query, the part's review summary, and a ref to cite as [n]. Leave out product_ids to search every part in the current build.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "What to look for, e.g. 'pump clicking noise at idle'"},
+                    "product_ids": {"type": "array", "items": {"type": "string"}},
+                    "limit": {"type": "integer", "default": 8},
                 },
                 "required": ["query"],
             },
@@ -165,13 +202,23 @@ def _find_parts(value: Any, found: dict[str, dict]) -> None:
 
 
 class ToolExecutor:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session, notes: NoteSet | None = None, note_retriever: NoteRetriever | None = None,
+                 build_part_ids: list[str] | None = None, review_retriever: ReviewRetriever | None = None):
         self._db = db
         self._embedder = None
         self._store = None
         # Every part a tool returned during this executor's lifetime, by ID,
         # so the caller can tell which parts an answer was based on.
         self.seen_parts: dict[str, dict] = {}
+        # Notes served this turn, shared with the caller so citations in the
+        # reply resolve to the notes behind them.
+        self.notes = notes if notes is not None else NoteSet()
+        self._note_retriever = note_retriever
+        self._build_part_ids = build_part_ids or []
+        self._review_retriever = review_retriever
+        # Every review passage served this turn, so the note evaluation can
+        # check a reply didn't copy one.
+        self.review_passages: list[str] = []
 
     def _lazy_rag(self):
         if self._embedder is None:
@@ -194,6 +241,44 @@ class ToolExecutor:
             category=Category(category) if category else None,
             max_price_php=max_price_php, manufacturer=manufacturer, limit=limit,
         )
+
+    def _tool_search_notes(self, query: str, product_ids: list[str] | None = None, limit: int = 4):
+        retriever = self._note_retriever or get_note_retriever()
+        if product_ids:
+            parts = [self._tool_get_part_details(pid) for pid in product_ids]
+            found = retriever.for_parts(parts, query, limit=limit)
+        else:
+            found = retriever.search(query, limit=limit)
+        if not found:
+            return {"notes": [], "message": "No sourced notes cover this."}
+        return {"notes": self.notes.add_all(found)}
+
+    def _tool_search_reviews(self, query: str, product_ids: list[str] | None = None, limit: int = 8):
+        retriever = self._review_retriever or get_review_retriever()
+        ids = product_ids or self._build_part_ids
+        if not ids:
+            raise ToolExecutionError("Give product_ids: there's no build to search.")
+        reviewed, results = [], []
+        for pid in ids:
+            part = self._tool_get_part_details(pid)
+            name = f"{part['manufacturer']} {part['model']}"
+            note = note_by_id(owner_review_note_id(part["id"]))
+            if note is None:
+                results.append({"part": name, "message": "No Amazon owner reviews for this part. The review data "
+                                                         "ends in September 2023, and newer parts have none."})
+            else:
+                reviewed.append((pid, name, note))
+        per_part = max(3, limit // max(1, len(reviewed)))
+        for pid, name, note in reviewed:
+            try:
+                found = retriever.search(query, [pid], limit=per_part)
+            except ReviewUnavailable:
+                return {"error": "Owner review search is unavailable right now."}
+            self.review_passages += [p.text for p in found]
+            ref = self.notes.add(RetrievedNote(note, [name], 0.0))
+            results.append({"ref": ref, "part": name, "review_summary": note.text,
+                            "passages_returned": len(found), "passages": [p.for_prompt() for p in found]})
+        return {"results": results}
 
     def _tool_get_part_details(self, product_id: str):
         part = parts_service.get_part(self._db, uuid.UUID(product_id))

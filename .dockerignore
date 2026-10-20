@@ -1,0 +1,12 @@
+# Build context is the repo root (see docker/docker-compose.yml); keep it small.
+.git
+.claude
+.env
+**/__pycache__
+**/.pytest_cache
+backend/.venv
+frontend/node_modules
+frontend/dist
+data/raw
+data/combined
+*.md

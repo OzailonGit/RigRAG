@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.llm.chat_orchestrator import handle_chat_message
+from app.llm.citations import sources_markdown
 from app.llm.providers.factory import get_llm_provider
 from app.recommendation.engine import BuildResult
 from app.schemas import BuildRequest
@@ -18,10 +19,28 @@ class ChatRequest(BaseModel):
     message: str
 
 
+class NoteSource(BaseModel):
+    publisher: str
+    title: str
+    url: str
+    kind: str  # "manufacturer", "review", or "press"
+    published: str | None = None
+
+
+class CitedNote(BaseModel):
+    """A knowledge note the reply cites as [ref]."""
+    ref: int
+    note_id: str
+    title: str
+    checked: str  # when the note's sources were last read
+    sources: list[NoteSource]
+
+
 class ChatResponse(BaseModel):
-    reply: str
+    reply: str  # ends with a "Sources" list when it cites notes
     state: BuildRequest
     build: BuildResult | None = None
+    sources: list[CitedNote] = []
 
 
 @router.post("", response_model=ChatResponse)
@@ -39,4 +58,5 @@ def chat(payload: ChatRequest, db: Session = Depends(get_db)) -> ChatResponse:
     # Saved only after a whole turn succeeds, so a failed call leaves the
     # stored conversation as it was.
     save_session(db, payload.session_id, session)
-    return ChatResponse(reply=result.reply, state=result.state, build=result.build)
+    return ChatResponse(reply=result.reply + sources_markdown(result.sources), state=result.state,
+                        build=result.build, sources=result.sources)

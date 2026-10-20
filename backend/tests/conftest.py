@@ -2,6 +2,15 @@ import copy
 
 import pytest
 
+from app.rag.knowledge import retrieval
+
+
+@pytest.fixture(autouse=True)
+def note_retriever_without_vectors(monkeypatch):
+    """Note retrieval in tests ranks by shared words, so no test needs
+    Qdrant or the embedding model."""
+    monkeypatch.setattr(retrieval, "_default", retrieval.NoteRetriever(use_vectors=False))
+
 AM5_CPU = {
     "manufacturer": "AMD", "model": "Ryzen 5 7600", "socket": "AM5",
     "tdp_w": 65, "bios_flash_required": False,

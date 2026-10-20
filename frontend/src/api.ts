@@ -73,14 +73,34 @@ export interface BuildRequest {
   quiet: boolean
   low_power: boolean
   prioritize_upgradeability: boolean
+  favor: 'cpu' | 'gpu' | null
   existing_parts: Record<string, string>
   pinned_parts: Record<string, string>
+}
+
+export interface NoteSource {
+  publisher: string
+  title: string
+  url: string
+  kind: 'manufacturer' | 'review' | 'press'
+  published: string | null
+}
+
+// A knowledge note the reply cites as [ref]; the reply already ends with a
+// "Sources" list built from these.
+export interface CitedNote {
+  ref: number
+  note_id: string
+  title: string
+  checked: string
+  sources: NoteSource[]
 }
 
 export interface ChatResponse {
   reply: string
   state: BuildRequest
   build: BuildResult | null
+  sources: CitedNote[]
 }
 
 export class ChatError extends Error {}

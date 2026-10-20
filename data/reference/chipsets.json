@@ -1,0 +1,124 @@
+{
+  "source": "PCIe generation of the CPU-attached graphics slot and the CPU-attached M.2 (NVMe) slot for each chipset, from AMD's AM5 and AM4 chipset specification tables (retrieved 2026-10-20). B650 and B650E no longer appear in AMD's table; their values come from Corsair's B650 vs B650E comparison and agree with launch reviews. Intel chipsets are left out: on LGA1700 and LGA1851 the graphics lanes come from the CPU, and whether a board's slot runs at PCIe 5.0 depends on the board, not the chipset.",
+  "chipsets": [
+    {
+      "socket": "AM5",
+      "chipset": "X870E",
+      "graphics_pcie": "5.0",
+      "nvme_pcie": "5.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "X870",
+      "graphics_pcie": "5.0",
+      "nvme_pcie": "5.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "B850",
+      "graphics_pcie": "4.0",
+      "nvme_pcie": "5.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "B840",
+      "graphics_pcie": "4.0",
+      "nvme_pcie": "4.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "X670E",
+      "graphics_pcie": "5.0",
+      "nvme_pcie": "5.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "X670",
+      "graphics_pcie": "4.0",
+      "nvme_pcie": "5.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "B650E",
+      "graphics_pcie": "5.0",
+      "nvme_pcie": "5.0",
+      "source": "https://www.corsair.com/ww/pl/explorer/gamer/gaming-pcs/b650-vs-b650e-which-chipset-should-you-choose/"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "B650",
+      "graphics_pcie": "4.0",
+      "nvme_pcie": "4.0, or 5.0 on some boards",
+      "source": "https://www.corsair.com/ww/pl/explorer/gamer/gaming-pcs/b650-vs-b650e-which-chipset-should-you-choose/"
+    },
+    {
+      "socket": "AM5",
+      "chipset": "A620",
+      "graphics_pcie": "4.0",
+      "nvme_pcie": "4.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am5.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "X570",
+      "graphics_pcie": "4.0 (3.0 with Ryzen APUs)",
+      "nvme_pcie": "4.0 (3.0 with Ryzen APUs)",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "B550",
+      "graphics_pcie": "4.0 (3.0 with Ryzen APUs)",
+      "nvme_pcie": "4.0 (3.0 with Ryzen APUs)",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "A520",
+      "graphics_pcie": "3.0",
+      "nvme_pcie": "3.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "X470",
+      "graphics_pcie": "3.0",
+      "nvme_pcie": "3.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "B450",
+      "graphics_pcie": "3.0",
+      "nvme_pcie": "3.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "X370",
+      "graphics_pcie": "3.0",
+      "nvme_pcie": "3.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "B350",
+      "graphics_pcie": "3.0",
+      "nvme_pcie": "3.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    },
+    {
+      "socket": "AM4",
+      "chipset": "A320",
+      "graphics_pcie": "3.0",
+      "nvme_pcie": "3.0",
+      "source": "https://www.amd.com/en/products/processors/chipsets/am4.html"
+    }
+  ]
+}

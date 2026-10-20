@@ -1,0 +1,496 @@
+{
+  "about": "Sourced hardware notes retrieved into build explanations and follow-up answers: trade-offs, platform quirks, power, noise, and upgrade paths. Each note is written from its sources, in its own words, and states only what they support. applies_to lists the parts a note is about; a part matches when it fits every field of any one entry (see app/rag/knowledge/notes.py). 'checked' is the date the sources were last read.",
+  "notes": [
+    {
+      "id": "arc-a-series-resizable-bar",
+      "title": "Intel Arc A-series cards need Resizable BAR for their expected performance",
+      "topic": "quirk",
+      "text": "Intel says Resizable BAR (called Smart Access Memory on AMD platforms) must be enabled for optimal performance with Arc A-series graphics cards. The cards still work without it, but they don't perform as intended, so the motherboard and CPU should support Resizable BAR and it should be turned on in the BIOS.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "Arc A380",
+            "Arc A580",
+            "Arc A750",
+            "Arc A770"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Intel",
+          "title": "Do You Need a Resizable BAR to Use Intel Arc A-Series Graphics?",
+          "url": "https://www.intel.com/content/www/us/en/support/articles/000092416.html",
+          "kind": "manufacturer",
+          "published": "2024-12-03"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "raptor-lake-vmin-shift",
+      "title": "13th and 14th Gen Core desktop CPUs need a current BIOS for the Vmin Shift fix",
+      "topic": "quirk",
+      "text": "Intel traced instability reports on 13th and 14th Gen Core desktop processors to a clock tree circuit in the cores that ages faster under high voltage and temperature, which it calls Vmin Shift Instability. Microcode 0x12B (September 2024) and 0x12F (May 2025) address it and arrive through motherboard BIOS updates. Intel recommends installing the latest BIOS and using the Intel Default Settings power profile. Intel's posts describe the microcode as preventing the issue; they don't say it repairs a processor that has already degraded.",
+      "applies_to": [
+        {
+          "category": "cpu",
+          "model_pattern": "^Core i[3579]-1[34]\\d{3}"
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Intel",
+          "title": "Intel Core 13th and 14th Gen Desktop Instability Root Cause Update",
+          "url": "https://community.intel.com/t5/Processors/Intel-Core-13th-and-14th-Gen-Desktop-Instability-Root-Cause/td-p/1633442",
+          "kind": "manufacturer",
+          "published": "2024-09-25"
+        },
+        {
+          "publisher": "Intel",
+          "title": "Intel Core 13th and 14th Gen Vmin Shift Instability Update: New Microcode Update (0x12F)",
+          "url": "https://community.intel.com/t5/Mobile-and-Desktop-Processors/Intel-Core-13th-and-14th-Gen-Vmin-Shift-Instabilty-Update-New/m-p/1686948",
+          "kind": "manufacturer",
+          "published": "2025-05-01"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "core-ultra-200s-updates",
+      "title": "Core Ultra 200S performance depends on Windows and BIOS updates",
+      "topic": "quirk",
+      "text": "Intel found several causes of lower-than-expected performance in Core Ultra 200S launch testing: Application Optimization not taking effect, the default Balanced power plan not enabling full performance, unusual scheduling with low single-thread scores, and misconfigured settings in some early BIOSes. They are fixed by Windows 11 build 26100.2161 (KB5044384) or newer and current motherboard BIOSes. Intel's final recipe is Windows 11 build 26100.2314 or newer with a BIOS containing Intel CSME firmware 19.0.0.1854v2.2. Intel saw the largest gains on the Balanced power plan.",
+      "applies_to": [
+        {
+          "category": "cpu",
+          "model_pattern": "^Core Ultra [579] 2\\d\\d"
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Intel",
+          "title": "Intel Core Ultra 200S Series Field Update Overview",
+          "url": "https://cdrdv2-public.intel.com/845102/Intel-Core-Ultra-200S-Field-Update-2.pdf",
+          "kind": "manufacturer",
+          "published": "2025-01"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "am5-600-series-bios-for-new-cpus",
+      "title": "AM5 600-series boards may need a BIOS update for Ryzen 8000 and 9000",
+      "topic": "quirk",
+      "text": "AMD says every AM5 motherboard is compatible with every AM5 processor, but a 600-series board (A620, B650, B650E, X670, X670E) may need a BIOS update before it runs a Ryzen 8000 or 9000 series processor. AMD's guidance for a system that won't boot with a new CPU is to update the BIOS using an older supported CPU, the retailer's update service, or USB BIOS Flashback on boards that have it. Check the board maker's CPU support list before buying.",
+      "applies_to": [
+        {
+          "category": "motherboard",
+          "socket": "AM5",
+          "chipset": [
+            "A620",
+            "B650",
+            "B650E",
+            "X670",
+            "X670E"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "AMD",
+          "title": "AMD Socket AM5 Chipsets for Motherboards",
+          "url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+          "kind": "manufacturer"
+        },
+        {
+          "publisher": "AMD",
+          "title": "BIOS Updates for AMD Ryzen Desktop Systems",
+          "url": "https://www.amd.com/en/resources/support-articles/faqs/cpu-99.html",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "am5-support-through-2029",
+      "title": "AMD supports the AM5 socket through 2029",
+      "topic": "upgrade",
+      "text": "At Computex 2026 (May 31, 2026), AMD extended its support for the Socket AM5 platform through 2029, up from its earlier commitment through 2027. AM5 already spans Ryzen 7000, 8000 and 9000 processors, and AMD presents the extension as more time to upgrade a system on the same platform, so an AM5 board leaves room for a later CPU upgrade without replacing the board.",
+      "applies_to": [
+        {
+          "category": "cpu",
+          "socket": "AM5"
+        },
+        {
+          "category": "motherboard",
+          "socket": "AM5"
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "AMD",
+          "title": "AMD Computex 2026: 10 Years of AM4, AM5 Support Through 2029 and Expanded RDNA 4 Gaming",
+          "url": "https://www.amd.com/en/blogs/2026/amd-computex-2026-10-years-of-am4-am5-support-through.html",
+          "kind": "manufacturer",
+          "published": "2026-05-31"
+        },
+        {
+          "publisher": "Tom's Hardware",
+          "title": "AMD confirms AM5 support through 2029",
+          "url": "https://www.tomshardware.com/pc-components/cpus/amd-confirms-am5-support-through-2029-zen-4-and-5-platform-will-likely-see-two-more-generations-at-least",
+          "kind": "press"
+        },
+        {
+          "publisher": "AMD",
+          "title": "AMD Socket AM5 Chipsets for Motherboards",
+          "url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "a620-b840-no-cpu-overclocking",
+      "title": "A620 and B840 boards don't allow CPU overclocking",
+      "topic": "trade_off",
+      "text": "AMD's AM5 chipset comparison lists A620 and B840 as the only consumer AM5 chipsets without Ryzen processor overclocking. Memory overclocking with AMD EXPO profiles is still supported. Both have a single x16 graphics slot at PCIe 4.0 (no x8/x8 split) and no PCIe 5.0 lanes. B850 and the X-series chipsets in the same table allow processor overclocking.",
+      "applies_to": [
+        {
+          "category": "motherboard",
+          "socket": "AM5",
+          "chipset": [
+            "A620",
+            "B840"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "AMD",
+          "title": "AMD Socket AM5 Chipsets for Motherboards",
+          "url": "https://www.amd.com/en/products/processors/chipsets/am5.html",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "ryzen-9950x3d-one-cache-die",
+      "title": "Only one of the Ryzen 9 9950X3D's two dies has 3D V-Cache",
+      "topic": "quirk",
+      "text": "The Ryzen 9 9950X3D is two 8-core dies, and only one of them has 3D V-Cache. For games, the other die's cores are parked so the game runs on the cached die. PC Perspective notes the setup expects AMD's chipset driver 7.01.08.129 or later, which brings the 3D V-Cache Performance Optimizer, after which the parking happens automatically. Software that isn't recognized as a game may not trigger it.",
+      "applies_to": [
+        {
+          "category": "cpu",
+          "model": [
+            "Ryzen 9 9950X3D"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "PC Perspective",
+          "title": "AMD Ryzen 9 9950X3D Processor First Look Review",
+          "url": "https://pcper.com/2025/03/amd-ryzen-9-9950x3d-processor-first-look-review/",
+          "kind": "review",
+          "published": "2025-03-11"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rtx-50-no-32bit-physx",
+      "title": "RTX 50 series cards don't run 32-bit PhysX",
+      "topic": "trade_off",
+      "text": "RTX 50 series cards don't support 32-bit CUDA applications, which ends GPU-accelerated PhysX in older 32-bit games such as Borderlands 2, Mirror's Edge, Metro 2033 and the Batman Arkham trilogy. RTX 40 series and older cards keep 32-bit PhysX. Tom's Hardware reports that the only way to keep GPU PhysX with an RTX 50 card is a second, older NVIDIA card set aside for it.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "GeForce RTX 5050",
+            "GeForce RTX 5060",
+            "GeForce RTX 5060 Ti",
+            "GeForce RTX 5070",
+            "GeForce RTX 5070 Ti",
+            "GeForce RTX 5080",
+            "GeForce RTX 5090"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Tom's Hardware",
+          "title": "PhysX quietly retired on RTX 50 series GPUs: Nvidia ends 32-bit CUDA app support",
+          "url": "https://www.tomshardware.com/pc-components/gpus/physx-quietly-retired-on-rtx-50-series-gpus-nvidia-ends-32-bit-cuda-app-support",
+          "kind": "press",
+          "published": "2025-02-18"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rtx-5060-ti-8gb-vram",
+      "title": "The RTX 5060 Ti 8GB trails the 16GB model where VRAM runs short",
+      "topic": "trade_off",
+      "text": "Benchmarks reported by Tom's Hardware found the RTX 5060 Ti 8GB close to the 16GB model in most games at 1080p and 1440p, with the 16GB card noticeably faster in some, such as Horizon Zero Dawn. With DLSS 4 Multi Frame Generation at 4x in Cyberpunk 2077, the 16GB card was 22% faster. Tom's called the 8GB card a tough sell for gamers looking at something for the long term, because of its VRAM.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "GeForce RTX 5060 Ti"
+          ],
+          "vram_gb": 8
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Tom's Hardware",
+          "title": "Reviews show the Nvidia RTX 5060 Ti 8GB matches the 16GB model in most tests, falls behind in DLSS 4",
+          "url": "https://www.tomshardware.com/pc-components/gpus/reviews-show-the-nvidia-rtx-5060-ti-8gb-matches-the-16gb-model-in-most-tests-falls-behind-in-dlss-4",
+          "kind": "press",
+          "published": "2025-04-17"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rx-7000-fsr-4-1",
+      "title": "Radeon RX 7000 cards run FSR 4.1, at a slightly higher cost than RX 9000",
+      "topic": "trade_off",
+      "text": "Since June 22, 2026, Radeon RX 7000 series cards support AMD's FSR 4.1 upscaling through a driver update, in over 300 games. They run an INT8 version of the model instead of the FP8 version RX 9000 cards use, which costs RX 7000 cards slightly more performance in exchange for better image quality than FSR 3.1. Tom's Hardware notes that only RDNA 4 (RX 9000) has the hardware for FSR 4.1 to work optimally.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "Radeon RX 7600",
+            "Radeon RX 7600 XT",
+            "Radeon RX 7700 XT",
+            "Radeon RX 7800 XT",
+            "Radeon RX 7900 GRE",
+            "Radeon RX 7900 XT",
+            "Radeon RX 7900 XTX"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Tom's Hardware",
+          "title": "AMD brings official FSR 4.1 support to RX 7000 series GPUs",
+          "url": "https://www.tomshardware.com/pc-components/gpu-drivers/amd-brings-official-fsr-4-1-support-to-rx-7000-series-gpus-int8-model-now-available-in-300-games-rdna-3-apus-also-getting-fsr-4-1-soon",
+          "kind": "press",
+          "published": "2026-06-22"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rx-9070-xt-power",
+      "title": "Radeon RX 9070 XT power requirements",
+      "topic": "power",
+      "text": "AMD rates the Radeon RX 9070 XT at 304W typical board power and recommends a power supply of at least 750W. AMD's specification lists two 8-pin power connectors.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "Radeon RX 9070 XT"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "AMD",
+          "title": "AMD Radeon RX 9070 XT",
+          "url": "https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070xt.html",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rx-9070-power",
+      "title": "Radeon RX 9070 power requirements",
+      "topic": "power",
+      "text": "AMD rates the Radeon RX 9070 at 220W typical board power, 84W less than the RX 9070 XT, and recommends a power supply of at least 650W. AMD's specification lists two 8-pin power connectors.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "Radeon RX 9070"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "AMD",
+          "title": "AMD Radeon RX 9070",
+          "url": "https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070.html",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rtx-5090-power",
+      "title": "GeForce RTX 5090 power requirements",
+      "topic": "power",
+      "text": "NVIDIA's reference specification rates the RTX 5090 at 575W total graphics power and calls for a 1000W power supply, a minimum based on a Ryzen 9 9950X system. It takes one 600W PCIe Gen 5 (16-pin) cable, or four 8-pin cables through the adapter in the box. NVIDIA recommends a PCIe CEM 5.1 compliant power supply.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "GeForce RTX 5090"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "NVIDIA",
+          "title": "GeForce RTX 5090 Graphics Cards",
+          "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rtx-5080-power",
+      "title": "GeForce RTX 5080 power requirements",
+      "topic": "power",
+      "text": "NVIDIA's reference specification rates the RTX 5080 at 360W total graphics power and calls for an 850W power supply, a minimum based on a Ryzen 9 9950X system. It takes one PCIe Gen 5 (16-pin) cable rated for 450W or more, or three 8-pin cables through the adapter in the box. NVIDIA recommends a PCIe CEM 5.1 compliant power supply.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "GeForce RTX 5080"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "NVIDIA",
+          "title": "GeForce RTX 5080 Graphics Cards",
+          "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5080/",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rtx-5070-ti-power",
+      "title": "GeForce RTX 5070 Ti power requirements",
+      "topic": "power",
+      "text": "NVIDIA's reference specification rates the RTX 5070 Ti at 300W total graphics power and calls for a 750W power supply, a minimum based on a Ryzen 9 9950X system. It takes one PCIe Gen 5 (16-pin) cable rated for 300W or more, or two 8-pin cables through the adapter in the box.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "GeForce RTX 5070 Ti"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "NVIDIA",
+          "title": "GeForce RTX 5070 Family",
+          "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "rtx-5070-power",
+      "title": "GeForce RTX 5070 power requirements",
+      "topic": "power",
+      "text": "NVIDIA's reference specification rates the RTX 5070 at 250W total graphics power and calls for a 650W power supply, a minimum based on a Ryzen 9 9950X system. It takes one PCIe Gen 5 (16-pin) cable rated for 300W or more, or two 8-pin cables through the adapter in the box.",
+      "applies_to": [
+        {
+          "category": "gpu",
+          "chip": [
+            "GeForce RTX 5070"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "NVIDIA",
+          "title": "GeForce RTX 5070 Family",
+          "url": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "am5-expo-is-overclocking",
+      "title": "AMD counts EXPO memory profiles as overclocking",
+      "topic": "quirk",
+      "text": "AMD describes EXPO as memory overclocking: an EXPO profile runs a DDR5 kit at its rated speed and timings, beyond AMD's published memory specification. AMD's footnote says operating outside its published specifications voids the AMD processor warranty, even when enabled through AMD's own tools. AMD's memory compatibility list shows which kits were tested to run at their rated speed and latency.",
+      "applies_to": [
+        {
+          "category": "cpu",
+          "socket": "AM5"
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "AMD",
+          "title": "AMD EXPO Technology",
+          "url": "https://www.amd.com/en/products/processors/technologies/expo.html",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "thermalright-aqua-elite-120-v3-noise",
+      "title": "Thermalright Aqua Elite V3 120mm fan and pump ratings",
+      "topic": "noise",
+      "text": "Thermalright rates the Aqua Elite 120 V3's single 120mm fan at up to 1500 RPM and 25.6 dBA, and its pump at up to 3300 RPM and 23 dBA. These are the maker's maximum ratings, not independent noise measurements. Thermalright lists the pump's rated life (MTTF) as 40,000 hours and the warranty as 3 years.",
+      "applies_to": [
+        {
+          "category": "cooler",
+          "manufacturer": "Thermalright",
+          "model": [
+            "Aqua Elite V3 120mm"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Thermalright",
+          "title": "Aqua Elite 120 V3",
+          "url": "https://www.thermalright.com/product/aqua-elite-120-v3/",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    },
+    {
+      "id": "thermalright-assassin-x-120-se-noise",
+      "title": "Thermalright Assassin X 120 Refined SE fan ratings",
+      "topic": "noise",
+      "text": "Thermalright rates the Assassin X 120 Refined SE's single 120mm fan at up to 1550 RPM and 25.6 dBA, moving up to 66.17 CFM. These are the maker's ratings, not independent noise measurements. The heatsink is a single tower with four 6mm heat pipes, 148mm tall.",
+      "applies_to": [
+        {
+          "category": "cooler",
+          "manufacturer": "Thermalright",
+          "model": [
+            "Assassin X 120 Refined SE"
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "publisher": "Thermalright",
+          "title": "Assassin X 120 Refined SE",
+          "url": "https://www.thermalright.com/product/assassin-x-120-refined-se/",
+          "kind": "manufacturer"
+        }
+      ],
+      "checked": "2026-10-20"
+    }
+  ]
+}

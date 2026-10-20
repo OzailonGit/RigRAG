@@ -29,6 +29,14 @@ class VectorStore(ABC):
     def ensure_collection(self, dimension: int) -> None: ...
 
     @abstractmethod
+    def recreate_collection(self, dimension: int) -> None:
+        """Drops the collection, if any, and creates it empty."""
+
+    def create_keyword_index(self, field: str) -> None:
+        """Indexes a payload field for exact-match filtering. Optional: a
+        store without payload indexes filters by scanning."""
+
+    @abstractmethod
     def upsert(self, points: list[VectorPoint]) -> None: ...
 
     @abstractmethod

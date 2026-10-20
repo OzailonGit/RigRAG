@@ -7,6 +7,7 @@ Run after app.ingestion.seed has populated Postgres.
 """
 
 from app.database.session import SessionLocal
+from app.ingestion import index_notes
 from app.models.product import Product
 from app.rag.chunking.document_builder import build_product_document
 from app.rag.chunking.payload_builder import build_payload
@@ -44,6 +45,7 @@ def main() -> None:
 
     print(f"Indexing complete. Collection now holds {store.count()} points.")
     db.close()
+    index_notes.main()
 
 
 if __name__ == "__main__":

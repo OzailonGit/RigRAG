@@ -23,7 +23,7 @@ CATEGORY_TEMPLATES = {
         "{manufacturer} {model} is a {form_factor} motherboard for {socket} socket CPUs "
         "with the {chipset} chipset, supporting {ram_type} RAM up to {max_ram_gb}GB across "
         "{ram_slots} slots, {m2_clause}{m2_slots} M.2 slot(s), and {sata_clause}{sata_ports} SATA port(s)."
-        "{wifi_clause}"
+        "{pcie_clause}{wifi_clause}"
     ),
     "ram": (
         "{manufacturer} {model} is a {capacity_gb}GB {ddr_gen} memory kit ({sticks} sticks) "
@@ -111,6 +111,13 @@ def build_product_document(product: dict) -> str:
         fields["m2_clause"] = "at least " if "m2_slots" in assumed else ""
         fields["sata_clause"] = "at least " if "sata_ports" in assumed else ""
         fields["wifi_clause"] = f" Includes {' and '.join(wifi_bits)}." if wifi_bits else " No built-in Wi-Fi/Bluetooth."
+        if product.get("pcie_graphics"):
+            fields["pcie_clause"] = (
+                f" Per the {product['chipset']} chipset spec, the graphics slot runs at PCIe {product['pcie_graphics']}"
+                f" and the CPU-attached M.2 slot at PCIe {product['pcie_nvme']}."
+            )
+        else:
+            fields["pcie_clause"] = " Its PCIe versions depend on the board and aren't listed."
     if category == "psu":
         fields["connector_clause"] = (
             " Supports 12VHPWR/12V-2x6." if product.get("supports_12vhpwr") else ""

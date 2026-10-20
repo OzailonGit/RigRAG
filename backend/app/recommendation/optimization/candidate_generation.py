@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import and_, exists, func, literal, or_, select
 from sqlalchemy.orm import Session, aliased
 
@@ -199,3 +201,25 @@ def fetch_candidates(
             ranked = [*ranked[: MAX_CANDIDATES_PER_CATEGORY - 1], fastest]
     products = {p.id: p for p in db.scalars(select(Product).where(Product.id.in_([r[0] for r in ranked])))}
     return [to_full_dict(db, products[r[0]]) for r in ranked]
+
+
+def fastest_parts(db: Session, category: str, request: BuildRequest, limit: int = 10) -> list[uuid.UUID]:
+    """Priced CPUs or GPUs that pass the request's filters, fastest first by
+    the benchmark score that matters for it. Only the cheapest part at each
+    score is kept, since cards sharing a chip share a score."""
+    speed = speed_column(category, request)
+    spec_model = SPEC_MODEL_BY_CATEGORY[Category(category)]
+    stmt = (
+        select(Product.id, speed)
+        .join(spec_model, spec_model.product_id == Product.id)
+        .where(*_filters(category, request, {}), speed.is_not(None))
+        .order_by(speed.desc(), Product.price_php)
+    )
+    picks, seen = [], set()
+    for product_id, score in db.execute(stmt):
+        if score not in seen:
+            seen.add(score)
+            picks.append(product_id)
+            if len(picks) == limit:
+                break
+    return picks

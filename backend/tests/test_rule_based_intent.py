@@ -102,3 +102,18 @@ def test_trailing_more_phrasing_without_verb():
 ])
 def test_classifies_message_kind(message, has_build, awaiting, kind):
     assert classify_message_rule_based(message, has_build, awaiting) is kind
+
+
+@pytest.mark.parametrize("message,favor", [
+    ("What's the fastest CPU I can get in a 50000 peso gaming PC?", "cpu"),
+    ("Best graphics card for 80k please", "gpu"),
+    ("Prioritize the GPU, 70k budget", "gpu"),
+    ("70k gaming PC", None),
+])
+def test_extracts_which_part_to_favor(message, favor):
+    assert parse_intent_rule_based(message).favor == favor
+
+
+@pytest.mark.parametrize("message", ["50000 peso gaming PC", "50000 pesos gaming PC", "₱50,000 gaming PC", "50k gaming PC at 1440p"])
+def test_budget_survives_peso_and_resolution_wording(message):
+    assert parse_intent_rule_based(message).budget_php == 50000
