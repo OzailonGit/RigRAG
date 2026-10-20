@@ -13,6 +13,7 @@ from app.models.product import Category, Product
 from app.models.psu import Psu
 from app.models.ram import RamKit
 from app.models.storage import StorageDevice
+from app.services.chipsets import chipset_pcie
 
 SPEC_MODEL_BY_CATEGORY = {
     Category.cpu: Cpu,
@@ -51,6 +52,12 @@ def to_full_dict(db: Session, product: Product) -> dict:
         spec_data = _row_to_dict(spec)
         spec_data.pop("product_id", None)
         data.update(spec_data)
+    if product.category is Category.motherboard:
+        # Derived from the chipset, so explanations state the real PCIe
+        # versions rather than guessing them; None where the chipset doesn't fix them.
+        pcie = chipset_pcie(data.get("socket"), data.get("chipset"))
+        data["pcie_graphics"] = pcie["graphics_pcie"] if pcie else None
+        data["pcie_nvme"] = pcie["nvme_pcie"] if pcie else None
     return data
 
 

@@ -75,3 +75,21 @@ def test_exceeding_the_needed_tier_is_not_penalized():
     assert ordinal_fit(4, 2) == 1.0
     assert ordinal_fit(2, 2) == 1.0
     assert ordinal_fit(1, 3) == pytest.approx(1 / 3)
+
+
+def test_chipset_pcie_comes_from_the_reference_and_only_where_fixed():
+    from app.rag.chunking.document_builder import build_product_document
+    from app.services.chipsets import chipset_pcie
+
+    assert chipset_pcie("AM5", "A620") == {**chipset_pcie("AM5", "A620"), "graphics_pcie": "4.0", "nvme_pcie": "4.0"}
+    assert chipset_pcie("AM5", "X870E")["graphics_pcie"] == "5.0"
+    assert chipset_pcie("LGA1700", "B760") is None  # depends on the board
+
+    board = {
+        "category": "motherboard", "manufacturer": "Biostar", "model": "A620MS", "form_factor": "Micro-ATX",
+        "socket": "AM5", "chipset": "A620", "ram_type": "DDR5", "max_ram_gb": 96, "ram_slots": 2, "m2_slots": 1,
+        "sata_ports": 2, "wifi": False, "bluetooth": False, "price_php": 4430, "price_type": "estimated",
+        "source": "test", "pcie_graphics": "4.0", "pcie_nvme": "4.0",
+    }
+    assert "graphics slot runs at PCIe 4.0" in build_product_document(board)
+    assert "aren't listed" in build_product_document({**board, "chipset": "B760", "pcie_graphics": None, "pcie_nvme": None})
