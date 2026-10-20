@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: pcbuilder
+          POSTGRES_PASSWORD: pcbuilder
+          POSTGRES_DB: pcbuilder
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pcbuilder"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://pcbuilder:pcbuilder@localhost:5432/pcbuilder
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+      # CPU-only PyTorch: the tests never touch a GPU, and the default wheel
+      # bundles CUDA.
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -r requirements.txt
+      # The seed catalog only: the full dataset import needs files that
+      # aren't in the repo. Tests that need the full catalog skip themselves.
+      - run: python -m alembic upgrade head
+      - run: python -m app.ingestion.seed
+      - run: python -m app.ingestion.import_benchmarks
+      - run: python -m pytest -q
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f backend/Dockerfile -t rigrag-backend .
+      - run: docker build -f frontend/Dockerfile -t rigrag-frontend .
